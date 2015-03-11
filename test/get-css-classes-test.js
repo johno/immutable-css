@@ -11,6 +11,6 @@ describe('get-css-classes', function() {
 
   it('should return a hash of the selectors', function() {
     var css = postcss.parse(fixture('vendor.css'), { safe: true });
-    assert.deepEqual(getCssClasses(css), { '.awesome': true });
+    assert.deepEqual(getCssClasses(css), { '.awesome': true, '.opossum': true });
   });
 });
