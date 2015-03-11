@@ -1,6 +1,4 @@
-# immutable.css
-
-[![Build Status](https://secure.travis-ci.org/johnotander/immutable.css.png?branch=master)](https://travis-ci.org/johnotander/immutable.css)
+# immutable.css [![Build Status](https://secure.travis-ci.org/johnotander/immutable.css.png?branch=master)](https://travis-ci.org/johnotander/immutable.css)
 
 A linter for immutable CSS. Inspired by [csswizardry's immutable CSS article](http://csswizardry.com/2015/03/immutable-css/).
 ## Installation
