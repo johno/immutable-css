@@ -5,3 +5,15 @@
 .awesome {
   color: green;
 }
+
+.foo.awesome {
+  color: hotpink;
+}
+
+.foobar .awesome {
+  color: tomato;
+}
+
+.foobar.awesome {
+  color: rebeccapurple;
+}
