@@ -14,7 +14,16 @@
     "type": "git",
     "url": "https://github.com/johnotander/immutable.css.git"
   },
-  "keywords": [],
+  "keywords": [
+    "css",
+    "immutable",
+    "mutability",
+    "immutablecss",
+    "immutability",
+    "mutation",
+    "lint",
+    "linter"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/johnotander/immutable.css/issues"
