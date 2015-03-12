@@ -1,29 +1,27 @@
 'use strict';
 
+var fs = require('fs');
 var postcss = require('postcss');
-var getCssClasses = require('./lib/get-css-classes');
+var getMutations = require('./lib/get-mutations');
 
-module.exports = function immutableCss(baseCss, additionalCss) {
+module.exports = function immutableCss(immutableCssFile, customCssFile, options) {
+  options = options || {};
   var noMutationViolations = true;
 
-  var baseAst = postcss.parse(baseCss, { safe: true });
-  var additionalAst = postcss.parse(additionalCss, { safe: true });
-  var immutableClasses = getCssClasses(baseAst);
+  var immutableCss = fs.readFileSync(immutableCssFile, 'utf8').trim();
+  var customCss = fs.readFileSync(customCssFile, 'utf8').trim();
 
-  var immutableErrors = {};
-  additionalAst.eachRule(function(rule) {
-    rule.selectors.forEach(function(selector) {
-      if (immutableClasses[selector]) {
-        noMutationViolations = false;
-
-        console.log('app.css: ' +
-          'line ' + rule.source.start.line + ',' +
-          'col ' + rule.source.start.column +
-          ' - ' + selector + ' was mutated'
-        );
-      }
-    });
+  var immutableErrors = getMutations(immutableCss, customCss);
+  immutableErrors.forEach(function(error) {
+ 
+   if (options.verbose) { 
+      console.log(customCssFile + ': ' +
+        'line ' + error.line + ',' +
+        'col ' + error.column +
+        ' - ' + error.selector + ' was mutated'
+      );
+   }
   });
 
-  return noMutationViolations;
+  return immutableErrors;
 }
