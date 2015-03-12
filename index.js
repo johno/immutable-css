@@ -19,5 +19,13 @@ module.exports = function immutableCss(baseCss, additionalCss) {
 }
 
 function handleSelectorReopen(ast, selector) {
-  console.log('Immutable.css Error: [' + selector + ']');
+  ast.eachRule(function(rule) {
+    if (rule.selectors.indexOf(selector) != -1) {
+      console.log(rule);
+      console.log('Immutable.css Error:' +
+        rule.source.start.line +
+        ' [' + selector +'] was reopened'
+      );
+    }
+  });
 }

@@ -1,3 +1,7 @@
+.bar {
+  content: 'baz';
+}
+
 .awesome {
   color: green;
 }
