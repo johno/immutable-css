@@ -30,9 +30,9 @@
   },
   "homepage": "https://github.com/johnotander/immutable.css",
   "dependencies": {
-    "css-selector-parser": "^1.0.4",
     "has-class-selector": "0.0.1",
-    "postcss": "^4.0.6"
+    "postcss": "^4.0.6",
+    "specificity": "^0.1.4"
   },
   "devDependencies": {
     "mocha": "*"
