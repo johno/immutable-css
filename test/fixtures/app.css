@@ -6,14 +6,18 @@
   color: green;
 }
 
-.foo.awesome {
+.bar.awesome {
   color: hotpink;
 }
 
-.foobar .awesome {
+.sibling + .awesome {
+  color: yellow;
+}
+
+.foobar > .awesome {
   color: tomato;
 }
 
-.foobar.awesome {
+a.awesome {
   color: rebeccapurple;
 }
