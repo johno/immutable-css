@@ -1,0 +1,15 @@
+.this-is-not-a-mutation {
+  color: green;
+}
+
+input {
+  border: none;
+}
+
+.button {
+  color: blue;
+}
+
+.left {
+  float: right /* :) */
+}

@@ -11,4 +11,12 @@ describe('get-mutations', function() {
   it('should return an array of mutations', function() {
     assert.equal(getMutations(fixture('vendor.css'), fixture('app.css')).length, 5);
   });
+
+  it('should find basscss mutations when they exist', function() {
+    assert.equal(getMutations(fixture('basscss.css'), fixture('basscss-mutations.css')).length, 2);
+  });
+
+  it('should find bootstrap mutations when they exist', function() {
+    assert.equal(getMutations(fixture('bootstrap.css'), fixture('bootstrap-mutations.css')).length, 1);
+  });
 });
