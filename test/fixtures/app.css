@@ -10,7 +10,7 @@
   color: hotpink;
 }
 
-.sibling + .awesome {
+.sibling + .foo {
   color: yellow;
 }
 
