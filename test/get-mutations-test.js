@@ -9,6 +9,6 @@ function fixture(name) {
 describe('get-mutations', function() {
 
   it('should return an array of mutations', function() {
-    assert.equal(getMutations(fixture('vendor.css'), fixture('app.css')).length, 1);
+    assert.equal(getMutations(fixture('vendor.css'), fixture('app.css')).length, 5);
   });
 });
