@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var program = require('commander');
+var immutableCss = require('..');
+
+program
+  .version('0.0.1')
+  .command('* <immutableCssFile.css> [appCssFiles.css...]')
+  .action(function(immutableCssFile, appCssFiles) {
+    if(appCssFiles) {
+      appCssFiles.forEach(function(appCssFile) {
+        console.log(appCssFile);
+        immutableCss(immutableCssFile, appCssFile, { verbose: true });
+      });
+    }
+  });
+
+program.parse(process.argv);

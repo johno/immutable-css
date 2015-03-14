@@ -7,6 +7,12 @@ A linter for immutable CSS. Inspired by [csswizardry's immutable CSS article](ht
 npm install --save immutable.css
 ```
 
+#### For the CLI
+
+```
+npm i -g immutable.css
+```
+
 ## Usage
 
 ```javascript
@@ -14,6 +20,21 @@ var immutableCss = require('immutable.css');
 
 immutableCss('vendor.css', 'app.css');
 // Error: app.css:45 An immutable selector has been reopened [.some-selector]
+```
+
+#### Using the CLI
+
+```
+immutablecss vendor.css app.css app2.css
+
+test/fixtures/app.css
+test/fixtures/app.css: line 5,col 1 - .awesome was mutated
+test/fixtures/app.css: line 9,col 1 - .awesome was mutated
+test/fixtures/app.css: line 13,col 1 - .foo was mutated
+test/fixtures/app.css: line 17,col 1 - .awesome was mutated
+test/fixtures/app.css: line 21,col 1 - .awesome was mutated
+test/fixtures/app2.css
+test/fixtures/app2.css: line 1,col 1 - .foo was mutated
 ```
 
 ## License
