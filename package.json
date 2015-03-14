@@ -7,6 +7,9 @@
   "directories": {
     "test": "test"
   },
+  "bin": {
+    "immutablecss": "./bin/immutablecss"
+  },
   "scripts": {
     "test": "mocha test"
   },
