@@ -19,4 +19,13 @@ describe('get-mutations', function() {
   it('should find bootstrap mutations when they exist', function() {
     assert.equal(getMutations(fixture('bootstrap.css'), fixture('bootstrap-mutations.css')).length, 1);
   });
+
+  it('should ignore the specified classes', function() {
+    assert.equal(
+      getMutations(
+        fixture('basscss.css'),
+        fixture('basscss-mutations.css'),
+        { ignoredSelectors: ['.button'] }
+      ).length, 1);
+  });
 });

@@ -11,7 +11,7 @@ module.exports = function immutableCss(immutableCssFile, customCssFile, options)
   var immutableCss = fs.readFileSync(immutableCssFile, 'utf8').trim();
   var customCss = fs.readFileSync(customCssFile, 'utf8').trim();
 
-  var immutableErrors = getMutations(immutableCss, customCss);
+  var immutableErrors = getMutations(immutableCss, customCss, options);
   immutableErrors.forEach(function(error) {
  
    if (options.verbose) { 
