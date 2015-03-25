@@ -20,6 +20,15 @@ describe('get-mutations', function() {
     assert.equal(getMutations(fixture('bootstrap.css'), fixture('bootstrap-mutations.css')).length, 1);
   });
 
+  it('should include immutable selectors that are passes as options', function() {
+    assert.equal(
+      getMutations(
+        fixture('vendor.css'),
+        fixture('app.css'),
+        { immutableSelectors: ['.sibling'] }
+      ).length, 6);
+  });
+
   it('should ignore the specified classes', function() {
     assert.equal(
       getMutations(
