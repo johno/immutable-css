@@ -22,6 +22,12 @@ immutableCss('vendor.css', 'app.css');
 // Error: app.css:45 An immutable selector has been reopened [.some-selector]
 ```
 
+#### Options
+
+* `verbose` (Boolean)
+* `ignoredSelectors` (Array)
+* `immutableSelectors` (Array)
+
 #### Using the CLI
 
 ```
