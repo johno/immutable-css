@@ -1,22 +1,22 @@
-# immutable.css [![Build Status](https://secure.travis-ci.org/johnotander/immutable.css.png?branch=master)](https://travis-ci.org/johnotander/immutable.css)
+# immutable-css [![Build Status](https://secure.travis-ci.org/johnotander/immutable.css.png?branch=master)](https://travis-ci.org/johnotander/immutable.css)
 
 A linter for immutable CSS. Inspired by [csswizardry's immutable CSS article](http://csswizardry.com/2015/03/immutable-css/).
 ## Installation
 
 ```bash
-npm install --save immutable.css
+npm install --save immutable-css
 ```
 
 #### For the CLI
 
 ```
-npm i -g immutable.css
+npm i -g immutable-css
 ```
 
 ## Usage
 
 ```javascript
-var immutableCss = require('immutable.css');
+var immutableCss = require('immutable-css');
 
 immutableCss('vendor.css', 'app.css');
 // Error: app.css:45 An immutable selector has been reopened [.some-selector]
