@@ -1,6 +1,9 @@
 # immutable-css [![Build Status](https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master)](https://travis-ci.org/johnotander/immutable-css)
 
 A linter for immutable CSS. Inspired by [csswizardry's immutable CSS article](http://csswizardry.com/2015/03/immutable-css/).
+
+Currently, this library only supports CSS classes.
+
 ## Installation
 
 ```bash
@@ -24,9 +27,9 @@ immutableCss('vendor.css', 'app.css');
 
 #### Options
 
-* `verbose` (Boolean)
-* `ignoredSelectors` (Array)
-* `immutableSelectors` (Array)
+* `verbose` (Boolean): Print output to standard out.
+* `ignoredSelectors` (Array): List of selectors to ignore for mutation violations.
+* `immutableSelectors` (Array): List of selectors to check against.
 
 #### Using the CLI
 
