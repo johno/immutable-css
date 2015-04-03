@@ -52,9 +52,14 @@ gulp.task('browserify', function() {
   .pipe(gulp.dest('js'))
 })
 
-gulp.task('watch', function() {
-  gulp.watch('css/src/*.css', ['rework', 'csslint'])
-  gulp.watch('js/src/*.js', ['browserify'])
+gulp.task('js', ['browserify'], function() {
+  return gulp.src('js/j.js')
+    .pipe(gulp.dest('js'))
 })
 
-gulp.task('default', ['rework', 'csslint', 'browserify', 'watch'])
+gulp.task('watch', function() {
+  gulp.watch('css/src/*.css', ['rework', 'csslint'])
+  gulp.watch('js/src/*.js', ['browserify', 'js'])
+})
+
+gulp.task('default', ['rework', 'csslint', 'browserify', 'js', 'watch'])

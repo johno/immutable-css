@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/johnotander/immutable.css",
   "devDependencies": {
+    "brace": "^0.5.0",
     "browserify": "^9.0.6",
     "gulp": "^3.8.11",
     "gulp-autoprefixer": "^2.1.0",

@@ -1,3 +1,16 @@
-body {
-  color: tomato;
+.mutation-error {
+  background-color: tomato;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Temporary hackery to get the error reporting working for the editor */
+.ace-tm {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
