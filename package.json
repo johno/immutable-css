@@ -1,44 +1,36 @@
 {
-  "name": "immutable-css",
-  "description": "A CSS linter for immutable selectors.",
-  "author": "John Otander",
-  "version": "0.0.1",
+  "name": "immutable-css-site",
+  "version": "1.0.0",
+  "description": "The docs/promo site for immutable-css",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "bin": {
-    "immutablecss": "./bin/immutablecss"
-  },
   "scripts": {
-    "test": "mocha test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/johnotander/immutable-css.git"
+    "url": "https://github.com/johnotander/immutable.css.git"
   },
-  "keywords": [
-    "css",
-    "immutable",
-    "mutability",
-    "immutablecss",
-    "immutability",
-    "mutation",
-    "lint",
-    "linter"
-  ],
-  "license": "MIT",
+  "author": "John Otander <johnotander@gmail.com> (http://johnotander.com/)",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/johnotander/immutable-css/issues"
+    "url": "https://github.com/johnotander/immutable.css/issues"
   },
-  "homepage": "https://github.com/johnotander/immutable-css",
-  "dependencies": {
-    "commander": "^2.7.1",
-    "has-class-selector": "0.0.1",
-    "postcss": "^4.0.6",
-    "specificity": "^0.1.4"
-  },
+  "homepage": "https://github.com/johnotander/immutable.css",
   "devDependencies": {
-    "mocha": "*"
+    "browserify": "^9.0.6",
+    "gulp": "^3.8.11",
+    "gulp-autoprefixer": "^2.1.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-csslint": "^0.1.5",
+    "gulp-minify-css": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-rework": "^1.0.3",
+    "gulp-size": "^1.2.1",
+    "immutable-css": "0.0.1",
+    "is-blank": "0.0.1",
+    "rework-custom-media": "^0.2.0",
+    "rework-npm": "^1.0.0",
+    "rework-vars": "^3.1.1",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

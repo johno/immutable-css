@@ -1,65 +1,9 @@
-# immutable-css [![Build Status](https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master)](https://travis-ci.org/johnotander/immutable-css)
-
-A linter for immutable CSS. Inspired by [csswizardry's immutable CSS article](http://csswizardry.com/2015/03/immutable-css/).
-
-Currently, this library only supports CSS classes.
+# immutable-css
 
 ## Installation
 
-```bash
-npm install --save immutable-css
 ```
-
-#### For the CLI
-
+npm i
+gulp
+open index.html
 ```
-npm i -g immutable-css
-```
-
-## Usage
-
-```javascript
-var immutableCss = require('immutable-css');
-
-immutableCss('vendor.css', 'app.css');
-// Error: app.css:45 An immutable selector has been reopened [.some-selector]
-```
-
-#### Options
-
-* `verbose` (Boolean): Print output to standard out.
-* `ignoredSelectors` (Array): List of selectors to ignore for mutation violations.
-* `immutableSelectors` (Array): List of selectors to check against.
-
-#### Using the CLI
-
-```
-immutablecss vendor.css app.css app2.css
-
-test/fixtures/app.css
-test/fixtures/app.css: line 5,col 1 - .awesome was mutated
-test/fixtures/app.css: line 9,col 1 - .awesome was mutated
-test/fixtures/app.css: line 13,col 1 - .foo was mutated
-test/fixtures/app.css: line 17,col 1 - .awesome was mutated
-test/fixtures/app.css: line 21,col 1 - .awesome was mutated
-test/fixtures/app2.css
-test/fixtures/app2.css: line 1,col 1 - .foo was mutated
-```
-
-## License
-
-MIT
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-Crafted with <3 by [@jxnblk](https://twitter.com/jxnblk) & [@4lpine](https://twitter.com/4lpine).
-
-***
-
-> This package was initially generated with [yeoman](http://yeoman.io) and the [p generator](https://github.com/johnotander/generator-p.git).
