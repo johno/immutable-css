@@ -9,17 +9,63 @@
 <meta name="description" content="">
 <link rel="stylesheet" href="css/c.css" type="text/css">
 </head>
-<body>
-  <form action="">
-    <textarea id="immutablecss" name="immutablecss">
-.foo { color: red; }
-    </textarea>
-    <textarea id="appcss" name="appcss">
-.foo { color: red; }
-    </textarea>
-    <input type="submit" value="test" id="test-button" />
+<body class="flex flex-column" style="min-height:100vh">
+
+  <form action="" class="flex-auto flex">
+    <div class="sm-flex full-width">
+      <div class="sm-col-4 flex flex-column border-right">
+        <header class="flex-none p2">
+          <h1 class="h2 m0">immutable-css</h1>
+          <p class="">Lint CSS for altering a stylesheet's base styles</p>
+        </header>
+        <div class="flex-auto p2">
+          <label for="framework-select" class="h5 bold">Framework</label>
+          <select id="framework-select" name="framework" class="block full-width field-light">
+            <option value="basscss" label="Basscss" />
+            <option value="bootstrap" label="Bootstrap" />
+            <option value="" label="Other" />
+          </select>
+          <label for="immutablecss" class="h5 bold flex-none">Other CSS</label>
+          <textarea id="immutablecss"
+            rows="8"
+            class="block full-width field-light"
+            placeholder=".foo { color: red; }"
+            name="immutablecss"></textarea>
+        </div>
+
+        <footer class="flex-none border-top">
+          <div class="flex flex-wrap">
+            <div class="flex-auto"></div>
+            <p class="h5 p2 m0">
+              Made by
+              <a href="#">John Otander</a>
+              and
+              <a href="//jxnblk.com">Jxnblk</a>
+            </p>
+          </div>
+        </footer>
+
+      </div>
+      <div class="sm-col-8 flex flex-column">
+        <div class="flex-none flex flex-center px2 py1">
+          <label for="appcss" class="h5 bold">Custom CSS</label>
+          <div class="flex-auto"></div>
+          <div>
+            <input type="submit"
+              value="Check for Mutations"
+              id="test-button"
+              class="button" />
+          </div>
+        </div>
+        <div class="relative flex-auto">
+          <textarea id="appcss" name="appcss">.foo { color: red; }</textarea>
+        </div>
+      </div>
+    </div>
   </form>
+
   <div id="test-results"></div>
+
 <script src="js/j.js"></script>
 </body>
 </html>

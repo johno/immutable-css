@@ -26354,7 +26354,8 @@ module.exports={
     "tarball": "http://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
+  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz",
+  "readme": "ERROR: No README data found!"
 }
 
 },{}],49:[function(require,module,exports){
