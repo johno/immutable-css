@@ -4,6 +4,7 @@
  */
 
 @import "basscss";
+/*
 @import "basscss-highlight"; /* 1. */
 
 .mutation-error {
@@ -29,9 +30,11 @@
   left: 0;
 }
 
+.monospace { font-family: var(--monospace) }
 
 :root {
   --font-family: 'Avenir Next', 'Hevletica Neue', Helvetica, sans-serif;
+  --monospace: 'Source Code Pro', Consolas, Menlo, monospace;
   --bold-font-weight: 600;
   --heading-font-weight: var(--bold-font-weight);
   --button-font-size: var(--h5);

@@ -46,6 +46,7 @@ gulp.task('browserify', function() {
   return browserify({
     entries: './js/src/all.js'
   })
+  .transform('brfs')
   .bundle()
   .pipe(source('all.js'))
   .pipe(rename('j.js'))

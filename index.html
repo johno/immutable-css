@@ -18,25 +18,31 @@
           <h1 class="h2 m0">immutable-css</h1>
           <p class="">Lint CSS for altering a stylesheet's base styles</p>
         </header>
-        <div class="flex-auto p2">
+        <div class="flex-auto flex flex-column p2">
           <label for="framework-select" class="h5 bold">Framework</label>
           <select id="framework-select" name="framework" class="block full-width field-light">
             <option value="basscss" label="Basscss" />
             <option value="bootstrap" label="Bootstrap" />
-            <option value="" label="Other" />
+            <option value="other" label="Other" />
           </select>
-          <label for="immutablecss" class="h5 bold flex-none">Other CSS</label>
+          <label for="immutablecss"
+            id="immutablecss-label"
+            class="h5 bold flex-none">
+            Source CSS
+          </label>
           <textarea id="immutablecss"
+            name="immutablecss"
             rows="8"
-            class="block full-width field-light"
+            class="monospace flex-auto block full-width field-light"
             placeholder=".foo { color: red; }"
-            name="immutablecss"></textarea>
+            readonly></textarea>
         </div>
 
         <footer class="flex-none border-top">
-          <div class="flex flex-wrap">
+          <div class="h5 flex flex-center flex-wrap p2">
+            <a href="#">GitHub</a>
             <div class="flex-auto"></div>
-            <p class="h5 p2 m0">
+            <p class="h5 m0">
               Made by
               <a href="#">John Otander</a>
               and

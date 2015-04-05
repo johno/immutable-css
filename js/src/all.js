@@ -1,6 +1,21 @@
 var getMutations = require('immutable-css/lib/get-mutations')
 var isBlank = require('is-blank')
 var ace = require('brace')
+var fs = require('fs');
+
+var frameworks = {
+  basscss: {
+    name: 'Basscss',
+    content: fs.readFileSync('js/src/frameworks/basscss.css', 'utf8'),
+  },
+  bootstrap: {
+    name: 'Bootstrap',
+    content: fs.readFileSync('js/src/frameworks/bootstrap.css', 'utf8'),
+  },
+  other: { name: 'Other', content: '' }
+};
+
+console.log(frameworks);
 
 function testImmutability(event) {
   event.preventDefault()
@@ -16,11 +31,33 @@ function testImmutability(event) {
   }
 }
 
+
+// Load selected framework
+function loadFramework(name) {
+  var textarea = document.getElementById('immutablecss');
+  var label = document.getElementById('immutablecss-label');
+  var framework = frameworks[name];
+  if (name === 'other') {
+    textarea.readOnly = false;
+  } else {
+    textarea.readOnly = true;
+  }
+  textarea.value = framework.content;
+  label.textContent = framework.name + ' CSS';
+}
+
+
 ;(function() {
   document.getElementById('test-button').addEventListener('click', testImmutability, false)
 
+  document.getElementById('framework-select').addEventListener('change', function(event) {
+    var name = event.target.value;
+    loadFramework(name);
+  }, false);
+
   var previousMutations = []
   var editor = ace.edit('appcss')
+
   editor.getSession().on('change', function() {
     var mutations = getMutations(
       document.getElementById('immutablecss').value,
@@ -36,4 +73,7 @@ function testImmutability(event) {
       editor.getSession().addGutterDecoration(mutation.line - 1, 'mutation-error')
     })
   })
+
+  loadFramework('basscss');
+
 }())

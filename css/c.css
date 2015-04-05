@@ -1071,7 +1071,7 @@ h6,
 }
 
 body {
-  color: #111;
+  color: #222;
   background-color: white;
 }
 
@@ -1632,7 +1632,7 @@ input[type=range] {
 
 .black,
 .dark-gray {
-  color: #111;
+  color: #222;
 }
 
 .gray,
@@ -1705,7 +1705,7 @@ input[type=range] {
 
 .bg-black,
 .bg-dark-gray {
-  background-color: #111;
+  background-color: #222;
 }
 
 .bg-gray,
@@ -1845,7 +1845,7 @@ input[type=range] {
 }
 
 .border-black {
-  border-color: #111;
+  border-color: #222;
 }
 
 .border-gray {
@@ -1924,143 +1924,8 @@ input[type=range] {
   /* Legacy support */
 }
 
-/* Basscss Highlight */
-
 /*
-
-   COLOR VARIABLES
-
-   - Cool
-   - Warm
-   - Gray Scale
-
-*/
-
-:root {
-  /* Cool */
-  /* Warm */
-  /* Gray scale */
-}
-
-.hljs {
-  -webkit-text-size-adjust: none;
-}
-
-.hljs-comment,
-.diff .hljs-header,
-.hljs-javadoc {
-  color: #aaa;
-  font-style: italic;
-}
-
-.hljs-keyword,
-.css .rule .hljs-keyword,
-.hljs-winutils,
-.nginx .hljs-title,
-.hljs-subst,
-.hljs-request,
-.hljs-status {
-  color: #111;
-  font-weight: bold;
-}
-
-.hljs-number,
-.hljs-hexcolor,
-.ruby .hljs-constant {
-  color: #3d9970;
-}
-
-.hljs-string,
-.hljs-tag .hljs-value,
-.hljs-phpdoc,
-.hljs-dartdoc,
-.tex .hljs-formula {
-  color: #ff4136;
-}
-
-.hljs-title,
-.hljs-id,
-.scss .hljs-preprocessor {
-  color: #ff4136;
-  font-weight: bold;
-}
-
-.hljs-list .hljs-keyword,
-.hljs-subst {
-  font-weight: normal;
-}
-
-.hljs-class .hljs-title,
-.hljs-type,
-.vhdl .hljs-literal,
-.tex .hljs-command {
-  color: #001f3f;
-  font-weight: bold;
-}
-
-.hljs-tag,
-.hljs-tag .hljs-title,
-.hljs-rules .hljs-property,
-.django .hljs-tag .hljs-keyword {
-  color: #001f3f;
-  font-weight: normal;
-}
-
-.hljs-attribute,
-.hljs-variable,
-.lisp .hljs-body {
-  color: #3d9970;
-}
-
-.hljs-regexp {
-  color: #3d9970;
-}
-
-.hljs-symbol,
-.ruby .hljs-symbol .hljs-string,
-.lisp .hljs-keyword,
-.clojure .hljs-keyword,
-.scheme .hljs-keyword,
-.tex .hljs-special,
-.hljs-prompt {
-  color: #b10dc9;
-}
-
-.hljs-built_in {
-  color: #001f3f;
-}
-
-.hljs-preprocessor,
-.hljs-pragma,
-.hljs-pi,
-.hljs-doctype,
-.hljs-shebang,
-.hljs-cdata {
-  color: #aaa;
-  font-weight: bold;
-}
-
-.hljs-deletion {
-  background: #f012be;
-}
-
-.hljs-addition {
-  background: #01ff70;
-}
-
-.diff .hljs-change {
-  background: #001f3f;
-}
-
-.hljs-chunk {
-  color: #ddd;
-}
-
-:root {
-  /* Mapped colors */
-}
-
-/* 1. */
+@import "basscss-highlight"; /* 1. */
 
 .mutation-error {
   background-color: tomato;
@@ -2084,5 +1949,9 @@ input[type=range] {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+.monospace {
+  font-family: 'Source Code Pro', Consolas, Menlo, monospace;
 }
 
