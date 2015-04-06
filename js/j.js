@@ -55,9 +55,13 @@ function loadFramework(name) {
   }, false);
 
   var previousMutations = []
+  var mutationAnnotations = []
   var editor = ace.edit('appcss')
+  var Range = ace.acequire('ace/range').Range
 
   window.aceEditor = editor
+
+  editor.getSession().setOption('useWorker', false)
 
   editor.getSession().on('change', function() {
     var mutations = getMutations(
@@ -66,13 +70,24 @@ function loadFramework(name) {
     )
 
     previousMutations.forEach(function(mutationError) {
+      // editor.getSession().removeMarker(new Range(mutationError.line, 0, mutationError.line, 200), 'mutation-error', 'fullLine')
       editor.getSession().removeGutterDecoration(mutationError.line - 1, 'mutation-error')
+      mutationAnnotations = []
     })
 
     previousMutations = mutations
     mutations.forEach(function(mutation) {
+      // editor.getSession().addMarker(new Range(mutation.line, 0, mutation.line, 200), 'mutation-error', 'fullLine')
       editor.getSession().addGutterDecoration(mutation.line - 1, 'mutation-error')
+      mutationAnnotations.push({  
+        row: mutation.line - 1,
+        column: 0,
+        text: mutation.selector + ' was mutated',
+        type: 'error'
+      })
     })
+    
+    editor.getSession().setAnnotations(mutationAnnotations)
   })
 
   loadFramework('basscss');
