@@ -16,13 +16,11 @@ var frameworks = {
   other: { name: 'Other', content: '' }
 };
 
-console.log(frameworks);
-
 function testImmutability(event) {
   event.preventDefault()
 
   var immutableCss = document.getElementById('immutablecss').value
-  var appCss = document.getElementById('appcss').value
+  var appCss = window.aceEditor.getValue()
   
   if(isBlank(immutableCss) || isBlank(appCss)) {
     alert('please provide css')
@@ -58,6 +56,8 @@ function loadFramework(name) {
 
   var previousMutations = []
   var editor = ace.edit('appcss')
+
+  window.aceEditor = editor
 
   editor.getSession().on('change', function() {
     var mutations = getMutations(
@@ -26394,8 +26394,7 @@ module.exports={
     "tarball": "http://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz",
-  "readme": "ERROR: No README data found!"
+  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
 }
 
 },{}],49:[function(require,module,exports){

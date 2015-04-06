@@ -15,13 +15,11 @@ var frameworks = {
   other: { name: 'Other', content: '' }
 };
 
-console.log(frameworks);
-
 function testImmutability(event) {
   event.preventDefault()
 
   var immutableCss = document.getElementById('immutablecss').value
-  var appCss = document.getElementById('appcss').value
+  var appCss = window.aceEditor.getValue()
   
   if(isBlank(immutableCss) || isBlank(appCss)) {
     alert('please provide css')
@@ -57,6 +55,8 @@ function loadFramework(name) {
 
   var previousMutations = []
   var editor = ace.edit('appcss')
+
+  window.aceEditor = editor
 
   editor.getSession().on('change', function() {
     var mutations = getMutations(
