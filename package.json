@@ -31,7 +31,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-rework": "^1.0.3",
     "gulp-size": "^1.2.1",
-    "immutable-css": "0.0.1",
+    "immutable-css": "0.0.3",
     "is-blank": "0.0.1",
     "rework-custom-media": "^0.2.0",
     "rework-npm": "^1.0.0",

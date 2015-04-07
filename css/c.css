@@ -1389,8 +1389,8 @@ input[type=range] {
 
 .table-light th,
 .table-light td {
-  border-bottom-style: solid;
   border-bottom-width: 1px;
+  border-bottom-style: solid;
   border-bottom-color: rgba(0,0,0,.125);
 }
 

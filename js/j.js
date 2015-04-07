@@ -94,7 +94,7 @@ function loadFramework(name) {
 
 }())
 
-},{"brace":2,"immutable-css/lib/get-mutations":13,"is-blank":50}],2:[function(require,module,exports){
+},{"brace":2,"immutable-css/lib/get-mutations":14,"is-blank":15}],2:[function(require,module,exports){
 /* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
  *
@@ -20209,17 +20209,32 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],11:[function(require,module,exports){
+'use strict';
+
+module.exports = function hasClassSelector(selector) {
+  if (typeof selector != 'string') {
+    throw new TypeError('has-class-selector expected a string')
+  }
+
+  return /\./.test(selector)
+}
+
+},{}],12:[function(require,module,exports){
 var specificity = require('specificity');
+var hasClassSelector = require('has-class-selector');
 
 module.exports = function extractClassesFromSelector(selector) {
   return specificity.calculate(selector)[0].parts.filter(function(selectorPart) {
     return selectorPart.type === 'b';
+  }).filter(function(cssClass) {
+    // Sometimes it isn't actually a CSS class
+    return hasClassSelector(cssClass.selector);
   }).map(function(cssClass) {
     return cssClass.selector;
   });
 }
 
-},{"specificity":49}],12:[function(require,module,exports){
+},{"has-class-selector":11,"specificity":54}],13:[function(require,module,exports){
 var extractClasses = require('./extract-classes-from-selector');
 
 module.exports = function getCssClasses(cssObject) {
@@ -20236,7 +20251,7 @@ module.exports = function getCssClasses(cssObject) {
   return cssClasses;
 };
 
-},{"./extract-classes-from-selector":11}],13:[function(require,module,exports){
+},{"./extract-classes-from-selector":12}],14:[function(require,module,exports){
 'use strict';
 
 var postcss = require('postcss');
@@ -20263,7 +20278,8 @@ module.exports = function getMutations(immutableCss, customCss, options) {
           immutableErrors.push({
             selector: classSelector,
             line: rule.source.start.line,
-            column: rule.source.start.column
+            column: rule.source.start.column,
+            rule: rule
           });
         }
       });
@@ -20278,43 +20294,108 @@ function hasMutation(classSelector) {
          ignoredSelectors.indexOf(classSelector) == -1;
 }
 
-},{"./extract-classes-from-selector":11,"./get-css-classes":12,"postcss":26}],14:[function(require,module,exports){
-"use strict";
+},{"./extract-classes-from-selector":12,"./get-css-classes":13,"postcss":30}],15:[function(require,module,exports){
+var isEmpty = require('is-empty');
+var isWhitespace = require('is-whitespace');
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+module.exports = function isBlank(object) {
+  if(typeof object == 'string' && object.length) {
+    return isWhitespace(object);
+  } else {
+    return isEmpty(object);
+  }
+};
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+},{"is-empty":16,"is-whitespace":17}],16:[function(require,module,exports){
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+/**
+ * Expose `isEmpty`.
+ */
 
-var Container = _interopRequire(require("./container"));
+module.exports = isEmpty;
+
+
+/**
+ * Has.
+ */
+
+var has = Object.prototype.hasOwnProperty;
+
+
+/**
+ * Test whether a value is "empty".
+ *
+ * @param {Mixed} val
+ * @return {Boolean}
+ */
+
+function isEmpty (val) {
+  if (null == val) return true;
+  if ('number' == typeof val) return 0 === val;
+  if (undefined !== val.length) return 0 === val.length;
+  for (var key in val) if (has.call(val, key)) return false;
+  return true;
+}
+},{}],17:[function(require,module,exports){
+/*!
+ * is-whitespace <https://github.com/jonschlinkert/is-whitespace>
+ *
+ * Copyright (c) 2014 Jon Schlinkert, contributors.
+ * Licensed under the MIT License
+ */
+
+'use strict';
+
+var regex = new RegExp('^[\\s\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF"]+$');
+
+module.exports = function isWhitespace(value) {
+  if (typeof value === 'string') {
+    return regex.test(value);
+  }
+  return false;
+};
+
+},{}],18:[function(require,module,exports){
+'use strict';
+
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+exports.__esModule = true;
+
+var _Container2 = require('./container');
+
+var _Container3 = _interopRequireWildcard(_Container2);
 
 var AtRule = (function (_Container) {
     function AtRule(defaults) {
         _classCallCheck(this, AtRule);
 
-        this.type = "atrule";
         _Container.call(this, defaults);
+        this.type = 'atrule';
     }
 
     _inherits(AtRule, _Container);
 
     AtRule.prototype.stringify = function stringify(builder, semicolon) {
-        var name = "@" + this.name;
-        var params = this.params ? this.stringifyRaw("params") : "";
+        var name = '@' + this.name;
+        var params = this.params ? this.stringifyRaw('params') : '';
 
-        if (typeof this.afterName !== "undefined") {
+        if (typeof this.afterName !== 'undefined') {
             name += this.afterName;
         } else if (params) {
-            name += " ";
+            name += ' ';
         }
 
         if (this.nodes) {
             this.stringifyBlock(builder, name + params);
         } else {
-            var before = this.style("before");
+            var before = this.style('before');
             if (before) builder(before);
-            var end = (this.between || "") + (semicolon ? ";" : "");
+            var end = (this.between || '') + (semicolon ? ';' : '');
             builder(name + params + end, this);
         }
     };
@@ -20340,58 +20421,72 @@ var AtRule = (function (_Container) {
     };
 
     return AtRule;
-})(Container);
+})(_Container3['default']);
 
-module.exports = AtRule;
-},{"./container":16}],15:[function(require,module,exports){
-"use strict";
+exports['default'] = AtRule;
+module.exports = exports['default'];
+},{"./container":20}],19:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var Node = _interopRequire(require("./node"));
+exports.__esModule = true;
+
+var _Node2 = require('./node');
+
+var _Node3 = _interopRequireWildcard(_Node2);
 
 var Comment = (function (_Node) {
     function Comment(defaults) {
         _classCallCheck(this, Comment);
 
-        this.type = "comment";
         _Node.call(this, defaults);
+        this.type = 'comment';
     }
 
     _inherits(Comment, _Node);
 
     Comment.prototype.stringify = function stringify(builder) {
-        var before = this.style("before");
+        var before = this.style('before');
         if (before) builder(before);
-        var left = this.style("left", "commentLeft");
-        var right = this.style("right", "commentRight");
-        builder("/*" + left + this.text + right + "*/", this);
+        var left = this.style('left', 'commentLeft');
+        var right = this.style('right', 'commentRight');
+        builder('/*' + left + this.text + right + '*/', this);
     };
 
     return Comment;
-})(Node);
+})(_Node3['default']);
 
-module.exports = Comment;
-},{"./node":23}],16:[function(require,module,exports){
-"use strict";
+exports['default'] = Comment;
+module.exports = exports['default'];
+},{"./node":27}],20:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var Declaration = _interopRequire(require("./declaration"));
+exports.__esModule = true;
 
-var Comment = _interopRequire(require("./comment"));
+var _Declaration = require('./declaration');
 
-var Node = _interopRequire(require("./node"));
+var _Declaration2 = _interopRequireWildcard(_Declaration);
+
+var _Comment = require('./comment');
+
+var _Comment2 = _interopRequireWildcard(_Comment);
+
+var _Node2 = require('./node');
+
+var _Node3 = _interopRequireWildcard(_Node2);
 
 var Container = (function (_Node) {
     function Container() {
@@ -20410,33 +20505,33 @@ var Container = (function (_Node) {
         }var i = undefined,
             last = this.nodes.length - 1;
         while (last > 0) {
-            if (this.nodes[last].type !== "comment") break;
+            if (this.nodes[last].type !== 'comment') break;
             last -= 1;
         }
 
-        var semicolon = this.style("semicolon");
+        var semicolon = this.style('semicolon');
         for (i = 0; i < this.nodes.length; i++) {
             this.nodes[i].stringify(builder, last !== i || semicolon);
         }
     };
 
     Container.prototype.stringifyBlock = function stringifyBlock(builder, start) {
-        var before = this.style("before");
+        var before = this.style('before');
         if (before) builder(before);
 
-        var between = this.style("between", "beforeOpen");
-        builder(start + between + "{", this, "start");
+        var between = this.style('between', 'beforeOpen');
+        builder(start + between + '{', this, 'start');
 
         var after = undefined;
         if (this.nodes && this.nodes.length) {
             this.stringifyContent(builder);
-            after = this.style("after");
+            after = this.style('after');
         } else {
-            after = this.style("after", "emptyBody");
+            after = this.style('after', 'emptyBody');
         }
 
         if (after) builder(after);
-        builder("}", this, "end");
+        builder('}', this, 'end');
     };
 
     Container.prototype.push = function push(child) {
@@ -20488,21 +20583,21 @@ var Container = (function (_Node) {
         if (!callback) {
             callback = prop;
             return this.eachInside(function (child, i) {
-                if (child.type === "decl") {
+                if (child.type === 'decl') {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
             });
         } else if (prop instanceof RegExp) {
             return this.eachInside(function (child, i) {
-                if (child.type === "decl" && prop.test(child.prop)) {
+                if (child.type === 'decl' && prop.test(child.prop)) {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
             });
         } else {
             return this.eachInside(function (child, i) {
-                if (child.type === "decl" && child.prop === prop) {
+                if (child.type === 'decl' && child.prop === prop) {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
@@ -20512,7 +20607,7 @@ var Container = (function (_Node) {
 
     Container.prototype.eachRule = function eachRule(callback) {
         return this.eachInside(function (child, i) {
-            if (child.type === "rule") {
+            if (child.type === 'rule') {
                 var result = callback(child, i);
                 if (result === false) return result;
             }
@@ -20523,21 +20618,21 @@ var Container = (function (_Node) {
         if (!callback) {
             callback = name;
             return this.eachInside(function (child, i) {
-                if (child.type === "atrule") {
+                if (child.type === 'atrule') {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
             });
         } else if (name instanceof RegExp) {
             return this.eachInside(function (child, i) {
-                if (child.type === "atrule" && name.test(child.name)) {
+                if (child.type === 'atrule' && name.test(child.name)) {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
             });
         } else {
             return this.eachInside(function (child, i) {
-                if (child.type === "atrule" && child.name === name) {
+                if (child.type === 'atrule' && child.name === name) {
                     var result = callback(child, i);
                     if (result === false) return result;
                 }
@@ -20547,7 +20642,7 @@ var Container = (function (_Node) {
 
     Container.prototype.eachComment = function eachComment(callback) {
         return this.eachInside(function (child, i) {
-            if (child.type === "comment") {
+            if (child.type === 'comment') {
                 var result = callback(child, i);
                 if (result === false) return result;
             }
@@ -20574,20 +20669,20 @@ var Container = (function (_Node) {
     };
 
     Container.prototype.prepend = function prepend(child) {
-        var nodes = this.normalize(child, this.first, "prepend").reverse();
-        for (var _iterator = nodes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-            var _ref;
+        var nodes = this.normalize(child, this.first, 'prepend').reverse();
+        for (var _iterator2 = nodes, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+            var _ref2;
 
-            if (_isArray) {
-                if (_i >= _iterator.length) break;
-                _ref = _iterator[_i++];
+            if (_isArray2) {
+                if (_i2 >= _iterator2.length) break;
+                _ref2 = _iterator2[_i2++];
             } else {
-                _i = _iterator.next();
-                if (_i.done) break;
-                _ref = _i.value;
+                _i2 = _iterator2.next();
+                if (_i2.done) break;
+                _ref2 = _i2.value;
             }
 
-            var node = _ref;
+            var node = _ref2;
             this.nodes.unshift(node);
         }for (var id in this.indexes) {
             this.indexes[id] = this.indexes[id] + nodes.length;
@@ -20599,21 +20694,21 @@ var Container = (function (_Node) {
     Container.prototype.insertBefore = function insertBefore(exist, add) {
         exist = this.index(exist);
 
-        var type = exist === 0 ? "prepend" : false;
+        var type = exist === 0 ? 'prepend' : false;
         var nodes = this.normalize(add, this.nodes[exist], type).reverse();
-        for (var _iterator = nodes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-            var _ref;
+        for (var _iterator3 = nodes, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+            var _ref3;
 
-            if (_isArray) {
-                if (_i >= _iterator.length) break;
-                _ref = _iterator[_i++];
+            if (_isArray3) {
+                if (_i3 >= _iterator3.length) break;
+                _ref3 = _iterator3[_i3++];
             } else {
-                _i = _iterator.next();
-                if (_i.done) break;
-                _ref = _i.value;
+                _i3 = _iterator3.next();
+                if (_i3.done) break;
+                _ref3 = _i3.value;
             }
 
-            var node = _ref;
+            var node = _ref3;
             this.nodes.splice(exist, 0, node);
         }var index = undefined;
         for (var id in this.indexes) {
@@ -20630,19 +20725,19 @@ var Container = (function (_Node) {
         exist = this.index(exist);
 
         var nodes = this.normalize(add, this.nodes[exist]).reverse();
-        for (var _iterator = nodes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-            var _ref;
+        for (var _iterator4 = nodes, _isArray4 = Array.isArray(_iterator4), _i4 = 0, _iterator4 = _isArray4 ? _iterator4 : _iterator4[Symbol.iterator]();;) {
+            var _ref4;
 
-            if (_isArray) {
-                if (_i >= _iterator.length) break;
-                _ref = _iterator[_i++];
+            if (_isArray4) {
+                if (_i4 >= _iterator4.length) break;
+                _ref4 = _iterator4[_i4++];
             } else {
-                _i = _iterator.next();
-                if (_i.done) break;
-                _ref = _i.value;
+                _i4 = _iterator4.next();
+                if (_i4.done) break;
+                _ref4 = _i4.value;
             }
 
-            var node = _ref;
+            var node = _ref4;
             this.nodes.splice(exist + 1, 0, node);
         }var index = undefined;
         for (var id in this.indexes) {
@@ -20672,19 +20767,19 @@ var Container = (function (_Node) {
     };
 
     Container.prototype.removeAll = function removeAll() {
-        for (var _iterator = this.nodes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-            var _ref;
+        for (var _iterator5 = this.nodes, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
+            var _ref5;
 
-            if (_isArray) {
-                if (_i >= _iterator.length) break;
-                _ref = _iterator[_i++];
+            if (_isArray5) {
+                if (_i5 >= _iterator5.length) break;
+                _ref5 = _iterator5[_i5++];
             } else {
-                _i = _iterator.next();
-                if (_i.done) break;
-                _ref = _i.value;
+                _i5 = _iterator5.next();
+                if (_i5.done) break;
+                _ref5 = _i5.value;
             }
 
-            var node = _ref;
+            var node = _ref5;
             node.parent = undefined;
         }this.nodes = [];
         return this;
@@ -20715,7 +20810,7 @@ var Container = (function (_Node) {
     };
 
     Container.prototype.index = function index(child) {
-        if (typeof child === "number") {
+        if (typeof child === 'number') {
             return child;
         } else {
             return this.nodes.indexOf(child);
@@ -20725,37 +20820,37 @@ var Container = (function (_Node) {
     Container.prototype.normalize = function normalize(nodes, sample) {
         var _this = this;
 
-        if (typeof nodes === "string") {
-            var parse = require("./parse");
+        if (typeof nodes === 'string') {
+            var parse = require('./parse');
             nodes = parse(nodes).nodes;
         } else if (!Array.isArray(nodes)) {
-            if (nodes.type === "root") {
+            if (nodes.type === 'root') {
                 nodes = nodes.nodes;
             } else if (nodes.type) {
                 nodes = [nodes];
             } else if (nodes.prop) {
-                if (typeof nodes.value === "undefined") {
-                    throw "value field is missed in node creation";
+                if (typeof nodes.value === 'undefined') {
+                    throw 'value field is missed in node creation';
                 }
-                nodes = [new Declaration(nodes)];
+                nodes = [new _Declaration2['default'](nodes)];
             } else if (nodes.selector) {
-                var Rule = require("./rule");
+                var Rule = require('./rule');
                 nodes = [new Rule(nodes)];
             } else if (nodes.name) {
-                var AtRule = require("./at-rule");
+                var AtRule = require('./at-rule');
                 nodes = [new AtRule(nodes)];
             } else if (nodes.text) {
-                nodes = [new Comment(nodes)];
+                nodes = [new _Comment2['default'](nodes)];
             } else {
-                throw "Unknown node type in node creation";
+                throw 'Unknown node type in node creation';
             }
         }
 
         var processed = nodes.map(function (child) {
             if (child.parent) child = child.clone();
-            if (typeof child.before === "undefined") {
-                if (sample && typeof sample.before !== "undefined") {
-                    child.before = sample.before.replace(/[^\s]/g, "");
+            if (typeof child.before === 'undefined') {
+                if (sample && typeof sample.before !== 'undefined') {
+                    child.before = sample.before.replace(/[^\s]/g, '');
                 }
             }
             child.parent = _this;
@@ -20765,51 +20860,56 @@ var Container = (function (_Node) {
         return processed;
     };
 
-    _createClass(Container, {
-        first: {
-            get: function () {
-                if (!this.nodes) return undefined;
-                return this.nodes[0];
-            }
-        },
-        last: {
-            get: function () {
-                if (!this.nodes) return undefined;
-                return this.nodes[this.nodes.length - 1];
-            }
+    _createClass(Container, [{
+        key: 'first',
+        get: function () {
+            if (!this.nodes) return undefined;
+            return this.nodes[0];
         }
-    });
+    }, {
+        key: 'last',
+        get: function () {
+            if (!this.nodes) return undefined;
+            return this.nodes[this.nodes.length - 1];
+        }
+    }]);
 
     return Container;
-})(Node);
+})(_Node3['default']);
 
-module.exports = Container;
-},{"./at-rule":14,"./comment":15,"./declaration":18,"./node":23,"./parse":24,"./rule":31}],17:[function(require,module,exports){
+exports['default'] = Container;
+module.exports = exports['default'];
+},{"./at-rule":18,"./comment":19,"./declaration":22,"./node":27,"./parse":28,"./rule":35}],21:[function(require,module,exports){
 (function (process){
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var warnOnce = _interopRequire(require("./warn-once"));
+exports.__esModule = true;
+
+var _warnOnce = require('./warn-once');
+
+var _warnOnce2 = _interopRequireWildcard(_warnOnce);
 
 var CssSyntaxError = (function (_SyntaxError) {
     function CssSyntaxError(message, line, column, source, file, plugin) {
         _classCallCheck(this, CssSyntaxError);
 
+        _SyntaxError.call(this, message);
         this.reason = message;
 
-        this.message = plugin ? plugin + ": " : "";
-        this.message += file ? file : "<css input>";
-        if (typeof line !== "undefined" && typeof column !== "undefined") {
+        this.message = plugin ? plugin + ': ' : '';
+        this.message += file ? file : '<css input>';
+        if (typeof line !== 'undefined' && typeof column !== 'undefined') {
             this.line = line;
             this.column = column;
-            this.message += ":" + line + ":" + column + ": " + message;
+            this.message += ':' + line + ':' + column + ': ' + message;
         } else {
-            this.message += ": " + message;
+            this.message += ': ' + message;
         }
 
         if (file) this.file = file;
@@ -20825,37 +20925,37 @@ var CssSyntaxError = (function (_SyntaxError) {
 
     CssSyntaxError.prototype.showSourceCode = function showSourceCode(color) {
         if (!this.source) {
-            return "";
+            return '';
         }var num = this.line - 1;
-        var lines = this.source.split("\n");
+        var lines = this.source.split('\n');
 
-        var prev = num > 0 ? lines[num - 1] + "\n" : "";
+        var prev = num > 0 ? lines[num - 1] + '\n' : '';
         var broken = lines[num];
-        var next = num < lines.length - 1 ? "\n" + lines[num + 1] : "";
+        var next = num < lines.length - 1 ? '\n' + lines[num + 1] : '';
 
-        var mark = "\n";
+        var mark = '\n';
         for (var i = 0; i < this.column - 1; i++) {
-            mark += " ";
+            mark += ' ';
         }
 
-        if (typeof color === "undefined" && typeof process !== "undefined") {
+        if (typeof color === 'undefined' && typeof process !== 'undefined') {
             if (process.stdout && process.env) {
                 color = process.stdout.isTTY && !process.env.NODE_DISABLE_COLORS;
             }
         }
 
         if (color) {
-            mark += "\u001b[1;31m^\u001b[0m";
+            mark += '\u001b[1;31m^\u001b[0m';
         } else {
-            mark += "^";
+            mark += '^';
         }
 
-        return "\n" + prev + broken + mark + next;
+        return '\n' + prev + broken + mark + next;
     };
 
     CssSyntaxError.prototype.highlight = function highlight(color) {
-        warnOnce("CssSyntaxError#highlight is deprecated and will be " + "removed in 5.0. Use error.showSourceCode instead.");
-        return this.showSourceCode(color).replace(/^\n/, "");
+        _warnOnce2['default']('CssSyntaxError#highlight is deprecated and will be ' + 'removed in 5.0. Use error.showSourceCode instead.');
+        return this.showSourceCode(color).replace(/^\n/, '');
     };
 
     CssSyntaxError.prototype.setMozillaProps = function setMozillaProps() {
@@ -20867,68 +20967,82 @@ var CssSyntaxError = (function (_SyntaxError) {
     };
 
     CssSyntaxError.prototype.toString = function toString() {
-        return this.name + ": " + this.message + this.showSourceCode();
+        return this.name + ': ' + this.message + this.showSourceCode();
     };
 
     return CssSyntaxError;
 })(SyntaxError);
 
-module.exports = CssSyntaxError;
+exports['default'] = CssSyntaxError;
 
-CssSyntaxError.prototype.name = "CssSyntaxError";
+CssSyntaxError.prototype.name = 'CssSyntaxError';
+module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./warn-once":34,"_process":10}],18:[function(require,module,exports){
-"use strict";
+},{"./warn-once":38,"_process":10}],22:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var Node = _interopRequire(require("./node"));
+exports.__esModule = true;
+
+var _Node2 = require('./node');
+
+var _Node3 = _interopRequireWildcard(_Node2);
 
 var Declaration = (function (_Node) {
     function Declaration(defaults) {
         _classCallCheck(this, Declaration);
 
-        this.type = "decl";
         _Node.call(this, defaults);
+        this.type = 'decl';
     }
 
     _inherits(Declaration, _Node);
 
     Declaration.prototype.stringify = function stringify(builder, semicolon) {
-        var before = this.style("before");
+        var before = this.style('before');
         if (before) builder(before);
 
-        var between = this.style("between", "colon");
-        var string = this.prop + between + this.stringifyRaw("value");
+        var between = this.style('between', 'colon');
+        var string = this.prop + between + this.stringifyRaw('value');
 
         if (this.important) {
-            string += this._important || " !important";
+            string += this._important || ' !important';
         }
 
-        if (semicolon) string += ";";
+        if (semicolon) string += ';';
         builder(string, this);
     };
 
     return Declaration;
-})(Node);
+})(_Node3['default']);
 
-module.exports = Declaration;
-},{"./node":23}],19:[function(require,module,exports){
-"use strict";
+exports['default'] = Declaration;
+module.exports = exports['default'];
+},{"./node":27}],23:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var CssSyntaxError = _interopRequire(require("./css-syntax-error"));
+exports.__esModule = true;
 
-var PreviousMap = _interopRequire(require("./previous-map"));
+var _CssSyntaxError = require('./css-syntax-error');
 
-var path = _interopRequire(require("path"));
+var _CssSyntaxError2 = _interopRequireWildcard(_CssSyntaxError);
+
+var _PreviousMap = require('./previous-map');
+
+var _PreviousMap2 = _interopRequireWildcard(_PreviousMap);
+
+var _path = require('path');
+
+var _path2 = _interopRequireWildcard(_path);
 
 var sequence = 0;
 
@@ -20940,15 +21054,15 @@ var Input = (function () {
 
         this.css = css.toString();
 
-        if (this.css[0] === "﻿" || this.css[0] === "￾") {
+        if (this.css[0] === '﻿' || this.css[0] === '￾') {
             this.css = this.css.slice(1);
         }
 
         this.safe = !!opts.safe;
 
-        if (opts.from) this.file = path.resolve(opts.from);
+        if (opts.from) this.file = _path2['default'].resolve(opts.from);
 
-        var map = new PreviousMap(this.css, opts, this.id);
+        var map = new _PreviousMap2['default'](this.css, opts, this.id);
         if (map.text) {
             this.map = map;
             var file = map.consumer().file;
@@ -20959,22 +21073,32 @@ var Input = (function () {
             this.from = this.file;
         } else {
             sequence += 1;
-            this.id = "<input css " + sequence + ">";
+            this.id = '<input css ' + sequence + '>';
             this.from = this.id;
         }
         if (this.map) this.map.file = this.from;
     }
 
-    Input.prototype.error = function error(message, line, column) {
+    Input.prototype.error = (function (_error) {
+        function error(_x, _x2, _x3) {
+            return _error.apply(this, arguments);
+        }
+
+        error.toString = function () {
+            return error.toString();
+        };
+
+        return error;
+    })(function (message, line, column) {
         var opts = arguments[3] === undefined ? {} : arguments[3];
 
-        var error = new CssSyntaxError(message);
+        var error = new _CssSyntaxError2['default'](message);
 
         var origin = this.origin(line, column);
         if (origin) {
-            error = new CssSyntaxError(message, origin.line, origin.column, origin.source, origin.file, opts.plugin);
+            error = new _CssSyntaxError2['default'](message, origin.line, origin.column, origin.source, origin.file, opts.plugin);
         } else {
-            error = new CssSyntaxError(message, line, column, this.css, this.file, opts.plugin);
+            error = new _CssSyntaxError2['default'](message, line, column, this.css, this.file, opts.plugin);
         }
 
         error.generated = {
@@ -20985,7 +21109,7 @@ var Input = (function () {
         if (this.file) error.generated.file = this.file;
 
         return error;
-    };
+    });
 
     Input.prototype.origin = function origin(line, column) {
         if (!this.map) {
@@ -21008,36 +21132,50 @@ var Input = (function () {
     };
 
     Input.prototype.mapResolve = function mapResolve(file) {
-        return path.resolve(this.map.consumer().sourceRoot || ".", file);
+        return _path2['default'].resolve(this.map.consumer().sourceRoot || '.', file);
     };
 
     return Input;
 })();
 
-module.exports = Input;
-},{"./css-syntax-error":17,"./previous-map":27,"path":9}],20:[function(require,module,exports){
-"use strict";
+exports['default'] = Input;
+module.exports = exports['default'];
+},{"./css-syntax-error":21,"./previous-map":31,"path":9}],24:[function(require,module,exports){
+(function (global){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) { _arr.push(_step.value); if (i && _arr.length === i) break; } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+exports.__esModule = true;
 
-var MapGenerator = _interopRequire(require("./map-generator"));
+var _MapGenerator = require('./map-generator');
 
-var warnOnce = _interopRequire(require("./warn-once"));
+var _MapGenerator2 = _interopRequireWildcard(_MapGenerator);
 
-var Result = _interopRequire(require("./result"));
+var _warnOnce = require('./warn-once');
 
-var parse = _interopRequire(require("./parse"));
+var _warnOnce2 = _interopRequireWildcard(_warnOnce);
 
-var Root = _interopRequire(require("./root"));
+var _Result = require('./result');
+
+var _Result2 = _interopRequireWildcard(_Result);
+
+var _parse = require('./parse');
+
+var _parse2 = _interopRequireWildcard(_parse);
+
+var _Root = require('./root');
+
+var _Root2 = _interopRequireWildcard(_Root);
+
+var Promise = global.Promise || require('es6-promise').Promise;
 
 function isPromise(obj) {
-    return typeof obj === "object" && typeof obj.then === "function";
+    return typeof obj === 'object' && typeof obj.then === 'function';
 }
 
 var LazyResult = (function () {
@@ -21048,18 +21186,18 @@ var LazyResult = (function () {
         this.processed = false;
 
         var root = undefined;
-        if (css instanceof Root) {
+        if (css instanceof _Root2['default']) {
             root = css;
-        } else if (css instanceof LazyResult || css instanceof Result) {
+        } else if (css instanceof LazyResult || css instanceof _Result2['default']) {
             root = css.root;
-            if (css.map && typeof opts.map === "undefined") {
+            if (css.map && typeof opts.map === 'undefined') {
                 opts.map = { prev: css.map };
             }
         } else {
-            root = parse(css, opts);
+            root = _parse2['default'](css, opts);
         }
 
-        this.result = new Result(processor, root, opts);
+        this.result = new _Result2['default'](processor, root, opts);
     }
 
     LazyResult.prototype.warnings = function warnings() {
@@ -21074,8 +21212,8 @@ var LazyResult = (function () {
         return this.async().then(onFulfilled, onRejected);
     };
 
-    LazyResult.prototype["catch"] = function _catch(onRejected) {
-        return this.async()["catch"](onRejected);
+    LazyResult.prototype['catch'] = function _catch(onRejected) {
+        return this.async()['catch'](onRejected);
     };
 
     LazyResult.prototype.asyncTick = function asyncTick(plugins, resolve, reject) {
@@ -21087,7 +21225,7 @@ var LazyResult = (function () {
         if (isPromise(promise)) {
             promise.then(function () {
                 _this.asyncTick(plugins, resolve, reject);
-            })["catch"](function (error) {
+            })['catch'](function (error) {
                 reject(error);
             });
         } else {
@@ -21096,11 +21234,11 @@ var LazyResult = (function () {
     };
 
     LazyResult.prototype.async = function async() {
-        var _this = this;
+        var _this2 = this;
 
         if (this.processed) {
             return Promise.resolve().then(function () {
-                return _this.stringify();
+                return _this2.stringify();
             });
         }
         if (this.processing) {
@@ -21109,10 +21247,10 @@ var LazyResult = (function () {
 
         var plugins = this.processor.plugins.slice(0);
         this.processing = new Promise(function (resolve, reject) {
-            _this.asyncTick(plugins, resolve, reject);
+            _this2.asyncTick(plugins, resolve, reject);
         }).then(function () {
-            _this.processed = true;
-            return _this.stringify();
+            _this2.processed = true;
+            return _this2.stringify();
         });
 
         return this.processing;
@@ -21124,7 +21262,7 @@ var LazyResult = (function () {
         }this.processed = true;
 
         if (this.processing) {
-            throw "Use process(css).then(cb) to work with async plugins";
+            throw 'Use process(css).then(cb) to work with async plugins';
         }
 
         for (var _iterator = this.result.processor.plugins, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
@@ -21143,7 +21281,7 @@ var LazyResult = (function () {
 
             var promise = this.run(plugin);
             if (isPromise(promise)) {
-                throw "Use process(css).then(cb) to work with async plugins";
+                throw 'Use process(css).then(cb) to work with async plugins';
             }
         }
 
@@ -21161,17 +21299,17 @@ var LazyResult = (function () {
                 var pluginName = plugin.postcssPlugin;
                 var pluginVersion = plugin.postcssVersion;
                 var runtimeVersion = this.result.processor.version;
-                var a = pluginVersion.split(".");
-                var b = runtimeVersion.split(".");
+                var a = pluginVersion.split('.');
+                var b = runtimeVersion.split('.');
 
                 if (a[0] !== b[0] || parseInt(a[1]) > parseInt(b[1])) {
-                    warnOnce("" + pluginName + " is based on " + ("PostCSS " + pluginVersion + " but you use it ") + ("with PostCSS " + runtimeVersion + ". ") + "Maybe this is a source of error below.");
+                    _warnOnce2['default']('' + pluginName + ' is based on ' + ('PostCSS ' + pluginVersion + ' but you use it ') + ('with PostCSS ' + runtimeVersion + '. ') + 'Maybe this is a source of error below.');
                 }
             }
             throw error;
         }
 
-        if (returned instanceof Root) {
+        if (returned instanceof _Root2['default']) {
             this.result.root = returned;
         } else {
             return returned;
@@ -21184,73 +21322,63 @@ var LazyResult = (function () {
         }this.stringified = true;
 
         this.sync();
-        var map = new MapGenerator(this.result.root, this.result.opts);
+        var map = new _MapGenerator2['default'](this.result.root, this.result.opts);
 
-        var _ref = map.generate();
+        var _map$generate = map.generate();
 
-        var _ref2 = _slicedToArray(_ref, 2);
-
-        this.result.css = _ref2[0];
-        this.result.map = _ref2[1];
+        this.result.css = _map$generate[0];
+        this.result.map = _map$generate[1];
 
         return this.result;
     };
 
-    _createClass(LazyResult, {
-        processor: {
-            get: function () {
-                return this.result.processor;
-            }
-        },
-        opts: {
-            get: function () {
-                return this.result.opts;
-            }
-        },
-        css: {
-            get: function () {
-                return this.stringify().css;
-            }
-        },
-        map: {
-            get: function () {
-                return this.stringify().map;
-            }
-        },
-        root: {
-            get: function () {
-                return this.sync().root;
-            }
-        },
-        messages: {
-            get: function () {
-                return this.sync().messages;
-            }
+    _createClass(LazyResult, [{
+        key: 'processor',
+        get: function () {
+            return this.result.processor;
         }
-    });
+    }, {
+        key: 'opts',
+        get: function () {
+            return this.result.opts;
+        }
+    }, {
+        key: 'css',
+        get: function () {
+            return this.stringify().css;
+        }
+    }, {
+        key: 'map',
+        get: function () {
+            return this.stringify().map;
+        }
+    }, {
+        key: 'root',
+        get: function () {
+            return this.sync().root;
+        }
+    }, {
+        key: 'messages',
+        get: function () {
+            return this.sync().messages;
+        }
+    }]);
 
     return LazyResult;
 })();
 
-module.exports = LazyResult;
-},{"./map-generator":22,"./parse":24,"./result":29,"./root":30,"./warn-once":34}],21:[function(require,module,exports){
-"use strict";
+exports['default'] = LazyResult;
+module.exports = exports['default'];
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./map-generator":26,"./parse":28,"./result":33,"./root":34,"./warn-once":38,"es6-promise":40}],25:[function(require,module,exports){
+'use strict';
 
+exports.__esModule = true;
 var list = {
 
-    split: (function (_split) {
-        var _splitWrapper = function split(_x, _x2, _x3) {
-            return _split.apply(this, arguments);
-        };
-
-        _splitWrapper.toString = function () {
-            return _split.toString();
-        };
-
-        return _splitWrapper;
-    })(function (string, separators, last) {
+    split: function split(string, separators, last) {
         var array = [];
-        var current = "";
+        var current = '';
         var split = false;
 
         var func = 0;
@@ -21263,16 +21391,16 @@ var list = {
             if (quote) {
                 if (escape) {
                     escape = false;
-                } else if (letter === "\\") {
+                } else if (letter === '\\') {
                     escape = true;
                 } else if (letter === quote) {
                     quote = false;
                 }
-            } else if (letter === "\"" || letter === "'") {
+            } else if (letter === '"' || letter === '\'') {
                 quote = letter;
-            } else if (letter === "(") {
+            } else if (letter === '(') {
                 func += 1;
-            } else if (letter === ")") {
+            } else if (letter === ')') {
                 if (func > 0) func -= 1;
             } else if (func === 0) {
                 for (var j = 0; j < separators.length; j++) {
@@ -21281,53 +21409,50 @@ var list = {
             }
 
             if (split) {
-                if (current !== "") array.push(current.trim());
-                current = "";
+                if (current !== '') array.push(current.trim());
+                current = '';
                 split = false;
             } else {
                 current += letter;
             }
         }
 
-        if (last || current !== "") array.push(current.trim());
+        if (last || current !== '') array.push(current.trim());
         return array;
-    }),
+    },
 
     space: function space(string) {
-        var spaces = [" ", "\n", "\t"];
+        var spaces = [' ', '\n', '\t'];
         return list.split(string, spaces);
     },
 
-    comma: (function (_comma) {
-        var _commaWrapper = function comma(_x) {
-            return _comma.apply(this, arguments);
-        };
-
-        _commaWrapper.toString = function () {
-            return _comma.toString();
-        };
-
-        return _commaWrapper;
-    })(function (string) {
-        var comma = ",";
+    comma: function comma(string) {
+        var comma = ',';
         return list.split(string, [comma], true);
-    })
+    }
 
 };
 
-module.exports = list;
-},{}],22:[function(require,module,exports){
-"use strict";
+exports['default'] = list;
+module.exports = exports['default'];
+},{}],26:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var Base64 = require("js-base64").Base64;
+exports.__esModule = true;
 
-var mozilla = _interopRequire(require("source-map"));
+var _Base64 = require('js-base64');
 
-var path = _interopRequire(require("path"));
+var _mozilla = require('source-map');
+
+var _mozilla2 = _interopRequireWildcard(_mozilla);
+
+var _path = require('path');
+
+var _path2 = _interopRequireWildcard(_path);
 
 var _default = (function () {
     var _class = function _default(root, opts) {
@@ -21339,7 +21464,7 @@ var _default = (function () {
     };
 
     _class.prototype.isMap = function isMap() {
-        if (typeof this.opts.map !== "undefined") {
+        if (typeof this.opts.map !== 'undefined') {
             return !!this.opts.map;
         } else {
             return this.previous().length > 0;
@@ -21365,12 +21490,12 @@ var _default = (function () {
     };
 
     _class.prototype.isInline = function isInline() {
-        if (typeof this.mapOpts.inline !== "undefined") {
+        if (typeof this.mapOpts.inline !== 'undefined') {
             return this.mapOpts.inline;
         }
 
         var annotation = this.mapOpts.annotation;
-        if (typeof annotation !== "undefined" && annotation !== true) {
+        if (typeof annotation !== 'undefined' && annotation !== true) {
             return false;
         }
 
@@ -21384,7 +21509,7 @@ var _default = (function () {
     };
 
     _class.prototype.isSourcesContent = function isSourcesContent() {
-        if (typeof this.mapOpts.sourcesContent !== "undefined") {
+        if (typeof this.mapOpts.sourcesContent !== 'undefined') {
             return this.mapOpts.sourcesContent;
         }
         if (this.previous().length) {
@@ -21402,15 +21527,15 @@ var _default = (function () {
         }var node = undefined;
         for (var i = this.root.nodes.length - 1; i >= 0; i--) {
             node = this.root.nodes[i];
-            if (node.type !== "comment") continue;
-            if (node.text.indexOf("# sourceMappingURL=") === 0) {
+            if (node.type !== 'comment') continue;
+            if (node.text.indexOf('# sourceMappingURL=') === 0) {
                 this.root.remove(i);
             }
         }
     };
 
     _class.prototype.setSourcesContent = function setSourcesContent() {
-        var _this = this;
+        var _this2 = this;
 
         var already = {};
         this.root.eachInside(function (node) {
@@ -21418,8 +21543,8 @@ var _default = (function () {
                 var from = node.source.input.from;
                 if (from && !already[from]) {
                     already[from] = true;
-                    var relative = _this.relative(from);
-                    _this.map.setSourceContent(relative, node.source.input.css);
+                    var relative = _this2.relative(from);
+                    _this2.map.setSourceContent(relative, node.source.input.css);
                 }
             }
         });
@@ -21441,11 +21566,11 @@ var _default = (function () {
             var prev = _ref;
 
             var from = this.relative(prev.file);
-            var root = prev.root || path.dirname(prev.file);
+            var root = prev.root || _path2['default'].dirname(prev.file);
             var map = undefined;
 
             if (this.mapOpts.sourcesContent === false) {
-                map = new mozilla.SourceMapConsumer(prev.text);
+                map = new _mozilla2['default'].SourceMapConsumer(prev.text);
                 if (map.sourcesContent) {
                     map.sourcesContent = map.sourcesContent.map(function () {
                         return null;
@@ -21462,7 +21587,7 @@ var _default = (function () {
     _class.prototype.isAnnotation = function isAnnotation() {
         if (this.isInline()) {
             return true;
-        } else if (typeof this.mapOpts.annotation !== "undefined") {
+        } else if (typeof this.mapOpts.annotation !== 'undefined') {
             return this.mapOpts.annotation;
         } else if (this.previous().length) {
             return this.previous().some(function (i) {
@@ -21477,14 +21602,14 @@ var _default = (function () {
         var content = undefined;
 
         if (this.isInline()) {
-            content = "data:application/json;base64," + Base64.encode(this.map.toString());
-        } else if (typeof this.mapOpts.annotation === "string") {
+            content = 'data:application/json;base64,' + _Base64.Base64.encode(this.map.toString());
+        } else if (typeof this.mapOpts.annotation === 'string') {
             content = this.mapOpts.annotation;
         } else {
-            content = this.outputFile() + ".map";
+            content = this.outputFile() + '.map';
         }
 
-        this.css += "\n/*# sourceMappingURL=" + content + " */";
+        this.css += '\n/*# sourceMappingURL=' + content + ' */';
     };
 
     _class.prototype.outputFile = function outputFile() {
@@ -21493,7 +21618,7 @@ var _default = (function () {
         } else if (this.opts.from) {
             return this.relative(this.opts.from);
         } else {
-            return "to.css";
+            return 'to.css';
         }
     };
 
@@ -21511,15 +21636,15 @@ var _default = (function () {
     };
 
     _class.prototype.relative = function relative(file) {
-        var from = this.opts.to ? path.dirname(this.opts.to) : ".";
+        var from = this.opts.to ? _path2['default'].dirname(this.opts.to) : '.';
 
-        if (typeof this.mapOpts.annotation === "string") {
-            from = path.dirname(path.resolve(from, this.mapOpts.annotation));
+        if (typeof this.mapOpts.annotation === 'string') {
+            from = _path2['default'].dirname(_path2['default'].resolve(from, this.mapOpts.annotation));
         }
 
-        file = path.relative(from, file);
-        if (path.sep === "\\") {
-            return file.replace(/\\/g, "/");
+        file = _path2['default'].relative(from, file);
+        if (_path2['default'].sep === '\\') {
+            return file.replace(/\\/g, '/');
         } else {
             return file;
         }
@@ -21530,22 +21655,22 @@ var _default = (function () {
     };
 
     _class.prototype.stringify = function stringify() {
-        var _this = this;
+        var _this3 = this;
 
-        this.css = "";
-        this.map = new mozilla.SourceMapGenerator({ file: this.outputFile() });
+        this.css = '';
+        this.map = new _mozilla2['default'].SourceMapGenerator({ file: this.outputFile() });
 
         var line = 1;
         var column = 1;
 
         var lines = undefined,
             last = undefined;
-        var builder = function (str, node, type) {
-            _this.css += str;
+        var builder = function builder(str, node, type) {
+            _this3.css += str;
 
-            if (node && node.source && node.source.start && type !== "end") {
-                _this.map.addMapping({
-                    source: _this.sourcePath(node),
+            if (node && node.source && node.source.start && type !== 'end') {
+                _this3.map.addMapping({
+                    source: _this3.sourcePath(node),
                     original: {
                         line: node.source.start.line,
                         column: node.source.start.column - 1
@@ -21560,15 +21685,15 @@ var _default = (function () {
             lines = str.match(/\n/g);
             if (lines) {
                 line += lines.length;
-                last = str.lastIndexOf("\n");
+                last = str.lastIndexOf('\n');
                 column = str.length - last;
             } else {
                 column = column + str.length;
             }
 
-            if (node && node.source && node.source.end && type !== "start") {
-                _this.map.addMapping({
-                    source: _this.sourcePath(node),
+            if (node && node.source && node.source.end && type !== 'start') {
+                _this3.map.addMapping({
+                    source: _this3.sourcePath(node),
                     original: {
                         line: node.source.end.line,
                         column: node.source.end.column
@@ -21597,57 +21722,62 @@ var _default = (function () {
     return _class;
 })();
 
-module.exports = _default;
-},{"js-base64":36,"path":9,"source-map":37}],23:[function(require,module,exports){
-"use strict";
+exports['default'] = _default;
+module.exports = exports['default'];
+},{"js-base64":41,"path":9,"source-map":42}],27:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var CssSyntaxError = _interopRequire(require("./css-syntax-error"));
+exports.__esModule = true;
+
+var _CssSyntaxError = require('./css-syntax-error');
+
+var _CssSyntaxError2 = _interopRequireWildcard(_CssSyntaxError);
 
 var defaultStyle = {
-    colon: ": ",
-    indent: "    ",
-    beforeDecl: "\n",
-    beforeRule: "\n",
-    beforeOpen: " ",
-    beforeClose: "\n",
-    beforeComment: "\n",
-    after: "\n",
-    emptyBody: "",
-    commentLeft: " ",
-    commentRight: " "
+    colon: ': ',
+    indent: '    ',
+    beforeDecl: '\n',
+    beforeRule: '\n',
+    beforeOpen: ' ',
+    beforeClose: '\n',
+    beforeComment: '\n',
+    after: '\n',
+    emptyBody: '',
+    commentLeft: ' ',
+    commentRight: ' '
 };
 
 var cloneNode = (function (_cloneNode) {
-    var _cloneNodeWrapper = function cloneNode(_x, _x2) {
+    function cloneNode(_x, _x2) {
         return _cloneNode.apply(this, arguments);
+    }
+
+    cloneNode.toString = function () {
+        return cloneNode.toString();
     };
 
-    _cloneNodeWrapper.toString = function () {
-        return _cloneNode.toString();
-    };
-
-    return _cloneNodeWrapper;
+    return cloneNode;
 })(function (obj, parent) {
-    if (typeof obj !== "object") return obj;
+    if (typeof obj !== 'object') return obj;
     var cloned = new obj.constructor();
 
     for (var i in obj) {
         if (!obj.hasOwnProperty(i)) continue;
         var value = obj[i];
 
-        if (i === "parent" && typeof value === "object") {
+        if (i === 'parent' && typeof value === 'object') {
             if (parent) cloned[i] = parent;
-        } else if (i === "source") {
+        } else if (i === 'source') {
             cloned[i] = value;
         } else if (value instanceof Array) {
             cloned[i] = value.map(function (j) {
                 return cloneNode(j, cloned);
             });
-        } else if (i !== "before" && i !== "after" && i !== "between" && i !== "semicolon") {
+        } else if (i !== 'before' && i !== 'after' && i !== 'between' && i !== 'semicolon') {
             cloned[i] = cloneNode(value, cloned);
         }
     }
@@ -21673,7 +21803,7 @@ var _default = (function () {
             var pos = this.source.start;
             return this.source.input.error(message, pos.line, pos.column, opts);
         } else {
-            return new CssSyntaxError(message);
+            return new _CssSyntaxError2['default'](message);
         }
     };
 
@@ -21692,8 +21822,8 @@ var _default = (function () {
     };
 
     _class.prototype.toString = function toString() {
-        var result = "";
-        var builder = function (str) {
+        var result = '';
+        var builder = function builder(str) {
             return result += str;
         };
         this.stringify(builder);
@@ -21704,8 +21834,8 @@ var _default = (function () {
         var overrides = arguments[0] === undefined ? {} : arguments[0];
 
         var cloned = cloneNode(this);
-        for (var _name in overrides) {
-            cloned[_name] = overrides[_name];
+        for (var _name2 in overrides) {
+            cloned[_name2] = overrides[_name2];
         }
         return cloned;
     };
@@ -21766,23 +21896,23 @@ var _default = (function () {
     _class.prototype.toJSON = function toJSON() {
         var fixed = {};
 
-        for (var _name in this) {
-            if (!this.hasOwnProperty(_name)) continue;
-            if (_name === "parent") continue;
-            var value = this[_name];
+        for (var _name3 in this) {
+            if (!this.hasOwnProperty(_name3)) continue;
+            if (_name3 === 'parent') continue;
+            var value = this[_name3];
 
             if (value instanceof Array) {
-                fixed[_name] = value.map(function (i) {
-                    if (typeof i === "object" && i.toJSON) {
+                fixed[_name3] = value.map(function (i) {
+                    if (typeof i === 'object' && i.toJSON) {
                         return i.toJSON();
                     } else {
                         return i;
                     }
                 });
-            } else if (typeof value === "object" && value.toJSON) {
-                fixed[_name] = value.toJSON();
+            } else if (typeof value === 'object' && value.toJSON) {
+                fixed[_name3] = value.toJSON();
             } else {
-                fixed[_name] = value;
+                fixed[_name3] = value;
             }
         }
 
@@ -21796,7 +21926,7 @@ var _default = (function () {
         // Already had
         if (own) {
             value = this[own];
-            if (typeof value !== "undefined") {
+            if (typeof value !== 'undefined') {
                 return value;
             }
         }
@@ -21804,9 +21934,9 @@ var _default = (function () {
         var parent = this.parent;
 
         // Hack for first rule in CSS
-        if (detect === "before") {
-            if (!parent || parent.type === "root" && parent.first === this) {
-                return "";
+        if (detect === 'before') {
+            if (!parent || parent.type === 'root' && parent.first === this) {
+                return '';
             }
         }
 
@@ -21816,106 +21946,106 @@ var _default = (function () {
         } // Detect style by other nodes
         var root = this.root();
         if (!root.styleCache) root.styleCache = {};
-        if (typeof root.styleCache[detect] !== "undefined") {
+        if (typeof root.styleCache[detect] !== 'undefined') {
             return root.styleCache[detect];
         }
 
-        if (detect === "semicolon") {
+        if (detect === 'semicolon') {
             root.eachInside(function (i) {
-                if (i.nodes && i.nodes.length && i.last.type === "decl") {
+                if (i.nodes && i.nodes.length && i.last.type === 'decl') {
                     value = i.semicolon;
-                    if (typeof value !== "undefined") return false;
+                    if (typeof value !== 'undefined') return false;
                 }
             });
-        } else if (detect === "emptyBody") {
+        } else if (detect === 'emptyBody') {
             root.eachInside(function (i) {
                 if (i.nodes && i.nodes.length === 0) {
                     value = i.after;
-                    if (typeof value !== "undefined") return false;
+                    if (typeof value !== 'undefined') return false;
                 }
             });
-        } else if (detect === "indent") {
+        } else if (detect === 'indent') {
             root.eachInside(function (i) {
                 var p = i.parent;
                 if (p && p !== root && p.parent && p.parent === root) {
-                    if (typeof i.before !== "undefined") {
-                        var parts = i.before.split("\n");
+                    if (typeof i.before !== 'undefined') {
+                        var parts = i.before.split('\n');
                         value = parts[parts.length - 1];
-                        value = value.replace(/[^\s]/g, "");
+                        value = value.replace(/[^\s]/g, '');
                         return false;
                     }
                 }
             });
-        } else if (detect === "beforeComment") {
+        } else if (detect === 'beforeComment') {
             root.eachComment(function (i) {
-                if (typeof i.before !== "undefined") {
+                if (typeof i.before !== 'undefined') {
                     value = i.before;
-                    if (value.indexOf("\n") !== -1) {
-                        value = value.replace(/[^\n]+$/, "");
+                    if (value.indexOf('\n') !== -1) {
+                        value = value.replace(/[^\n]+$/, '');
                     }
                     return false;
                 }
             });
-            if (typeof value === "undefined") {
-                value = this.style(null, "beforeDecl");
+            if (typeof value === 'undefined') {
+                value = this.style(null, 'beforeDecl');
             }
-        } else if (detect === "beforeDecl") {
+        } else if (detect === 'beforeDecl') {
             root.eachDecl(function (i) {
-                if (typeof i.before !== "undefined") {
+                if (typeof i.before !== 'undefined') {
                     value = i.before;
-                    if (value.indexOf("\n") !== -1) {
-                        value = value.replace(/[^\n]+$/, "");
+                    if (value.indexOf('\n') !== -1) {
+                        value = value.replace(/[^\n]+$/, '');
                     }
                     return false;
                 }
             });
-            if (typeof value === "undefined") {
-                value = this.style(null, "beforeRule");
+            if (typeof value === 'undefined') {
+                value = this.style(null, 'beforeRule');
             }
-        } else if (detect === "beforeRule") {
+        } else if (detect === 'beforeRule') {
             root.eachInside(function (i) {
                 if (i.nodes && (i.parent !== root || root.first !== i)) {
-                    if (typeof i.before !== "undefined") {
+                    if (typeof i.before !== 'undefined') {
                         value = i.before;
-                        if (value.indexOf("\n") !== -1) {
-                            value = value.replace(/[^\n]+$/, "");
+                        if (value.indexOf('\n') !== -1) {
+                            value = value.replace(/[^\n]+$/, '');
                         }
                         return false;
                     }
                 }
             });
-        } else if (detect === "beforeClose") {
+        } else if (detect === 'beforeClose') {
             root.eachInside(function (i) {
                 if (i.nodes && i.nodes.length > 0) {
-                    if (typeof i.after !== "undefined") {
+                    if (typeof i.after !== 'undefined') {
                         value = i.after;
-                        if (value.indexOf("\n") !== -1) {
-                            value = value.replace(/[^\n]+$/, "");
+                        if (value.indexOf('\n') !== -1) {
+                            value = value.replace(/[^\n]+$/, '');
                         }
                         return false;
                     }
                 }
             });
-        } else if (detect === "before" || detect === "after") {
-            if (this.type === "decl") {
-                value = this.style(null, "beforeDecl");
-            } else if (this.type === "comment") {
-                value = this.style(null, "beforeComment");
-            } else if (detect === "before") {
-                value = this.style(null, "beforeRule");
+        } else if (detect === 'before' || detect === 'after') {
+            if (this.type === 'decl') {
+                value = this.style(null, 'beforeDecl');
+            } else if (this.type === 'comment') {
+                value = this.style(null, 'beforeComment');
+            } else if (detect === 'before') {
+                value = this.style(null, 'beforeRule');
             } else {
-                value = this.style(null, "beforeClose");
+                value = this.style(null, 'beforeClose');
             }
 
             var node = this.parent;
             var depth = 0;
-            while (node && node.type !== "root") {
+            while (node && node.type !== 'root') {
                 depth += 1;
                 node = node.parent;
             }
 
-            if (value.indexOf("\n") !== -1) {
-                var indent = this.style(null, "indent");
+            if (value.indexOf('\n') !== -1) {
+                var indent = this.style(null, 'indent');
                 if (indent.length) {
                     for (var step = 0; step < depth; step++) {
                         value += indent;
@@ -21924,28 +22054,28 @@ var _default = (function () {
             }
 
             return value;
-        } else if (detect === "colon") {
+        } else if (detect === 'colon') {
             root.eachDecl(function (i) {
-                if (typeof i.between !== "undefined") {
-                    value = i.between.replace(/[^\s:]/g, "");
+                if (typeof i.between !== 'undefined') {
+                    value = i.between.replace(/[^\s:]/g, '');
                     return false;
                 }
             });
-        } else if (detect === "beforeOpen") {
+        } else if (detect === 'beforeOpen') {
             root.eachInside(function (i) {
-                if (i.type !== "decl") {
+                if (i.type !== 'decl') {
                     value = i.between;
-                    if (typeof value !== "undefined") return false;
+                    if (typeof value !== 'undefined') return false;
                 }
             });
         } else {
             root.eachInside(function (i) {
                 value = i[own];
-                if (typeof value !== "undefined") return false;
+                if (typeof value !== 'undefined') return false;
             });
         }
 
-        if (typeof value === "undefined") value = defaultStyle[detect];
+        if (typeof value === 'undefined') value = defaultStyle[detect];
 
         root.styleCache[detect] = value;
         return value;
@@ -21983,7 +22113,7 @@ var _default = (function () {
 
     _class.prototype.stringifyRaw = function stringifyRaw(prop) {
         var value = this[prop];
-        var raw = this["_" + prop];
+        var raw = this['_' + prop];
         if (raw && raw.value === value) {
             return raw.raw;
         } else {
@@ -21994,45 +22124,67 @@ var _default = (function () {
     return _class;
 })();
 
-module.exports = _default;
-},{"./css-syntax-error":17}],24:[function(require,module,exports){
-"use strict";
+exports['default'] = _default;
+module.exports = exports['default'];
+},{"./css-syntax-error":21}],28:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-module.exports = parse;
+exports.__esModule = true;
+exports['default'] = parse;
 
-var Parser = _interopRequire(require("./parser"));
+var _Parser = require('./parser');
 
-var Input = _interopRequire(require("./input"));
+var _Parser2 = _interopRequireWildcard(_Parser);
+
+var _Input = require('./input');
+
+var _Input2 = _interopRequireWildcard(_Input);
 
 function parse(css, opts) {
-    var input = new Input(css, opts);
+    var input = new _Input2['default'](css, opts);
 
-    var parser = new Parser(input);
+    var parser = new _Parser2['default'](input);
     parser.tokenize();
     parser.loop();
 
     return parser.root;
 }
-},{"./input":19,"./parser":25}],25:[function(require,module,exports){
-"use strict";
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+module.exports = exports['default'];
+},{"./input":23,"./parser":29}],29:[function(require,module,exports){
+'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var Declaration = _interopRequire(require("./declaration"));
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var tokenizer = _interopRequire(require("./tokenize"));
+exports.__esModule = true;
 
-var Comment = _interopRequire(require("./comment"));
+var _Declaration = require('./declaration');
 
-var AtRule = _interopRequire(require("./at-rule"));
+var _Declaration2 = _interopRequireWildcard(_Declaration);
 
-var Root = _interopRequire(require("./root"));
+var _tokenizer = require('./tokenize');
 
-var Rule = _interopRequire(require("./rule"));
+var _tokenizer2 = _interopRequireWildcard(_tokenizer);
+
+var _Comment = require('./comment');
+
+var _Comment2 = _interopRequireWildcard(_Comment);
+
+var _AtRule = require('./at-rule');
+
+var _AtRule2 = _interopRequireWildcard(_AtRule);
+
+var _Root = require('./root');
+
+var _Root2 = _interopRequireWildcard(_Root);
+
+var _Rule = require('./rule');
+
+var _Rule2 = _interopRequireWildcard(_Rule);
 
 var Parser = (function () {
     function Parser(input) {
@@ -22041,9 +22193,9 @@ var Parser = (function () {
         this.input = input;
 
         this.pos = 0;
-        this.root = new Root();
+        this.root = new _Root2['default']();
         this.current = this.root;
-        this.spaces = "";
+        this.spaces = '';
         this.semicolon = false;
 
         this.root.source = { input: input };
@@ -22051,7 +22203,7 @@ var Parser = (function () {
     }
 
     Parser.prototype.tokenize = function tokenize() {
-        this.tokens = tokenizer(this.input);
+        this.tokens = _tokenizer2['default'](this.input);
     };
 
     Parser.prototype.loop = function loop() {
@@ -22060,24 +22212,24 @@ var Parser = (function () {
             token = this.tokens[this.pos];
 
             switch (token[0]) {
-                case "word":
-                case ":":
+                case 'word':
+                case ':':
                     this.word(token);
                     break;
 
-                case "}":
+                case '}':
                     this.end(token);
                     break;
 
-                case "comment":
+                case 'comment':
                     this.comment(token);
                     break;
 
-                case "at-word":
+                case 'at-word':
                     this.atrule(token);
                     break;
 
-                case "{":
+                case '{':
                     this.emptyRule(token);
                     break;
 
@@ -22092,15 +22244,15 @@ var Parser = (function () {
     };
 
     Parser.prototype.comment = function comment(token) {
-        var node = new Comment();
+        var node = new _Comment2['default']();
         this.init(node, token[2], token[3]);
         node.source.end = { line: token[4], column: token[5] };
 
         var text = token[1].slice(2, -2);
         if (text.match(/^\s*$/)) {
             node.left = text;
-            node.text = "";
-            node.right = "";
+            node.text = '';
+            node.right = '';
         } else {
             var match = text.match(/^(\s*)([^]*[^\s])(\s*)$/);
             node.left = match[1];
@@ -22110,10 +22262,10 @@ var Parser = (function () {
     };
 
     Parser.prototype.emptyRule = function emptyRule(token) {
-        var node = new Rule();
+        var node = new _Rule2['default']();
         this.init(node, token[2], token[3]);
-        node.between = "";
-        node.selector = "";
+        node.between = '';
+        node.selector = '';
         this.current = node;
     };
 
@@ -22131,31 +22283,31 @@ var Parser = (function () {
             token = this.tokens[this.pos];
             type = token[0];
 
-            if (type === "(") {
+            if (type === '(') {
                 if (!bracket) bracket = token;
                 brackets += 1;
             } else if (brackets === 0) {
-                if (type === ";") {
+                if (type === ';') {
                     if (colon) {
                         this.decl(this.tokens.slice(start, this.pos + 1));
                         return;
                     } else {
                         break;
                     }
-                } else if (type === "{") {
+                } else if (type === '{') {
                     this.rule(this.tokens.slice(start, this.pos + 1));
                     return;
-                } else if (type === "}") {
+                } else if (type === '}') {
                     this.pos -= 1;
                     end = true;
                     break;
-                } else if (type === "at-word") {
+                } else if (type === 'at-word') {
                     this.pos -= 1;
                     break;
                 } else {
-                    if (type === ":") colon = true;
+                    if (type === ':') colon = true;
                 }
-            } else if (type === ")") {
+            } else if (type === ')') {
                 brackets -= 1;
                 if (brackets === 0) bracket = null;
             }
@@ -22168,13 +22320,13 @@ var Parser = (function () {
         }
 
         if (brackets > 0 && !this.input.safe) {
-            throw this.input.error("Unclosed bracket", bracket[2], bracket[3]);
+            throw this.input.error('Unclosed bracket', bracket[2], bracket[3]);
         }
 
         if (end && colon) {
             while (this.pos > start) {
                 token = this.tokens[this.pos][0];
-                if (token !== "space" && token !== "comment") break;
+                if (token !== 'space' && token !== 'comment') break;
                 this.pos -= 1;
             }
             this.decl(this.tokens.slice(start, this.pos + 1));
@@ -22185,30 +22337,30 @@ var Parser = (function () {
             var buffer = this.tokens.slice(start, this.pos + 1);
             this.spaces += buffer.map(function (i) {
                 return i[1];
-            }).join("");
+            }).join('');
         } else {
             token = this.tokens[start];
-            throw this.input.error("Unknown word", token[2], token[3]);
+            throw this.input.error('Unknown word', token[2], token[3]);
         }
     };
 
     Parser.prototype.rule = function rule(tokens) {
         tokens.pop();
 
-        var node = new Rule();
+        var node = new _Rule2['default']();
         this.init(node, tokens[0][2], tokens[0][3]);
 
         node.between = this.spacesFromEnd(tokens);
-        this.raw(node, "selector", tokens);
+        this.raw(node, 'selector', tokens);
         this.current = node;
     };
 
     Parser.prototype.decl = function decl(tokens) {
-        var node = new Declaration();
+        var node = new _Declaration2['default']();
         this.init(node);
 
         var last = tokens[tokens.length - 1];
-        if (last[0] === ";") {
+        if (last[0] === ';') {
             this.semicolon = true;
             tokens.pop();
         }
@@ -22218,29 +22370,29 @@ var Parser = (function () {
             node.source.end = { line: last[2], column: last[3] };
         }
 
-        while (tokens[0][0] !== "word") {
+        while (tokens[0][0] !== 'word') {
             node.before += tokens.shift()[1];
         }
         node.source.start = { line: tokens[0][2], column: tokens[0][3] };
 
         node.prop = tokens.shift()[1];
-        node.between = "";
+        node.between = '';
 
         var token = undefined;
         while (tokens.length) {
             token = tokens.shift();
 
-            if (token[0] === ":") {
+            if (token[0] === ':') {
                 node.between += token[1];
                 break;
-            } else if (token[0] !== "space" && token[0] !== "comment") {
+            } else if (token[0] !== 'space' && token[0] !== 'comment') {
                 this.unknownWord(node, token, tokens);
             } else {
                 node.between += token[1];
             }
         }
 
-        if (node.prop[0] === "_" || node.prop[0] === "*") {
+        if (node.prop[0] === '_' || node.prop[0] === '*') {
             node.before += node.prop[0];
             node.prop = node.prop.slice(1);
         }
@@ -22250,49 +22402,49 @@ var Parser = (function () {
 
         for (var i = tokens.length - 1; i > 0; i--) {
             token = tokens[i];
-            if (token[1] === "!important") {
+            if (token[1] === '!important') {
                 node.important = true;
                 var string = this.stringFrom(tokens, i);
                 string = this.spacesFromEnd(tokens) + string;
-                if (string !== " !important") node._important = string;
+                if (string !== ' !important') node._important = string;
                 break;
-            } else if (token[1] === "important") {
+            } else if (token[1] === 'important') {
                 var cache = tokens.slice(0);
-                var str = "";
+                var str = '';
                 for (var j = i; j > 0; j--) {
                     var type = cache[j][0];
-                    if (str.trim().indexOf("!") === 0 && type !== "space") {
+                    if (str.trim().indexOf('!') === 0 && type !== 'space') {
                         break;
                     }
                     str = cache.pop()[1] + str;
                 }
-                if (str.trim().indexOf("!") === 0) {
+                if (str.trim().indexOf('!') === 0) {
                     node.important = true;
                     node._important = str;
                     tokens = cache;
                 }
             }
 
-            if (token[0] !== "space" && token[0] !== "comment") {
+            if (token[0] !== 'space' && token[0] !== 'comment') {
                 break;
             }
         }
 
-        this.raw(node, "value", tokens);
+        this.raw(node, 'value', tokens);
 
-        if (node.value.indexOf(":") !== -1 && !this.input.safe) {
+        if (node.value.indexOf(':') !== -1 && !this.input.safe) {
             this.checkMissedSemicolon(tokens);
         }
     };
 
     Parser.prototype.atrule = function atrule(token) {
-        var node = new AtRule();
+        var node = new _AtRule2['default']();
         node.name = token[1].slice(1);
-        if (node.name === "") {
+        if (node.name === '') {
             if (this.input.safe) {
-                node.name = "";
+                node.name = '';
             } else {
-                throw this.input.error("At-rule without name", token[2], token[3]);
+                throw this.input.error('At-rule without name', token[2], token[3]);
             }
         }
         this.init(node, token[2], token[3]);
@@ -22305,11 +22457,11 @@ var Parser = (function () {
         while (this.pos < this.tokens.length) {
             token = this.tokens[this.pos];
 
-            if (token[0] === ";") {
+            if (token[0] === ';') {
                 node.source.end = { line: token[2], column: token[3] };
                 this.semicolon = true;
                 break;
-            } else if (token[0] === "{") {
+            } else if (token[0] === '{') {
                 open = true;
                 break;
             } else {
@@ -22325,16 +22477,16 @@ var Parser = (function () {
         node.between = this.spacesFromEnd(params);
         if (params.length) {
             node.afterName = this.spacesFromStart(params);
-            this.raw(node, "params", params);
+            this.raw(node, 'params', params);
             if (last) {
                 token = params[params.length - 1];
                 node.source.end = { line: token[4], column: token[5] };
                 this.spaces = node.between;
-                node.between = "";
+                node.between = '';
             }
         } else {
-            node.afterName = "";
-            node.params = "";
+            node.afterName = '';
+            node.params = '';
         }
 
         if (open) {
@@ -22349,33 +22501,33 @@ var Parser = (function () {
         }
         this.semicolon = false;
 
-        this.current.after = (this.current.after || "") + this.spaces;
-        this.spaces = "";
+        this.current.after = (this.current.after || '') + this.spaces;
+        this.spaces = '';
 
         if (this.current.parent) {
             this.current.source.end = { line: token[2], column: token[3] };
             this.current = this.current.parent;
         } else if (!this.input.safe) {
-            throw this.input.error("Unexpected }", token[2], token[3]);
+            throw this.input.error('Unexpected }', token[2], token[3]);
         } else {
-            this.current.after += "}";
+            this.current.after += '}';
         }
     };
 
     Parser.prototype.endFile = function endFile() {
         if (this.current.parent && !this.input.safe) {
             var pos = this.current.source.start;
-            throw this.input.error("Unclosed block", pos.line, pos.column);
+            throw this.input.error('Unclosed block', pos.line, pos.column);
         }
 
         if (this.current.nodes && this.current.nodes.length) {
             this.current.semicolon = this.semicolon;
         }
-        this.current.after = (this.current.after || "") + this.spaces;
+        this.current.after = (this.current.after || '') + this.spaces;
 
         while (this.current.parent) {
             this.current = this.current.parent;
-            this.current.after = "";
+            this.current.after = '';
         }
     };
 
@@ -22384,9 +22536,9 @@ var Parser = (function () {
             node.source.start = { line: token[2], column: token[3] };
             node.before += node.prop + node.between;
             node.prop = token[1];
-            node.between = "";
+            node.between = '';
         } else {
-            throw this.input.error("Unknown word", token[2], token[3]);
+            throw this.input.error('Unknown word', token[2], token[3]);
         }
     };
 
@@ -22400,16 +22552,16 @@ var Parser = (function () {
             token = tokens[i];
             type = token[0];
 
-            if (type === "(") {
+            if (type === '(') {
                 brackets += 1;
-            } else if (type === ")") {
+            } else if (type === ')') {
                 brackets -= 0;
-            } else if (brackets === 0 && type === ":") {
+            } else if (brackets === 0 && type === ':') {
                 if (!prev && this.input.safe) {
                     continue;
                 } else if (!prev) {
-                    throw this.input.error("Double colon", token[2], token[3]);
-                } else if (prev[0] === "word" && prev[1] === "progid") {
+                    throw this.input.error('Double colon', token[2], token[3]);
+                } else if (prev[0] === 'word' && prev[1] === 'progid') {
                     continue;
                 } else {
                     colon = i;
@@ -22425,10 +22577,10 @@ var Parser = (function () {
         }if (this.input.safe) {
             var split = undefined;
             for (split = colon - 1; split >= 0; split--) {
-                if (tokens[split][0] === "word") break;
+                if (tokens[split][0] === 'word') break;
             }
             for (split -= 1; split >= 0; split--) {
-                if (tokens[split][0] !== "space") {
+                if (tokens[split][0] !== 'space') {
                     split += 1;
                     break;
                 }
@@ -22439,12 +22591,12 @@ var Parser = (function () {
             var founded = 0;
             for (var j = colon - 1; j >= 0; j--) {
                 token = tokens[j];
-                if (token[0] !== "space") {
+                if (token[0] !== 'space') {
                     founded += 1;
                     if (founded === 2) break;
                 }
             }
-            throw this.input.error("Missed semicolon", token[2], token[3]);
+            throw this.input.error('Missed semicolon', token[2], token[3]);
         }
     };
 
@@ -22455,13 +22607,13 @@ var Parser = (function () {
 
         node.source = { start: { line: line, column: column }, input: this.input };
         node.before = this.spaces;
-        this.spaces = "";
-        if (node.type !== "comment") this.semicolon = false;
+        this.spaces = '';
+        if (node.type !== 'comment') this.semicolon = false;
     };
 
     Parser.prototype.raw = function raw(node, prop, tokens) {
         var token = undefined;
-        var value = "";
+        var value = '';
         var clean = true;
         for (var _iterator = tokens, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
             if (_isArray) {
@@ -22473,14 +22625,14 @@ var Parser = (function () {
                 token = _i.value;
             }
 
-            if (token[0] === "comment") {
+            if (token[0] === 'comment') {
                 clean = false;
             } else {
                 value += token[1];
             }
         }
         if (!clean) {
-            var origin = "";
+            var origin = '';
             for (var _iterator2 = tokens, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
                 if (_isArray2) {
                     if (_i2 >= _iterator2.length) break;
@@ -22492,17 +22644,17 @@ var Parser = (function () {
                 }
 
                 origin += token[1];
-            }node["_" + prop] = { value: value, raw: origin };
+            }node['_' + prop] = { value: value, raw: origin };
         }
         node[prop] = value;
     };
 
     Parser.prototype.spacesFromEnd = function spacesFromEnd(tokens) {
         var next = undefined;
-        var spaces = "";
+        var spaces = '';
         while (tokens.length) {
             next = tokens[tokens.length - 1][0];
-            if (next !== "space" && next !== "comment") break;
+            if (next !== 'space' && next !== 'comment') break;
             spaces += tokens.pop()[1];
         }
         return spaces;
@@ -22510,17 +22662,17 @@ var Parser = (function () {
 
     Parser.prototype.spacesFromStart = function spacesFromStart(tokens) {
         var next = undefined;
-        var spaces = "";
+        var spaces = '';
         while (tokens.length) {
             next = tokens[0][0];
-            if (next !== "space" && next !== "comment") break;
+            if (next !== 'space' && next !== 'comment') break;
             spaces += tokens.shift()[1];
         }
         return spaces;
     };
 
     Parser.prototype.stringFrom = function stringFrom(tokens, from) {
-        var result = "";
+        var result = '';
         for (var i = from; i < tokens.length; i++) {
             result += tokens[i][1];
         }
@@ -22531,29 +22683,50 @@ var Parser = (function () {
     return Parser;
 })();
 
-module.exports = Parser;
-},{"./at-rule":14,"./comment":15,"./declaration":18,"./root":30,"./rule":31,"./tokenize":32}],26:[function(require,module,exports){
-"use strict";
+exports['default'] = Parser;
+module.exports = exports['default'];
+},{"./at-rule":18,"./comment":19,"./declaration":22,"./root":34,"./rule":35,"./tokenize":36}],30:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var Declaration = _interopRequire(require("./declaration"));
+exports.__esModule = true;
 
-var Processor = _interopRequire(require("./processor"));
+var _Declaration = require('./declaration');
 
-var Comment = _interopRequire(require("./comment"));
+var _Declaration2 = _interopRequireWildcard(_Declaration);
 
-var AtRule = _interopRequire(require("./at-rule"));
+var _Processor = require('./processor');
 
-var vendor = _interopRequire(require("./vendor"));
+var _Processor2 = _interopRequireWildcard(_Processor);
 
-var parse = _interopRequire(require("./parse"));
+var _Comment = require('./comment');
 
-var list = _interopRequire(require("./list"));
+var _Comment2 = _interopRequireWildcard(_Comment);
 
-var Rule = _interopRequire(require("./rule"));
+var _AtRule = require('./at-rule');
 
-var Root = _interopRequire(require("./root"));
+var _AtRule2 = _interopRequireWildcard(_AtRule);
+
+var _vendor = require('./vendor');
+
+var _vendor2 = _interopRequireWildcard(_vendor);
+
+var _parse = require('./parse');
+
+var _parse2 = _interopRequireWildcard(_parse);
+
+var _list = require('./list');
+
+var _list2 = _interopRequireWildcard(_list);
+
+var _Rule = require('./rule');
+
+var _Rule2 = _interopRequireWildcard(_Rule);
+
+var _Root = require('./root');
+
+var _Root2 = _interopRequireWildcard(_Root);
 
 var postcss = function postcss() {
     for (var _len = arguments.length, plugins = Array(_len), _key = 0; _key < _len; _key++) {
@@ -22563,14 +22736,14 @@ var postcss = function postcss() {
     if (plugins.length === 1 && Array.isArray(plugins[0])) {
         plugins = plugins[0];
     }
-    return new Processor(plugins);
+    return new _Processor2['default'](plugins);
 };
 
 postcss.plugin = function (name, initializer) {
     var creator = function creator() {
         var transformer = initializer.apply(this, arguments);
         transformer.postcssPlugin = name;
-        transformer.postcssVersion = Processor.prototype.version;
+        transformer.postcssVersion = _Processor2['default'].prototype.version;
         return transformer;
     };
 
@@ -22578,50 +22751,59 @@ postcss.plugin = function (name, initializer) {
     return creator;
 };
 
-postcss.vendor = vendor;
+postcss.vendor = _vendor2['default'];
 
-postcss.parse = parse;
+postcss.parse = _parse2['default'];
 
-postcss.list = list;
+postcss.list = _list2['default'];
 
 postcss.comment = function (defaults) {
-    return new Comment(defaults);
+    return new _Comment2['default'](defaults);
 };
 postcss.atRule = function (defaults) {
-    return new AtRule(defaults);
+    return new _AtRule2['default'](defaults);
 };
 postcss.decl = function (defaults) {
-    return new Declaration(defaults);
+    return new _Declaration2['default'](defaults);
 };
 postcss.rule = function (defaults) {
-    return new Rule(defaults);
+    return new _Rule2['default'](defaults);
 };
 postcss.root = function (defaults) {
-    return new Root(defaults);
+    return new _Root2['default'](defaults);
 };
 
-module.exports = postcss;
-},{"./at-rule":14,"./comment":15,"./declaration":18,"./list":21,"./parse":24,"./processor":28,"./root":30,"./rule":31,"./vendor":33}],27:[function(require,module,exports){
-"use strict";
+exports['default'] = postcss;
+module.exports = exports['default'];
+},{"./at-rule":18,"./comment":19,"./declaration":22,"./list":25,"./parse":28,"./processor":32,"./root":34,"./rule":35,"./vendor":37}],31:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var Base64 = require("js-base64").Base64;
+exports.__esModule = true;
 
-var mozilla = _interopRequire(require("source-map"));
+var _Base64 = require('js-base64');
 
-var path = _interopRequire(require("path"));
+var _mozilla = require('source-map');
 
-var fs = _interopRequire(require("fs"));
+var _mozilla2 = _interopRequireWildcard(_mozilla);
+
+var _path = require('path');
+
+var _path2 = _interopRequireWildcard(_path);
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireWildcard(_fs);
 
 var PreviousMap = (function () {
     function PreviousMap(css, opts) {
         _classCallCheck(this, PreviousMap);
 
         this.loadAnnotation(css);
-        this.inline = this.startWith(this.annotation, "data:");
+        this.inline = this.startWith(this.annotation, 'data:');
 
         var prev = opts.map ? opts.map.prev : undefined;
         var text = this.loadMap(opts.from, prev);
@@ -22630,7 +22812,7 @@ var PreviousMap = (function () {
 
     PreviousMap.prototype.consumer = function consumer() {
         if (!this.consumerCache) {
-            this.consumerCache = new mozilla.SourceMapConsumer(this.text);
+            this.consumerCache = new _mozilla2['default'].SourceMapConsumer(this.text);
         }
         return this.consumerCache;
     };
@@ -22651,16 +22833,16 @@ var PreviousMap = (function () {
     };
 
     PreviousMap.prototype.decodeInline = function decodeInline(text) {
-        var uri = "data:application/json,";
-        var base64 = "data:application/json;base64,";
+        var uri = 'data:application/json,';
+        var base64 = 'data:application/json;base64,';
 
         if (this.startWith(text, uri)) {
             return decodeURIComponent(text.substr(uri.length));
         } else if (this.startWith(text, base64)) {
-            return Base64.decode(text.substr(base64.length));
+            return _Base64.Base64.decode(text.substr(base64.length));
         } else {
             var encoding = text.match(/data:application\/json;([^,]+),/)[1];
-            throw new Error("Unsupported source map encoding " + encoding);
+            throw new Error('Unsupported source map encoding ' + encoding);
         }
     };
 
@@ -22668,26 +22850,26 @@ var PreviousMap = (function () {
         if (prev === false) {
             return false;
         }if (prev) {
-            if (typeof prev === "string") {
+            if (typeof prev === 'string') {
                 return prev;
-            } else if (prev instanceof mozilla.SourceMapConsumer) {
-                return mozilla.SourceMapGenerator.fromSourceMap(prev).toString();
-            } else if (prev instanceof mozilla.SourceMapGenerator) {
+            } else if (prev instanceof _mozilla2['default'].SourceMapConsumer) {
+                return _mozilla2['default'].SourceMapGenerator.fromSourceMap(prev).toString();
+            } else if (prev instanceof _mozilla2['default'].SourceMapGenerator) {
                 return prev.toString();
-            } else if (typeof prev === "object" && prev.mappings) {
+            } else if (typeof prev === 'object' && prev.mappings) {
                 return JSON.stringify(prev);
             } else {
-                throw new Error("Unsupported previous source map format: " + prev.toString());
+                throw new Error('Unsupported previous source map format: ' + prev.toString());
             }
         } else if (this.inline) {
             return this.decodeInline(this.annotation);
         } else if (this.annotation) {
             var map = this.annotation;
-            if (file) map = path.join(path.dirname(file), map);
+            if (file) map = _path2['default'].join(_path2['default'].dirname(file), map);
 
-            this.root = path.dirname(map);
-            if (fs.existsSync && fs.existsSync(map)) {
-                return fs.readFileSync(map, "utf-8").toString().trim();
+            this.root = _path2['default'].dirname(map);
+            if (_fs2['default'].existsSync && _fs2['default'].existsSync(map)) {
+                return _fs2['default'].readFileSync(map, 'utf-8').toString().trim();
             } else {
                 return false;
             }
@@ -22697,15 +22879,20 @@ var PreviousMap = (function () {
     return PreviousMap;
 })();
 
-module.exports = PreviousMap;
-},{"fs":4,"js-base64":36,"path":9,"source-map":37}],28:[function(require,module,exports){
-"use strict";
+exports['default'] = PreviousMap;
+module.exports = exports['default'];
+},{"fs":4,"js-base64":41,"path":9,"source-map":42}],32:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var LazyResult = _interopRequire(require("./lazy-result"));
+exports.__esModule = true;
+
+var _LazyResult = require('./lazy-result');
+
+var _LazyResult2 = _interopRequireWildcard(_LazyResult);
 
 var Processor = (function () {
     function Processor() {
@@ -22722,7 +22909,7 @@ var Processor = (function () {
 
     Processor.prototype.use = function use(plugin) {
         plugin = this.normalize(plugin);
-        if (typeof plugin === "object" && Array.isArray(plugin.plugins)) {
+        if (typeof plugin === 'object' && Array.isArray(plugin.plugins)) {
             this.plugins = this.plugins.concat(plugin.plugins);
         } else {
             this.plugins.push(plugin);
@@ -22733,12 +22920,12 @@ var Processor = (function () {
     Processor.prototype.process = function process(css) {
         var opts = arguments[1] === undefined ? {} : arguments[1];
 
-        return new LazyResult(this, css, opts);
+        return new _LazyResult2['default'](this, css, opts);
     };
 
     Processor.prototype.normalize = function normalize(plugin) {
         var type = typeof plugin;
-        if ((type === "object" || type === "function") && plugin.postcss) {
+        if ((type === 'object' || type === 'function') && plugin.postcss) {
             return plugin.postcss;
         } else {
             return plugin;
@@ -22748,21 +22935,28 @@ var Processor = (function () {
     return Processor;
 })();
 
-module.exports = Processor;
+exports['default'] = Processor;
 
-Processor.prototype.version = require("../package").version;
-},{"../package":48,"./lazy-result":20}],29:[function(require,module,exports){
-"use strict";
+Processor.prototype.version = require('../package').version;
+module.exports = exports['default'];
+},{"../package":53,"./lazy-result":24}],33:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var warnOnce = _interopRequire(require("./warn-once"));
+exports.__esModule = true;
 
-var Warning = _interopRequire(require("./warning"));
+var _warnOnce = require('./warn-once');
+
+var _warnOnce2 = _interopRequireWildcard(_warnOnce);
+
+var _Warning = require('./warning');
+
+var _Warning2 = _interopRequireWildcard(_Warning);
 
 var Result = (function () {
     function Result(processor, root, opts) {
@@ -22789,52 +22983,56 @@ var Result = (function () {
             }
         }
 
-        this.messages.push(new Warning(text, opts));
+        this.messages.push(new _Warning2['default'](text, opts));
     };
 
     Result.prototype.warnings = function warnings() {
         return this.messages.filter(function (i) {
-            return i.type === "warning";
+            return i.type === 'warning';
         });
     };
 
-    _createClass(Result, {
-        from: {
-            get: function () {
-                warnOnce("result.from is deprecated and will be removed in 5.0. " + "Use result.opts.from instead.");
-                return this.opts.from;
-            }
-        },
-        to: {
-            get: function () {
-                warnOnce("result.to is deprecated and will be removed in 5.0. " + "Use result.opts.to instead.");
-                return this.opts.to;
-            }
+    _createClass(Result, [{
+        key: 'from',
+        get: function () {
+            _warnOnce2['default']('result.from is deprecated and will be removed in 5.0. ' + 'Use result.opts.from instead.');
+            return this.opts.from;
         }
-    });
+    }, {
+        key: 'to',
+        get: function () {
+            _warnOnce2['default']('result.to is deprecated and will be removed in 5.0. ' + 'Use result.opts.to instead.');
+            return this.opts.to;
+        }
+    }]);
 
     return Result;
 })();
 
-module.exports = Result;
-},{"./warn-once":34,"./warning":35}],30:[function(require,module,exports){
-"use strict";
+exports['default'] = Result;
+module.exports = exports['default'];
+},{"./warn-once":38,"./warning":39}],34:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var Container = _interopRequire(require("./container"));
+exports.__esModule = true;
+
+var _Container2 = require('./container');
+
+var _Container3 = _interopRequireWildcard(_Container2);
 
 var Root = (function (_Container) {
     function Root(defaults) {
         _classCallCheck(this, Root);
 
-        this.type = "root";
-        this.nodes = [];
         _Container.call(this, defaults);
+        if (!this.nodes) this.nodes = [];
+        this.type = 'root';
     }
 
     _inherits(Root, _Container);
@@ -22853,7 +23051,7 @@ var Root = (function (_Container) {
         var nodes = _Container.prototype.normalize.call(this, child);
 
         if (sample) {
-            if (type === "prepend") {
+            if (type === 'prepend') {
                 if (this.nodes.length > 1) {
                     sample.before = this.nodes[1].before;
                 } else {
@@ -22890,83 +23088,91 @@ var Root = (function (_Container) {
     Root.prototype.toResult = function toResult() {
         var opts = arguments[0] === undefined ? {} : arguments[0];
 
-        var LazyResult = require("./lazy-result");
-        var Processor = require("./processor");
+        var LazyResult = require('./lazy-result');
+        var Processor = require('./processor');
 
         var lazy = new LazyResult(new Processor(), this, opts);
         return lazy.stringify();
     };
 
     return Root;
-})(Container);
+})(_Container3['default']);
 
-module.exports = Root;
-},{"./container":16,"./lazy-result":20,"./processor":28}],31:[function(require,module,exports){
-"use strict";
+exports['default'] = Root;
+module.exports = exports['default'];
+},{"./container":20,"./lazy-result":24,"./processor":32}],35:[function(require,module,exports){
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
-var Container = _interopRequire(require("./container"));
+exports.__esModule = true;
 
-var list = _interopRequire(require("./list"));
+var _Container2 = require('./container');
+
+var _Container3 = _interopRequireWildcard(_Container2);
+
+var _list = require('./list');
+
+var _list2 = _interopRequireWildcard(_list);
 
 var Rule = (function (_Container) {
     function Rule(defaults) {
         _classCallCheck(this, Rule);
 
-        this.type = "rule";
-        this.nodes = [];
         _Container.call(this, defaults);
+        if (!this.nodes) this.nodes = [];
+        this.type = 'rule';
     }
 
     _inherits(Rule, _Container);
 
     Rule.prototype.stringify = function stringify(builder) {
-        this.stringifyBlock(builder, this.stringifyRaw("selector"));
+        this.stringifyBlock(builder, this.stringifyRaw('selector'));
     };
 
-    _createClass(Rule, {
-        selectors: {
-            get: function () {
-                return list.comma(this.selector);
-            },
-            set: function (values) {
-                this.selector = values.join(", ");
-            }
+    _createClass(Rule, [{
+        key: 'selectors',
+        get: function () {
+            return _list2['default'].comma(this.selector);
+        },
+        set: function (values) {
+            this.selector = values.join(', ');
         }
-    });
+    }]);
 
     return Rule;
-})(Container);
+})(_Container3['default']);
 
-module.exports = Rule;
-},{"./container":16,"./list":21}],32:[function(require,module,exports){
-"use strict";
+exports['default'] = Rule;
+module.exports = exports['default'];
+},{"./container":20,"./list":25}],36:[function(require,module,exports){
+'use strict';
 
-module.exports = tokenize;
-var singleQuote = "'".charCodeAt(0),
-    doubleQuote = "\"".charCodeAt(0),
-    backslash = "\\".charCodeAt(0),
-    slash = "/".charCodeAt(0),
-    newline = "\n".charCodeAt(0),
-    space = " ".charCodeAt(0),
-    feed = "\f".charCodeAt(0),
-    tab = "\t".charCodeAt(0),
-    cr = "\r".charCodeAt(0),
-    openBracket = "(".charCodeAt(0),
-    closeBracket = ")".charCodeAt(0),
-    openCurly = "{".charCodeAt(0),
-    closeCurly = "}".charCodeAt(0),
-    semicolon = ";".charCodeAt(0),
-    asterisk = "*".charCodeAt(0),
-    colon = ":".charCodeAt(0),
-    at = "@".charCodeAt(0),
+exports.__esModule = true;
+exports['default'] = tokenize;
+var singleQuote = '\''.charCodeAt(0),
+    doubleQuote = '"'.charCodeAt(0),
+    backslash = '\\'.charCodeAt(0),
+    slash = '/'.charCodeAt(0),
+    newline = '\n'.charCodeAt(0),
+    space = ' '.charCodeAt(0),
+    feed = '\f'.charCodeAt(0),
+    tab = '\t'.charCodeAt(0),
+    cr = '\r'.charCodeAt(0),
+    openBracket = '('.charCodeAt(0),
+    closeBracket = ')'.charCodeAt(0),
+    openCurly = '{'.charCodeAt(0),
+    closeCurly = '}'.charCodeAt(0),
+    semicolon = ';'.charCodeAt(0),
+    asterisk = '*'.charCodeAt(0),
+    colon = ':'.charCodeAt(0),
+    at = '@'.charCodeAt(0),
     atEnd = /[ \n\t\r\{\(\)'"\\/]/g,
     wordEnd = /[ \n\t\r\(\)\{\}:;@!'"\\]|\/(?=\*)/g,
     badBracket = /.[\\\/\("'\n]/;
@@ -22997,7 +23203,7 @@ function tokenize(input) {
             css += end;
             next = css.length - 1;
         } else {
-            throw input.error("Unclosed " + what, line, pos - offset);
+            throw input.error('Unclosed ' + what, line, pos - offset);
         }
     };
 
@@ -23025,51 +23231,51 @@ function tokenize(input) {
                     }
                 } while (code === space || code === newline || code === tab || code === cr || code === feed);
 
-                tokens.push(["space", css.slice(pos, next)]);
+                tokens.push(['space', css.slice(pos, next)]);
                 pos = next - 1;
                 break;
 
             case openCurly:
-                tokens.push(["{", "{", line, pos - offset]);
+                tokens.push(['{', '{', line, pos - offset]);
                 break;
 
             case closeCurly:
-                tokens.push(["}", "}", line, pos - offset]);
+                tokens.push(['}', '}', line, pos - offset]);
                 break;
 
             case colon:
-                tokens.push([":", ":", line, pos - offset]);
+                tokens.push([':', ':', line, pos - offset]);
                 break;
 
             case semicolon:
-                tokens.push([";", ";", line, pos - offset]);
+                tokens.push([';', ';', line, pos - offset]);
                 break;
 
             case openBracket:
-                next = css.indexOf(")", pos + 1);
+                next = css.indexOf(')', pos + 1);
                 content = css.slice(pos, next + 1);
 
                 if (next === -1 || badBracket.test(content)) {
-                    tokens.push(["(", "(", line, pos - offset]);
+                    tokens.push(['(', '(', line, pos - offset]);
                 } else {
-                    tokens.push(["brackets", content, line, pos - offset, line, next - offset]);
+                    tokens.push(['brackets', content, line, pos - offset, line, next - offset]);
                     pos = next;
                 }
 
                 break;
 
             case closeBracket:
-                tokens.push([")", ")", line, pos - offset]);
+                tokens.push([')', ')', line, pos - offset]);
                 break;
 
             case singleQuote:
             case doubleQuote:
-                quote = code === singleQuote ? "'" : "\"";
+                quote = code === singleQuote ? '\'' : '"';
                 next = pos;
                 do {
                     escaped = false;
                     next = css.indexOf(quote, next + 1);
-                    if (next === -1) unclosed("quote", quote);
+                    if (next === -1) unclosed('quote', quote);
                     escapePos = next;
                     while (css.charCodeAt(escapePos - 1) === backslash) {
                         escapePos -= 1;
@@ -23077,7 +23283,7 @@ function tokenize(input) {
                     }
                 } while (escaped);
 
-                tokens.push(["string", css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
+                tokens.push(['string', css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
                 pos = next;
                 break;
 
@@ -23089,7 +23295,7 @@ function tokenize(input) {
                 } else {
                     next = atEnd.lastIndex - 2;
                 }
-                tokens.push(["at-word", css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
+                tokens.push(['at-word', css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
                 pos = next;
                 break;
 
@@ -23104,17 +23310,17 @@ function tokenize(input) {
                 if (escape && (code !== slash && code !== space && code !== newline && code !== tab && code !== cr && code !== feed)) {
                     next += 1;
                 }
-                tokens.push(["word", css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
+                tokens.push(['word', css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
                 pos = next;
                 break;
 
             default:
                 if (code === slash && css.charCodeAt(pos + 1) === asterisk) {
-                    next = css.indexOf("*/", pos + 2) + 1;
-                    if (next === 0) unclosed("comment", "*/");
+                    next = css.indexOf('*/', pos + 2) + 1;
+                    if (next === 0) unclosed('comment', '*/');
 
                     content = css.slice(pos, next + 1);
-                    lines = content.split("\n");
+                    lines = content.split('\n');
                     last = lines.length - 1;
 
                     if (last > 0) {
@@ -23125,7 +23331,7 @@ function tokenize(input) {
                         nextOffset = offset;
                     }
 
-                    tokens.push(["comment", content, line, pos - offset, nextLine, next - nextOffset]);
+                    tokens.push(['comment', content, line, pos - offset, nextLine, next - nextOffset]);
 
                     offset = nextOffset;
                     line = nextLine;
@@ -23139,7 +23345,7 @@ function tokenize(input) {
                         next = wordEnd.lastIndex - 2;
                     }
 
-                    tokens.push(["word", css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
+                    tokens.push(['word', css.slice(pos, next + 1), line, pos - offset, line, next - offset]);
                     pos = next;
                 }
 
@@ -23151,23 +23357,26 @@ function tokenize(input) {
 
     return tokens;
 }
-},{}],33:[function(require,module,exports){
-"use strict";
 
-module.exports = {
+module.exports = exports['default'];
+},{}],37:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = {
 
     prefix: function prefix(prop) {
-        if (prop[0] === "-") {
-            var sep = prop.indexOf("-", 1);
+        if (prop[0] === '-') {
+            var sep = prop.indexOf('-', 1);
             return prop.substr(0, sep + 1);
         } else {
-            return "";
+            return '';
         }
     },
 
     unprefixed: function unprefixed(prop) {
-        if (prop[0] === "-") {
-            var sep = prop.indexOf("-", 1);
+        if (prop[0] === '-') {
+            var sep = prop.indexOf('-', 1);
             return prop.substr(sep + 1);
         } else {
             return prop;
@@ -23175,10 +23384,12 @@ module.exports = {
     }
 
 };
-},{}],34:[function(require,module,exports){
-"use strict";
+module.exports = exports['default'];
+},{}],38:[function(require,module,exports){
+'use strict';
 
-module.exports = warnOnce;
+exports.__esModule = true;
+exports['default'] = warnOnce;
 var printed = {};
 
 function warnOnce(message) {
@@ -23186,12 +23397,16 @@ function warnOnce(message) {
         return;
     }printed[message] = true;
 
-    if (typeof console !== "undefined" && console.warn) console.warn(message);
+    if (typeof console !== 'undefined' && console.warn) console.warn(message);
 }
-},{}],35:[function(require,module,exports){
-"use strict";
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+module.exports = exports['default'];
+},{}],39:[function(require,module,exports){
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+exports.__esModule = true;
 
 var Warning = (function () {
     function Warning(text) {
@@ -23199,7 +23414,7 @@ var Warning = (function () {
 
         _classCallCheck(this, Warning);
 
-        this.type = "warning";
+        this.type = 'warning';
         this.text = text;
         for (var opt in opts) {
             this[opt] = opts[opt];
@@ -23210,7 +23425,7 @@ var Warning = (function () {
         if (this.node) {
             return this.node.error(this.text, { plugin: this.plugin }).message;
         } else if (this.plugin) {
-            return this.plugin + ": " + this.text;
+            return this.plugin + ': ' + this.text;
         } else {
             return this.text;
         }
@@ -23219,8 +23434,972 @@ var Warning = (function () {
     return Warning;
 })();
 
-module.exports = Warning;
-},{}],36:[function(require,module,exports){
+exports['default'] = Warning;
+module.exports = exports['default'];
+},{}],40:[function(require,module,exports){
+(function (process,global){
+/*!
+ * @overview es6-promise - a tiny implementation of Promises/A+.
+ * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
+ * @license   Licensed under MIT license
+ *            See https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE
+ * @version   2.0.1
+ */
+
+(function() {
+    "use strict";
+
+    function $$utils$$objectOrFunction(x) {
+      return typeof x === 'function' || (typeof x === 'object' && x !== null);
+    }
+
+    function $$utils$$isFunction(x) {
+      return typeof x === 'function';
+    }
+
+    function $$utils$$isMaybeThenable(x) {
+      return typeof x === 'object' && x !== null;
+    }
+
+    var $$utils$$_isArray;
+
+    if (!Array.isArray) {
+      $$utils$$_isArray = function (x) {
+        return Object.prototype.toString.call(x) === '[object Array]';
+      };
+    } else {
+      $$utils$$_isArray = Array.isArray;
+    }
+
+    var $$utils$$isArray = $$utils$$_isArray;
+    var $$utils$$now = Date.now || function() { return new Date().getTime(); };
+    function $$utils$$F() { }
+
+    var $$utils$$o_create = (Object.create || function (o) {
+      if (arguments.length > 1) {
+        throw new Error('Second argument not supported');
+      }
+      if (typeof o !== 'object') {
+        throw new TypeError('Argument must be an object');
+      }
+      $$utils$$F.prototype = o;
+      return new $$utils$$F();
+    });
+
+    var $$asap$$len = 0;
+
+    var $$asap$$default = function asap(callback, arg) {
+      $$asap$$queue[$$asap$$len] = callback;
+      $$asap$$queue[$$asap$$len + 1] = arg;
+      $$asap$$len += 2;
+      if ($$asap$$len === 2) {
+        // If len is 1, that means that we need to schedule an async flush.
+        // If additional callbacks are queued before the queue is flushed, they
+        // will be processed by this flush that we are scheduling.
+        $$asap$$scheduleFlush();
+      }
+    };
+
+    var $$asap$$browserGlobal = (typeof window !== 'undefined') ? window : {};
+    var $$asap$$BrowserMutationObserver = $$asap$$browserGlobal.MutationObserver || $$asap$$browserGlobal.WebKitMutationObserver;
+
+    // test for web worker but not in IE10
+    var $$asap$$isWorker = typeof Uint8ClampedArray !== 'undefined' &&
+      typeof importScripts !== 'undefined' &&
+      typeof MessageChannel !== 'undefined';
+
+    // node
+    function $$asap$$useNextTick() {
+      return function() {
+        process.nextTick($$asap$$flush);
+      };
+    }
+
+    function $$asap$$useMutationObserver() {
+      var iterations = 0;
+      var observer = new $$asap$$BrowserMutationObserver($$asap$$flush);
+      var node = document.createTextNode('');
+      observer.observe(node, { characterData: true });
+
+      return function() {
+        node.data = (iterations = ++iterations % 2);
+      };
+    }
+
+    // web worker
+    function $$asap$$useMessageChannel() {
+      var channel = new MessageChannel();
+      channel.port1.onmessage = $$asap$$flush;
+      return function () {
+        channel.port2.postMessage(0);
+      };
+    }
+
+    function $$asap$$useSetTimeout() {
+      return function() {
+        setTimeout($$asap$$flush, 1);
+      };
+    }
+
+    var $$asap$$queue = new Array(1000);
+
+    function $$asap$$flush() {
+      for (var i = 0; i < $$asap$$len; i+=2) {
+        var callback = $$asap$$queue[i];
+        var arg = $$asap$$queue[i+1];
+
+        callback(arg);
+
+        $$asap$$queue[i] = undefined;
+        $$asap$$queue[i+1] = undefined;
+      }
+
+      $$asap$$len = 0;
+    }
+
+    var $$asap$$scheduleFlush;
+
+    // Decide what async method to use to triggering processing of queued callbacks:
+    if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
+      $$asap$$scheduleFlush = $$asap$$useNextTick();
+    } else if ($$asap$$BrowserMutationObserver) {
+      $$asap$$scheduleFlush = $$asap$$useMutationObserver();
+    } else if ($$asap$$isWorker) {
+      $$asap$$scheduleFlush = $$asap$$useMessageChannel();
+    } else {
+      $$asap$$scheduleFlush = $$asap$$useSetTimeout();
+    }
+
+    function $$$internal$$noop() {}
+    var $$$internal$$PENDING   = void 0;
+    var $$$internal$$FULFILLED = 1;
+    var $$$internal$$REJECTED  = 2;
+    var $$$internal$$GET_THEN_ERROR = new $$$internal$$ErrorObject();
+
+    function $$$internal$$selfFullfillment() {
+      return new TypeError("You cannot resolve a promise with itself");
+    }
+
+    function $$$internal$$cannotReturnOwn() {
+      return new TypeError('A promises callback cannot return that same promise.')
+    }
+
+    function $$$internal$$getThen(promise) {
+      try {
+        return promise.then;
+      } catch(error) {
+        $$$internal$$GET_THEN_ERROR.error = error;
+        return $$$internal$$GET_THEN_ERROR;
+      }
+    }
+
+    function $$$internal$$tryThen(then, value, fulfillmentHandler, rejectionHandler) {
+      try {
+        then.call(value, fulfillmentHandler, rejectionHandler);
+      } catch(e) {
+        return e;
+      }
+    }
+
+    function $$$internal$$handleForeignThenable(promise, thenable, then) {
+       $$asap$$default(function(promise) {
+        var sealed = false;
+        var error = $$$internal$$tryThen(then, thenable, function(value) {
+          if (sealed) { return; }
+          sealed = true;
+          if (thenable !== value) {
+            $$$internal$$resolve(promise, value);
+          } else {
+            $$$internal$$fulfill(promise, value);
+          }
+        }, function(reason) {
+          if (sealed) { return; }
+          sealed = true;
+
+          $$$internal$$reject(promise, reason);
+        }, 'Settle: ' + (promise._label || ' unknown promise'));
+
+        if (!sealed && error) {
+          sealed = true;
+          $$$internal$$reject(promise, error);
+        }
+      }, promise);
+    }
+
+    function $$$internal$$handleOwnThenable(promise, thenable) {
+      if (thenable._state === $$$internal$$FULFILLED) {
+        $$$internal$$fulfill(promise, thenable._result);
+      } else if (promise._state === $$$internal$$REJECTED) {
+        $$$internal$$reject(promise, thenable._result);
+      } else {
+        $$$internal$$subscribe(thenable, undefined, function(value) {
+          $$$internal$$resolve(promise, value);
+        }, function(reason) {
+          $$$internal$$reject(promise, reason);
+        });
+      }
+    }
+
+    function $$$internal$$handleMaybeThenable(promise, maybeThenable) {
+      if (maybeThenable.constructor === promise.constructor) {
+        $$$internal$$handleOwnThenable(promise, maybeThenable);
+      } else {
+        var then = $$$internal$$getThen(maybeThenable);
+
+        if (then === $$$internal$$GET_THEN_ERROR) {
+          $$$internal$$reject(promise, $$$internal$$GET_THEN_ERROR.error);
+        } else if (then === undefined) {
+          $$$internal$$fulfill(promise, maybeThenable);
+        } else if ($$utils$$isFunction(then)) {
+          $$$internal$$handleForeignThenable(promise, maybeThenable, then);
+        } else {
+          $$$internal$$fulfill(promise, maybeThenable);
+        }
+      }
+    }
+
+    function $$$internal$$resolve(promise, value) {
+      if (promise === value) {
+        $$$internal$$reject(promise, $$$internal$$selfFullfillment());
+      } else if ($$utils$$objectOrFunction(value)) {
+        $$$internal$$handleMaybeThenable(promise, value);
+      } else {
+        $$$internal$$fulfill(promise, value);
+      }
+    }
+
+    function $$$internal$$publishRejection(promise) {
+      if (promise._onerror) {
+        promise._onerror(promise._result);
+      }
+
+      $$$internal$$publish(promise);
+    }
+
+    function $$$internal$$fulfill(promise, value) {
+      if (promise._state !== $$$internal$$PENDING) { return; }
+
+      promise._result = value;
+      promise._state = $$$internal$$FULFILLED;
+
+      if (promise._subscribers.length === 0) {
+      } else {
+        $$asap$$default($$$internal$$publish, promise);
+      }
+    }
+
+    function $$$internal$$reject(promise, reason) {
+      if (promise._state !== $$$internal$$PENDING) { return; }
+      promise._state = $$$internal$$REJECTED;
+      promise._result = reason;
+
+      $$asap$$default($$$internal$$publishRejection, promise);
+    }
+
+    function $$$internal$$subscribe(parent, child, onFulfillment, onRejection) {
+      var subscribers = parent._subscribers;
+      var length = subscribers.length;
+
+      parent._onerror = null;
+
+      subscribers[length] = child;
+      subscribers[length + $$$internal$$FULFILLED] = onFulfillment;
+      subscribers[length + $$$internal$$REJECTED]  = onRejection;
+
+      if (length === 0 && parent._state) {
+        $$asap$$default($$$internal$$publish, parent);
+      }
+    }
+
+    function $$$internal$$publish(promise) {
+      var subscribers = promise._subscribers;
+      var settled = promise._state;
+
+      if (subscribers.length === 0) { return; }
+
+      var child, callback, detail = promise._result;
+
+      for (var i = 0; i < subscribers.length; i += 3) {
+        child = subscribers[i];
+        callback = subscribers[i + settled];
+
+        if (child) {
+          $$$internal$$invokeCallback(settled, child, callback, detail);
+        } else {
+          callback(detail);
+        }
+      }
+
+      promise._subscribers.length = 0;
+    }
+
+    function $$$internal$$ErrorObject() {
+      this.error = null;
+    }
+
+    var $$$internal$$TRY_CATCH_ERROR = new $$$internal$$ErrorObject();
+
+    function $$$internal$$tryCatch(callback, detail) {
+      try {
+        return callback(detail);
+      } catch(e) {
+        $$$internal$$TRY_CATCH_ERROR.error = e;
+        return $$$internal$$TRY_CATCH_ERROR;
+      }
+    }
+
+    function $$$internal$$invokeCallback(settled, promise, callback, detail) {
+      var hasCallback = $$utils$$isFunction(callback),
+          value, error, succeeded, failed;
+
+      if (hasCallback) {
+        value = $$$internal$$tryCatch(callback, detail);
+
+        if (value === $$$internal$$TRY_CATCH_ERROR) {
+          failed = true;
+          error = value.error;
+          value = null;
+        } else {
+          succeeded = true;
+        }
+
+        if (promise === value) {
+          $$$internal$$reject(promise, $$$internal$$cannotReturnOwn());
+          return;
+        }
+
+      } else {
+        value = detail;
+        succeeded = true;
+      }
+
+      if (promise._state !== $$$internal$$PENDING) {
+        // noop
+      } else if (hasCallback && succeeded) {
+        $$$internal$$resolve(promise, value);
+      } else if (failed) {
+        $$$internal$$reject(promise, error);
+      } else if (settled === $$$internal$$FULFILLED) {
+        $$$internal$$fulfill(promise, value);
+      } else if (settled === $$$internal$$REJECTED) {
+        $$$internal$$reject(promise, value);
+      }
+    }
+
+    function $$$internal$$initializePromise(promise, resolver) {
+      try {
+        resolver(function resolvePromise(value){
+          $$$internal$$resolve(promise, value);
+        }, function rejectPromise(reason) {
+          $$$internal$$reject(promise, reason);
+        });
+      } catch(e) {
+        $$$internal$$reject(promise, e);
+      }
+    }
+
+    function $$$enumerator$$makeSettledResult(state, position, value) {
+      if (state === $$$internal$$FULFILLED) {
+        return {
+          state: 'fulfilled',
+          value: value
+        };
+      } else {
+        return {
+          state: 'rejected',
+          reason: value
+        };
+      }
+    }
+
+    function $$$enumerator$$Enumerator(Constructor, input, abortOnReject, label) {
+      this._instanceConstructor = Constructor;
+      this.promise = new Constructor($$$internal$$noop, label);
+      this._abortOnReject = abortOnReject;
+
+      if (this._validateInput(input)) {
+        this._input     = input;
+        this.length     = input.length;
+        this._remaining = input.length;
+
+        this._init();
+
+        if (this.length === 0) {
+          $$$internal$$fulfill(this.promise, this._result);
+        } else {
+          this.length = this.length || 0;
+          this._enumerate();
+          if (this._remaining === 0) {
+            $$$internal$$fulfill(this.promise, this._result);
+          }
+        }
+      } else {
+        $$$internal$$reject(this.promise, this._validationError());
+      }
+    }
+
+    $$$enumerator$$Enumerator.prototype._validateInput = function(input) {
+      return $$utils$$isArray(input);
+    };
+
+    $$$enumerator$$Enumerator.prototype._validationError = function() {
+      return new Error('Array Methods must be provided an Array');
+    };
+
+    $$$enumerator$$Enumerator.prototype._init = function() {
+      this._result = new Array(this.length);
+    };
+
+    var $$$enumerator$$default = $$$enumerator$$Enumerator;
+
+    $$$enumerator$$Enumerator.prototype._enumerate = function() {
+      var length  = this.length;
+      var promise = this.promise;
+      var input   = this._input;
+
+      for (var i = 0; promise._state === $$$internal$$PENDING && i < length; i++) {
+        this._eachEntry(input[i], i);
+      }
+    };
+
+    $$$enumerator$$Enumerator.prototype._eachEntry = function(entry, i) {
+      var c = this._instanceConstructor;
+      if ($$utils$$isMaybeThenable(entry)) {
+        if (entry.constructor === c && entry._state !== $$$internal$$PENDING) {
+          entry._onerror = null;
+          this._settledAt(entry._state, i, entry._result);
+        } else {
+          this._willSettleAt(c.resolve(entry), i);
+        }
+      } else {
+        this._remaining--;
+        this._result[i] = this._makeResult($$$internal$$FULFILLED, i, entry);
+      }
+    };
+
+    $$$enumerator$$Enumerator.prototype._settledAt = function(state, i, value) {
+      var promise = this.promise;
+
+      if (promise._state === $$$internal$$PENDING) {
+        this._remaining--;
+
+        if (this._abortOnReject && state === $$$internal$$REJECTED) {
+          $$$internal$$reject(promise, value);
+        } else {
+          this._result[i] = this._makeResult(state, i, value);
+        }
+      }
+
+      if (this._remaining === 0) {
+        $$$internal$$fulfill(promise, this._result);
+      }
+    };
+
+    $$$enumerator$$Enumerator.prototype._makeResult = function(state, i, value) {
+      return value;
+    };
+
+    $$$enumerator$$Enumerator.prototype._willSettleAt = function(promise, i) {
+      var enumerator = this;
+
+      $$$internal$$subscribe(promise, undefined, function(value) {
+        enumerator._settledAt($$$internal$$FULFILLED, i, value);
+      }, function(reason) {
+        enumerator._settledAt($$$internal$$REJECTED, i, reason);
+      });
+    };
+
+    var $$promise$all$$default = function all(entries, label) {
+      return new $$$enumerator$$default(this, entries, true /* abort on reject */, label).promise;
+    };
+
+    var $$promise$race$$default = function race(entries, label) {
+      /*jshint validthis:true */
+      var Constructor = this;
+
+      var promise = new Constructor($$$internal$$noop, label);
+
+      if (!$$utils$$isArray(entries)) {
+        $$$internal$$reject(promise, new TypeError('You must pass an array to race.'));
+        return promise;
+      }
+
+      var length = entries.length;
+
+      function onFulfillment(value) {
+        $$$internal$$resolve(promise, value);
+      }
+
+      function onRejection(reason) {
+        $$$internal$$reject(promise, reason);
+      }
+
+      for (var i = 0; promise._state === $$$internal$$PENDING && i < length; i++) {
+        $$$internal$$subscribe(Constructor.resolve(entries[i]), undefined, onFulfillment, onRejection);
+      }
+
+      return promise;
+    };
+
+    var $$promise$resolve$$default = function resolve(object, label) {
+      /*jshint validthis:true */
+      var Constructor = this;
+
+      if (object && typeof object === 'object' && object.constructor === Constructor) {
+        return object;
+      }
+
+      var promise = new Constructor($$$internal$$noop, label);
+      $$$internal$$resolve(promise, object);
+      return promise;
+    };
+
+    var $$promise$reject$$default = function reject(reason, label) {
+      /*jshint validthis:true */
+      var Constructor = this;
+      var promise = new Constructor($$$internal$$noop, label);
+      $$$internal$$reject(promise, reason);
+      return promise;
+    };
+
+    var $$es6$promise$promise$$counter = 0;
+
+    function $$es6$promise$promise$$needsResolver() {
+      throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
+    }
+
+    function $$es6$promise$promise$$needsNew() {
+      throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
+    }
+
+    var $$es6$promise$promise$$default = $$es6$promise$promise$$Promise;
+
+    /**
+      Promise objects represent the eventual result of an asynchronous operation. The
+      primary way of interacting with a promise is through its `then` method, which
+      registers callbacks to receive either a promise’s eventual value or the reason
+      why the promise cannot be fulfilled.
+
+      Terminology
+      -----------
+
+      - `promise` is an object or function with a `then` method whose behavior conforms to this specification.
+      - `thenable` is an object or function that defines a `then` method.
+      - `value` is any legal JavaScript value (including undefined, a thenable, or a promise).
+      - `exception` is a value that is thrown using the throw statement.
+      - `reason` is a value that indicates why a promise was rejected.
+      - `settled` the final resting state of a promise, fulfilled or rejected.
+
+      A promise can be in one of three states: pending, fulfilled, or rejected.
+
+      Promises that are fulfilled have a fulfillment value and are in the fulfilled
+      state.  Promises that are rejected have a rejection reason and are in the
+      rejected state.  A fulfillment value is never a thenable.
+
+      Promises can also be said to *resolve* a value.  If this value is also a
+      promise, then the original promise's settled state will match the value's
+      settled state.  So a promise that *resolves* a promise that rejects will
+      itself reject, and a promise that *resolves* a promise that fulfills will
+      itself fulfill.
+
+
+      Basic Usage:
+      ------------
+
+      ```js
+      var promise = new Promise(function(resolve, reject) {
+        // on success
+        resolve(value);
+
+        // on failure
+        reject(reason);
+      });
+
+      promise.then(function(value) {
+        // on fulfillment
+      }, function(reason) {
+        // on rejection
+      });
+      ```
+
+      Advanced Usage:
+      ---------------
+
+      Promises shine when abstracting away asynchronous interactions such as
+      `XMLHttpRequest`s.
+
+      ```js
+      function getJSON(url) {
+        return new Promise(function(resolve, reject){
+          var xhr = new XMLHttpRequest();
+
+          xhr.open('GET', url);
+          xhr.onreadystatechange = handler;
+          xhr.responseType = 'json';
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.send();
+
+          function handler() {
+            if (this.readyState === this.DONE) {
+              if (this.status === 200) {
+                resolve(this.response);
+              } else {
+                reject(new Error('getJSON: `' + url + '` failed with status: [' + this.status + ']'));
+              }
+            }
+          };
+        });
+      }
+
+      getJSON('/posts.json').then(function(json) {
+        // on fulfillment
+      }, function(reason) {
+        // on rejection
+      });
+      ```
+
+      Unlike callbacks, promises are great composable primitives.
+
+      ```js
+      Promise.all([
+        getJSON('/posts'),
+        getJSON('/comments')
+      ]).then(function(values){
+        values[0] // => postsJSON
+        values[1] // => commentsJSON
+
+        return values;
+      });
+      ```
+
+      @class Promise
+      @param {function} resolver
+      Useful for tooling.
+      @constructor
+    */
+    function $$es6$promise$promise$$Promise(resolver) {
+      this._id = $$es6$promise$promise$$counter++;
+      this._state = undefined;
+      this._result = undefined;
+      this._subscribers = [];
+
+      if ($$$internal$$noop !== resolver) {
+        if (!$$utils$$isFunction(resolver)) {
+          $$es6$promise$promise$$needsResolver();
+        }
+
+        if (!(this instanceof $$es6$promise$promise$$Promise)) {
+          $$es6$promise$promise$$needsNew();
+        }
+
+        $$$internal$$initializePromise(this, resolver);
+      }
+    }
+
+    $$es6$promise$promise$$Promise.all = $$promise$all$$default;
+    $$es6$promise$promise$$Promise.race = $$promise$race$$default;
+    $$es6$promise$promise$$Promise.resolve = $$promise$resolve$$default;
+    $$es6$promise$promise$$Promise.reject = $$promise$reject$$default;
+
+    $$es6$promise$promise$$Promise.prototype = {
+      constructor: $$es6$promise$promise$$Promise,
+
+    /**
+      The primary way of interacting with a promise is through its `then` method,
+      which registers callbacks to receive either a promise's eventual value or the
+      reason why the promise cannot be fulfilled.
+
+      ```js
+      findUser().then(function(user){
+        // user is available
+      }, function(reason){
+        // user is unavailable, and you are given the reason why
+      });
+      ```
+
+      Chaining
+      --------
+
+      The return value of `then` is itself a promise.  This second, 'downstream'
+      promise is resolved with the return value of the first promise's fulfillment
+      or rejection handler, or rejected if the handler throws an exception.
+
+      ```js
+      findUser().then(function (user) {
+        return user.name;
+      }, function (reason) {
+        return 'default name';
+      }).then(function (userName) {
+        // If `findUser` fulfilled, `userName` will be the user's name, otherwise it
+        // will be `'default name'`
+      });
+
+      findUser().then(function (user) {
+        throw new Error('Found user, but still unhappy');
+      }, function (reason) {
+        throw new Error('`findUser` rejected and we're unhappy');
+      }).then(function (value) {
+        // never reached
+      }, function (reason) {
+        // if `findUser` fulfilled, `reason` will be 'Found user, but still unhappy'.
+        // If `findUser` rejected, `reason` will be '`findUser` rejected and we're unhappy'.
+      });
+      ```
+      If the downstream promise does not specify a rejection handler, rejection reasons will be propagated further downstream.
+
+      ```js
+      findUser().then(function (user) {
+        throw new PedagogicalException('Upstream error');
+      }).then(function (value) {
+        // never reached
+      }).then(function (value) {
+        // never reached
+      }, function (reason) {
+        // The `PedgagocialException` is propagated all the way down to here
+      });
+      ```
+
+      Assimilation
+      ------------
+
+      Sometimes the value you want to propagate to a downstream promise can only be
+      retrieved asynchronously. This can be achieved by returning a promise in the
+      fulfillment or rejection handler. The downstream promise will then be pending
+      until the returned promise is settled. This is called *assimilation*.
+
+      ```js
+      findUser().then(function (user) {
+        return findCommentsByAuthor(user);
+      }).then(function (comments) {
+        // The user's comments are now available
+      });
+      ```
+
+      If the assimliated promise rejects, then the downstream promise will also reject.
+
+      ```js
+      findUser().then(function (user) {
+        return findCommentsByAuthor(user);
+      }).then(function (comments) {
+        // If `findCommentsByAuthor` fulfills, we'll have the value here
+      }, function (reason) {
+        // If `findCommentsByAuthor` rejects, we'll have the reason here
+      });
+      ```
+
+      Simple Example
+      --------------
+
+      Synchronous Example
+
+      ```javascript
+      var result;
+
+      try {
+        result = findResult();
+        // success
+      } catch(reason) {
+        // failure
+      }
+      ```
+
+      Errback Example
+
+      ```js
+      findResult(function(result, err){
+        if (err) {
+          // failure
+        } else {
+          // success
+        }
+      });
+      ```
+
+      Promise Example;
+
+      ```javascript
+      findResult().then(function(result){
+        // success
+      }, function(reason){
+        // failure
+      });
+      ```
+
+      Advanced Example
+      --------------
+
+      Synchronous Example
+
+      ```javascript
+      var author, books;
+
+      try {
+        author = findAuthor();
+        books  = findBooksByAuthor(author);
+        // success
+      } catch(reason) {
+        // failure
+      }
+      ```
+
+      Errback Example
+
+      ```js
+
+      function foundBooks(books) {
+
+      }
+
+      function failure(reason) {
+
+      }
+
+      findAuthor(function(author, err){
+        if (err) {
+          failure(err);
+          // failure
+        } else {
+          try {
+            findBoooksByAuthor(author, function(books, err) {
+              if (err) {
+                failure(err);
+              } else {
+                try {
+                  foundBooks(books);
+                } catch(reason) {
+                  failure(reason);
+                }
+              }
+            });
+          } catch(error) {
+            failure(err);
+          }
+          // success
+        }
+      });
+      ```
+
+      Promise Example;
+
+      ```javascript
+      findAuthor().
+        then(findBooksByAuthor).
+        then(function(books){
+          // found books
+      }).catch(function(reason){
+        // something went wrong
+      });
+      ```
+
+      @method then
+      @param {Function} onFulfilled
+      @param {Function} onRejected
+      Useful for tooling.
+      @return {Promise}
+    */
+      then: function(onFulfillment, onRejection) {
+        var parent = this;
+        var state = parent._state;
+
+        if (state === $$$internal$$FULFILLED && !onFulfillment || state === $$$internal$$REJECTED && !onRejection) {
+          return this;
+        }
+
+        var child = new this.constructor($$$internal$$noop);
+        var result = parent._result;
+
+        if (state) {
+          var callback = arguments[state - 1];
+          $$asap$$default(function(){
+            $$$internal$$invokeCallback(state, child, callback, result);
+          });
+        } else {
+          $$$internal$$subscribe(parent, child, onFulfillment, onRejection);
+        }
+
+        return child;
+      },
+
+    /**
+      `catch` is simply sugar for `then(undefined, onRejection)` which makes it the same
+      as the catch block of a try/catch statement.
+
+      ```js
+      function findAuthor(){
+        throw new Error('couldn't find that author');
+      }
+
+      // synchronous
+      try {
+        findAuthor();
+      } catch(reason) {
+        // something went wrong
+      }
+
+      // async with promises
+      findAuthor().catch(function(reason){
+        // something went wrong
+      });
+      ```
+
+      @method catch
+      @param {Function} onRejection
+      Useful for tooling.
+      @return {Promise}
+    */
+      'catch': function(onRejection) {
+        return this.then(null, onRejection);
+      }
+    };
+
+    var $$es6$promise$polyfill$$default = function polyfill() {
+      var local;
+
+      if (typeof global !== 'undefined') {
+        local = global;
+      } else if (typeof window !== 'undefined' && window.document) {
+        local = window;
+      } else {
+        local = self;
+      }
+
+      var es6PromiseSupport =
+        "Promise" in local &&
+        // Some of these methods are missing from
+        // Firefox/Chrome experimental implementations
+        "resolve" in local.Promise &&
+        "reject" in local.Promise &&
+        "all" in local.Promise &&
+        "race" in local.Promise &&
+        // Older version of the spec had a resolver object
+        // as the arg rather than a function
+        (function() {
+          var resolve;
+          new local.Promise(function(r) { resolve = r; });
+          return $$utils$$isFunction(resolve);
+        }());
+
+      if (!es6PromiseSupport) {
+        local.Promise = $$es6$promise$promise$$default;
+      }
+    };
+
+    var es6$promise$umd$$ES6Promise = {
+      'Promise': $$es6$promise$promise$$default,
+      'polyfill': $$es6$promise$polyfill$$default
+    };
+
+    /* global define:true module:true window: true */
+    if (typeof define === 'function' && define['amd']) {
+      define(function() { return es6$promise$umd$$ES6Promise; });
+    } else if (typeof module !== 'undefined' && module['exports']) {
+      module['exports'] = es6$promise$umd$$ES6Promise;
+    } else if (typeof this !== 'undefined') {
+      this['ES6Promise'] = es6$promise$umd$$ES6Promise;
+    }
+}).call(this);
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"_process":10}],41:[function(require,module,exports){
 (function (global){
 /*
  * $Id: base64.js,v 2.15 2014/04/05 12:58:57 dankogai Exp dankogai $
@@ -23417,7 +24596,7 @@ if (this['Meteor']) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"buffer":5}],37:[function(require,module,exports){
+},{"buffer":5}],42:[function(require,module,exports){
 /*
  * Copyright 2009-2011 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.txt or:
@@ -23427,7 +24606,7 @@ exports.SourceMapGenerator = require('./source-map/source-map-generator').Source
 exports.SourceMapConsumer = require('./source-map/source-map-consumer').SourceMapConsumer;
 exports.SourceNode = require('./source-map/source-node').SourceNode;
 
-},{"./source-map/source-map-consumer":43,"./source-map/source-map-generator":44,"./source-map/source-node":45}],38:[function(require,module,exports){
+},{"./source-map/source-map-consumer":48,"./source-map/source-map-generator":49,"./source-map/source-node":50}],43:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -23526,7 +24705,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":46,"amdefine":47}],39:[function(require,module,exports){
+},{"./util":51,"amdefine":52}],44:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -23669,7 +24848,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./base64":40,"amdefine":47}],40:[function(require,module,exports){
+},{"./base64":45,"amdefine":52}],45:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -23713,7 +24892,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":47}],41:[function(require,module,exports){
+},{"amdefine":52}],46:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -23832,7 +25011,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":47}],42:[function(require,module,exports){
+},{"amdefine":52}],47:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2014 Mozilla Foundation and contributors
@@ -23920,7 +25099,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./util":46,"amdefine":47}],43:[function(require,module,exports){
+},{"./util":51,"amdefine":52}],48:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -24880,7 +26059,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":38,"./base64-vlq":39,"./binary-search":41,"./util":46,"amdefine":47}],44:[function(require,module,exports){
+},{"./array-set":43,"./base64-vlq":44,"./binary-search":46,"./util":51,"amdefine":52}],49:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -25282,7 +26461,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./array-set":38,"./base64-vlq":39,"./mapping-list":42,"./util":46,"amdefine":47}],45:[function(require,module,exports){
+},{"./array-set":43,"./base64-vlq":44,"./mapping-list":47,"./util":51,"amdefine":52}],50:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -25698,7 +26877,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"./source-map-generator":44,"./util":46,"amdefine":47}],46:[function(require,module,exports){
+},{"./source-map-generator":49,"./util":51,"amdefine":52}],51:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -26019,7 +27198,7 @@ define(function (require, exports, module) {
 
 });
 
-},{"amdefine":47}],47:[function(require,module,exports){
+},{"amdefine":52}],52:[function(require,module,exports){
 (function (process,__filename){
 /** vim: et:ts=4:sw=4:sts=4
  * @license amdefine 0.1.0 Copyright (c) 2011, The Dojo Foundation All Rights Reserved.
@@ -26321,11 +27500,11 @@ function amdefine(module, requireFn) {
 
 module.exports = amdefine;
 
-}).call(this,require('_process'),"/node_modules/immutable-css/node_modules/postcss/node_modules/source-map/node_modules/amdefine/amdefine.js")
-},{"_process":10,"path":9}],48:[function(require,module,exports){
+}).call(this,require('_process'),"/node_modules/postcss/node_modules/source-map/node_modules/amdefine/amdefine.js")
+},{"_process":10,"path":9}],53:[function(require,module,exports){
 module.exports={
   "name": "postcss",
-  "version": "4.1.2",
+  "version": "4.1.4",
   "description": "Tool for transforming CSS with JS plugins",
   "keywords": [
     "css",
@@ -26347,6 +27526,7 @@ module.exports={
     "url": "https://github.com/postcss/postcss.git"
   },
   "dependencies": {
+    "es6-promise": "~2.0.1",
     "source-map": "~0.4.2",
     "js-base64": "~2.1.7"
   },
@@ -26356,8 +27536,8 @@ module.exports={
     "gulp-json-editor": "2.2.1",
     "gonzales-pe": "3.0.0-26",
     "gulp-eslint": "0.6.0",
-    "browserify": "9.0.4",
-    "gulp-babel": "4.0.1",
+    "browserify": "9.0.7",
+    "gulp-babel": "5.0.0",
     "gulp-bench": "1.1.0",
     "gulp-mocha": "2.0.1",
     "node-sass": "2.1.1",
@@ -26367,7 +27547,7 @@ module.exports={
     "gonzales": "1.0.7",
     "through2": "0.6.3",
     "stylecow": "5.0.0",
-    "request": "2.54.0",
+    "request": "2.55.0",
     "cssnext": "1.2.1",
     "rework": "1.0.1",
     "mensch": "0.3.1",
@@ -26377,9 +27557,9 @@ module.exports={
     "mocha": "2.2.1",
     "cssom": "0.3.0",
     "gulp": "3.8.11",
-    "less": "2.4.0",
+    "less": "2.5.0",
     "chai": "2.2.0",
-    "babel": "4.7.16"
+    "babel-core": "5.0.8"
   },
   "scripts": {
     "test": "gulp && yaspeller ."
@@ -26389,8 +27569,8 @@ module.exports={
     "url": "https://github.com/postcss/postcss/issues"
   },
   "homepage": "https://github.com/postcss/postcss",
-  "_id": "postcss@4.1.2",
-  "_shasum": "efc66ce5ec01cb9a1e715702cebbe0cc55cf87ea",
+  "_id": "postcss@4.1.4",
+  "_shasum": "24b3bf57071b838c126636a348453e101cb8a74b",
   "_from": "postcss@>=4.0.6 <5.0.0",
   "_npmVersion": "2.7.4",
   "_nodeVersion": "1.6.3",
@@ -26405,14 +27585,14 @@ module.exports={
     }
   ],
   "dist": {
-    "shasum": "efc66ce5ec01cb9a1e715702cebbe0cc55cf87ea",
-    "tarball": "http://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
+    "shasum": "24b3bf57071b838c126636a348453e101cb8a74b",
+    "tarball": "http://registry.npmjs.org/postcss/-/postcss-4.1.4.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.2.tgz"
+  "_resolved": "https://registry.npmjs.org/postcss/-/postcss-4.1.4.tgz"
 }
 
-},{}],49:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * Calculates the specificity of CSS selectors
  * http://www.w3.org/TR/css3-selectors/#specificity
@@ -26559,66 +27739,5 @@ var SPECIFICITY = (function() {
 if (typeof exports !== 'undefined') {
 	exports.calculate = SPECIFICITY.calculate;
 }
-
-},{}],50:[function(require,module,exports){
-var isEmpty = require('is-empty');
-var isWhitespace = require('is-whitespace');
-
-module.exports = function isBlank(object) {
-  if(typeof object == 'string' && object.length) {
-    return isWhitespace(object);
-  } else {
-    return isEmpty(object);
-  }
-};
-
-},{"is-empty":51,"is-whitespace":52}],51:[function(require,module,exports){
-
-/**
- * Expose `isEmpty`.
- */
-
-module.exports = isEmpty;
-
-
-/**
- * Has.
- */
-
-var has = Object.prototype.hasOwnProperty;
-
-
-/**
- * Test whether a value is "empty".
- *
- * @param {Mixed} val
- * @return {Boolean}
- */
-
-function isEmpty (val) {
-  if (null == val) return true;
-  if ('number' == typeof val) return 0 === val;
-  if (undefined !== val.length) return 0 === val.length;
-  for (var key in val) if (has.call(val, key)) return false;
-  return true;
-}
-},{}],52:[function(require,module,exports){
-/*!
- * is-whitespace <https://github.com/jonschlinkert/is-whitespace>
- *
- * Copyright (c) 2014 Jon Schlinkert, contributors.
- * Licensed under the MIT License
- */
-
-'use strict';
-
-var regex = new RegExp('^[\\s\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF"]+$');
-
-module.exports = function isWhitespace(value) {
-  if (typeof value === 'string') {
-    return regex.test(value);
-  }
-  return false;
-};
 
 },{}]},{},[1]);
