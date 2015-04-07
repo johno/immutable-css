@@ -1,9 +1,13 @@
-.bar {
+.bar:before {
   content: 'baz';
 }
 
-.awesome {
+.awesome:before {
   color: green;
+}
+
+:root {
+  color: purple;
 }
 
 .bar.awesome {
