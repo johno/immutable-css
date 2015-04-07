@@ -2,7 +2,7 @@
   "name": "immutable-css",
   "description": "A CSS linter for immutable selectors.",
   "author": "John Otander",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "directories": {
     "test": "test"
