@@ -49,6 +49,12 @@ test/fixtures/app2.css
 test/fixtures/app2.css[line 1,col 1]: .foo was mutated
 ```
 
+## Acknowledgements
+
+* <https://github.com/postcss/postcss>
+* <https://github.com/tj/commander.js>
+* <https://www.npmjs.com/package/specificity>
+
 ## License
 
 MIT
