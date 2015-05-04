@@ -15,10 +15,10 @@ module.exports = function immutableCss(immutableCssFile, customCssFile, options)
   immutableErrors.forEach(function(error) {
  
    if (options.verbose) { 
-      console.log(customCssFile + ': ' +
+      console.log(customCssFile + '[' +
         'line ' + error.line + ',' +
         'col ' + error.column +
-        ' - ' + error.selector + ' was mutated'
+        ']: ' + error.selector + ' was mutated'
       );
    }
   });
