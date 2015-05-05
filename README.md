@@ -30,6 +30,8 @@ immutableCss('vendor.css', 'app.css', { verbose: true });
 
 #### Options
 
+* `immutableCss` (file or glob): Immutable, vendor CSS -- `css/vendor.css` or `vendor/**/*.css`
+* `customCss` (file or glob): Custom application CSS -- `css/app.css` or `app/css/**/*.css`
 * `verbose` (Boolean): Print output to standard out.
 * `ignoredSelectors` (Array): List of selectors to ignore for mutation violations.
 * `immutableSelectors` (Array): List of selectors to check against.

@@ -3,8 +3,17 @@ var immutableCss = require('..');
 
 describe('immutable-css', function() {
 
-  it('should return false if immutability has been broken', function() {
-    assert.equal(immutableCss('test/fixtures/vendor.css', 'test/fixtures/app.css', { verbose: true }).length, 5);
-    assert.equal(immutableCss('test/fixtures/bootstrap.css', 'test/fixtures/basscss.css', { verbose: true }).length, 13);
+  it('should return an array of errors if immutability has been broken', function(done) {
+    immutableCss('test/fixtures/vendor/vendor.css', 'test/fixtures/app/app.css', { verbose: true }, function(mutations) {
+      assert.equal(mutations.length, 5);
+      done();
+    });
+  });
+
+  it('should support globbing', function(done) {
+    immutableCss('test/fixtures/vendor/**/*.css', 'test/fixtures/app/**/*.css', { verbose: true }, function(mutations) {
+      assert.equal(mutations.length, 9);
+      done();
+    });
   });
 });

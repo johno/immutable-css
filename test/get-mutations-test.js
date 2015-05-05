@@ -9,22 +9,22 @@ function fixture(name) {
 describe('get-mutations', function() {
 
   it('should return an array of mutations', function() {
-    assert.equal(getMutations(fixture('vendor.css'), fixture('app.css')).length, 5);
+    assert.equal(getMutations(fixture('vendor/vendor.css'), fixture('app/app.css')).length, 5);
   });
 
   it('should find basscss mutations when they exist', function() {
-    assert.equal(getMutations(fixture('basscss.css'), fixture('basscss-mutations.css')).length, 2);
+    assert.equal(getMutations(fixture('vendor/basscss.css'), fixture('app/basscss-mutations.css')).length, 2);
   });
 
   it('should find bootstrap mutations when they exist', function() {
-    assert.equal(getMutations(fixture('bootstrap.css'), fixture('bootstrap-mutations.css')).length, 1);
+    assert.equal(getMutations(fixture('vendor/bootstrap.css'), fixture('app/bootstrap-mutations.css')).length, 1);
   });
 
   it('should include immutable selectors that are passes as options', function() {
     assert.equal(
       getMutations(
-        fixture('vendor.css'),
-        fixture('app.css'),
+        fixture('vendor/vendor.css'),
+        fixture('app/app.css'),
         { immutableSelectors: ['.sibling'] }
       ).length, 6);
   });
@@ -32,8 +32,8 @@ describe('get-mutations', function() {
   it('should ignore the specified classes', function() {
     assert.equal(
       getMutations(
-        fixture('basscss.css'),
-        fixture('basscss-mutations.css'),
+        fixture('vendor/basscss.css'),
+        fixture('app/basscss-mutations.css'),
         { ignoredSelectors: ['.button'] }
       ).length, 1);
   });
