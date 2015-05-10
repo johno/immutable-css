@@ -1,14 +1,22 @@
 'use strict';
 
 var fs = require('fs');
+var _ = require('lodash');
 var postcss = require('postcss');
 var glob = require('glob');
+
 var getMutations = require('./lib/get-mutations');
 var logMutations = require('./lib/log-mutations');
 
 module.exports = function immutableCss(immutableCssFileOrGlob, customCssFileOrGlob, options, callback) {
-  options = options || {};
-  callback = callback || function() {};
+    if (_.isFunction(options)) {
+    callback = options;
+    options = {};
+  } else {
+    options = options || {};
+    callback = callback || _.noop;
+  }
+
   var noMutationViolations = true;
   var immutableErrors = [];
   var immutableCssFiles, customCssFiles;

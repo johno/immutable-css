@@ -11,7 +11,7 @@ describe('immutable-css', function() {
   });
 
   it('should support globbing', function(done) {
-    immutableCss('test/fixtures/vendor/**/*.css', 'test/fixtures/app/**/*.css', { verbose: true }, function(mutations) {
+    immutableCss('test/fixtures/vendor/**/*.css', 'test/fixtures/app/**/*.css', function(mutations) {
       assert.equal(mutations.length, 9);
       done();
     });

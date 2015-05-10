@@ -19,7 +19,9 @@ npm i -g immutable-css
 ```js
 var immutableCss = require('immutable-css');
 
-immutableCss('vendor.css', 'app.css');
+immutableCss('vendor.css', 'app.css', function(mutations) {
+  console.log(mutations);
+});
 // [{ selector: '.awesome', line: 5, column: 1, rule: {/* Rule Object */} }];
 ```
 
