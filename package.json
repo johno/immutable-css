@@ -11,6 +11,7 @@
     "immutablecss": "./bin/immutablecss"
   },
   "scripts": {
+    "demo:dev": "webpack-dev-server --progress --colors --config demo/webpack.config.js",
     "test": "mocha test"
   },
   "repository": {
@@ -19,13 +20,13 @@
   },
   "keywords": [
     "css",
-    "immutable",
-    "mutability",
-    "immutablecss",
     "immutability",
-    "mutation",
+    "immutable",
+    "immutablecss",
     "lint",
-    "linter"
+    "linter",
+    "mutability",
+    "mutation"
   ],
   "license": "MIT",
   "bugs": {
@@ -39,6 +40,20 @@
     "specificity": "^0.1.4"
   },
   "devDependencies": {
-    "mocha": "*"
+    "autoprefixer-core": "^5.2.1",
+    "babel-loader": "^5.3.1",
+    "basscss": "^7.0.0",
+    "css-loader": "^0.15.3",
+    "cssnext": "^1.8.0",
+    "cssnext-loader": "^1.0.1",
+    "csswring": "^3.0.5",
+    "mocha": "*",
+    "node-libs-browser": "^0.5.2",
+    "postcss-basscss": "^0.2.2",
+    "postcss-loader": "^0.5.1",
+    "react": "^0.13.3",
+    "style-loader": "^0.12.3",
+    "webpack": "^1.10.1",
+    "webpack-dev-server": "^1.10.1"
   }
 }
