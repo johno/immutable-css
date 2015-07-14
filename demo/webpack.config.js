@@ -1,8 +1,9 @@
 
-var basscss = require('postcss-basscss')
-var cssnext = require('cssnext')
-var csswring = require('csswring')
-var autoprefixer = require('autoprefixer-core')
+var atImport = require('postcss-import')
+var customMedia = require('postcss-custom-media')
+var customProperties = require('postcss-custom-properties')
+var calc = require('postcss-calc')
+var colorFunction = require('postcss-color-function')
 
 module.exports = {
 
@@ -11,22 +12,25 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     publicPath: 'demo',
-    path: __dirname + '/demo'
+    path: __dirname
   },
 
   module: {
     loaders: [
       { test: /(\.js$|\.jsx$)/, exclude: /node_modules/, loader: 'babel-loader' },
       { test: /\.json$/, loader: 'json-loader' },
-      { test:   /\.css$/, exclude: /demo/, loader: 'css-loader!postcss-loader' },
+      { test:   /\.css$/, loader: 'css-loader?-minimize!postcss-loader' },
     ]
   },
 
   postcss: function() {
-    return {
-      defaults: [cssnext],
-      app: [basscss, autoprefixer, csswring]
-    }
+    return [
+      atImport(),
+      customMedia(),
+      customProperties(),
+      calc(),
+      colorFunction()
+    ]
   },
 
   node: {

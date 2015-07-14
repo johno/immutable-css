@@ -1,5 +1,6 @@
 
 import React from 'react'
+import { throttle } from 'lodash'
 import immutablecss from '../../lib/get-mutations'
 import Header from './Header.jsx'
 import ImmutableForm from './ImmutableForm.jsx'
@@ -17,14 +18,16 @@ class App extends React.Component {
       mutations: []
     }
     this.handleChange = this.handleChange.bind(this)
-    this.getMutations = this.getMutations.bind(this)
+    this.getMutations = throttle(this.getMutations.bind(this), 2000)
   }
 
   handleChange (e) {
     this.setState({ [e.target.name]: e.target.value })
     if (e.target.name === 'library') {
       let immutable = this.props.libraries[e.target.value].css
-      this.setState({ immutable })
+      this.setState({ immutable }, function() {
+        this.getMutations()
+      }.bind(this))
     }
     if (e.target.name === 'custom') {
       this.getMutations()
@@ -36,8 +39,9 @@ class App extends React.Component {
     try {
       mutations = immutablecss(immutable, custom)
     } catch (e) {
-      // console.log(e)
+      console.error(e)
     }
+    console.log('getMutations')
     this.setState({ mutations })
   }
 
@@ -47,7 +51,9 @@ class App extends React.Component {
     this.setState({
       immutable: libraries[library].css,
       custom: initialCustom
-    })
+    }, function() {
+      this.getMutations()
+    }.bind(this))
   }
 
   render () {
@@ -59,13 +65,13 @@ class App extends React.Component {
         height: '100vh'
       },
       left: {
-        height: '100%',
-        overflow: 'auto',
+        height: '100vh',
+        overflowY: 'auto',
         WebkitOverflowScrolling: 'touch'
       },
       right: {
-        height: '100%',
-        overflow: 'auto',
+        height: '100vh',
+        overflowY: 'auto',
         WebkitOverflowScrolling: 'touch'
       }
     }

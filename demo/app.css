@@ -1,5 +1,5 @@
 
-/* I dare you to try to mutate Basscss */
+@import 'basscss/src/basscss.css';
 
 body {
 }

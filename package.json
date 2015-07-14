@@ -12,6 +12,7 @@
   },
   "scripts": {
     "demo:dev": "webpack-dev-server --progress --colors --config demo/webpack.config.js",
+    "demo:prod": "webpack -p --progress --colors --config demo/webpack.config.js",
     "test": "mocha test"
   },
   "repository": {
@@ -36,7 +37,7 @@
   "dependencies": {
     "commander": "^2.7.1",
     "has-class-selector": "0.0.1",
-    "postcss": "^4.0.6",
+    "postcss": "^4.1.16",
     "specificity": "^0.1.4"
   },
   "devDependencies": {
@@ -44,13 +45,15 @@
     "babel-loader": "^5.3.1",
     "basscss": "^7.0.0",
     "css-loader": "^0.15.3",
-    "cssnext": "^1.8.0",
-    "cssnext-loader": "^1.0.1",
     "csswring": "^3.0.5",
     "json-loader": "^0.5.2",
     "mocha": "*",
     "node-libs-browser": "^0.5.2",
-    "postcss-basscss": "^0.2.2",
+    "postcss-calc": "^4.1.0",
+    "postcss-color-function": "^1.3.2",
+    "postcss-custom-media": "^4.1.0",
+    "postcss-custom-properties": "^4.1.0",
+    "postcss-import": "^6.1.1",
     "postcss-loader": "^0.5.1",
     "react": "^0.13.3",
     "style-loader": "^0.12.3",
