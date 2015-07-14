@@ -17,6 +17,7 @@ module.exports = {
   module: {
     loaders: [
       { test: /(\.js$|\.jsx$)/, exclude: /node_modules/, loader: 'babel-loader' },
+      { test: /\.json$/, loader: 'json-loader' },
       { test:   /\.css$/, exclude: /demo/, loader: 'css-loader!postcss-loader' },
     ]
   },
@@ -26,6 +27,10 @@ module.exports = {
       defaults: [cssnext],
       app: [basscss, autoprefixer, csswring]
     }
+  },
+
+  node: {
+    fs: 'empty'
   }
 
 }

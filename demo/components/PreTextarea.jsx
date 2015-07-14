@@ -12,6 +12,7 @@ class PreTextarea extends React.Component {
       textarea: assign({
         fontSize: 12,
         fontFamily: 'Consolas, "Liberation Mono", Menlo, Courier, monospace',
+        lineHeight: '16px',
         whiteSpace: 'pre',
         overflow: 'auto'
       }, style)

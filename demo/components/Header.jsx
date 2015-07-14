@@ -7,8 +7,8 @@ class Header extends React.Component {
     let { title } = this.props
 
     return (
-      <header className='px2 border-bottom'>
-        <h1 className='h3'>
+      <header className='p3 border-bottom'>
+        <h1 className='h3 m0'>
           {title}
         </h1>
       </header>
