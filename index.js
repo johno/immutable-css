@@ -14,13 +14,14 @@ module.exports = function immutableCss(immutableCssFile, customCssFile, options)
   var immutableErrors = getMutations(immutableCss, customCss, options)
   immutableErrors.forEach(function(error) {
  
-   if (options.verbose) { 
-      console.log(customCssFile + '[' +
+    if (options.verbose) {
+      console.log(
+        customCssFile + '[' +
         'line ' + error.line + ',' +
         'col ' + error.column +
         ']: ' + error.selector + ' was mutated'
       )
-   }
+    }
   })
 
   return immutableErrors
