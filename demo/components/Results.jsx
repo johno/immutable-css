@@ -1,43 +1,52 @@
 
-import React from 'react'
+import React, { Component } from 'react'
 import { throttle } from 'lodash'
-import PreTextarea from './PreTextarea.jsx'
+import HighlightTextarea from './HighlightTextarea.jsx'
+import Scrubber from './Scrubber.jsx'
 
-class Results extends React.Component {
+class Results extends Component {
 
   render () {
     let { immutable, custom, mutations, onChange, getMutations } = this.props
 
-    let customLines = custom.split('\n')
+    let lines = custom.split('\n')
 
     let styles = {
-      pre: {
-        minHeight: customLines.length * 16
+      scrubber: {
+        position: 'fixed',
+        top: 16,
+        right: 16,
+        bottom: 16,
       }
     }
 
     return (
       <div className='p3'>
-        <button onClick={getMutations}>
-          Check for Mutations
-        </button>
-        <PreTextarea
+        <h3>{mutations.length} mutations found</h3>
+        <div style={styles.scrubber}>
+          <Scrubber {...this.props}
+            lines={lines} />
+        </div>
+        <HighlightTextarea
           label='Custom CSS'
           name='custom'
           value={custom}
-          onChange={onChange}
-          style={styles.pre} />
+          mutations={mutations}
+          onChange={onChange} />
+        {/*
         <div>
-          <h3>{mutations.length} mutations found</h3>
           {mutations.map(function(mutation, i) {
             return (
               <div key={i}>
-                <pre>{customLines[mutation.line - 1]}</pre>
+                <pre>{mutations.line} {customLines[mutation.line - 1]}</pre>
               </div>
             )
           })}
         </div>
+        */}
+        {/*
         <pre>{JSON.stringify(mutations, null, '  ')}</pre>
+        */}
       </div>
     )
   }

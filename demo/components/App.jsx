@@ -4,7 +4,6 @@ import { throttle } from 'lodash'
 import immutablecss from '../../lib/get-mutations'
 import Header from './Header.jsx'
 import ImmutableForm from './ImmutableForm.jsx'
-import Intro from './Intro.jsx'
 import Results from './Results.jsx'
 
 class App extends React.Component {
@@ -18,7 +17,8 @@ class App extends React.Component {
       mutations: []
     }
     this.handleChange = this.handleChange.bind(this)
-    this.getMutations = throttle(this.getMutations.bind(this), 2000)
+    this.getMutations = this.getMutations.bind(this)
+    this.getThrottledMutations = throttle(this.getMutations, 800)
   }
 
   handleChange (e) {
@@ -30,7 +30,7 @@ class App extends React.Component {
       }.bind(this))
     }
     if (e.target.name === 'custom') {
-      this.getMutations()
+      this.getThrottledMutations()
     }
   }
 
@@ -38,11 +38,11 @@ class App extends React.Component {
     let { mutations, immutable, custom } = this.state
     try {
       mutations = immutablecss(immutable, custom)
+      this.setState({ mutations })
     } catch (e) {
       console.error(e)
     }
     console.log('getMutations')
-    this.setState({ mutations })
   }
 
   componentDidMount () {
@@ -62,41 +62,34 @@ class App extends React.Component {
 
     let styles = {
       container: {
-        height: '100vh'
+        minHeight: '100vh'
       },
       left: {
-        height: '100vh',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
       },
       right: {
-        height: '100vh',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
+        minHeight: '100vh',
+        paddingRight: 96,
       }
     }
 
     return (
       <div className='clearfix'
         style={styles.container}>
-        <div className='sm-col sm-col-5 border-right'
+        <Header title={props.title} />
+        <div className='sm-col sm-col-4'
           style={styles.left}>
-          <Header title={props.title} />
           <ImmutableForm
             {...props}
             {...state}
             onChange={this.handleChange} />
         </div>
-        <div className='sm-col sm-col-7'
+        <div className='sm-col sm-col-8'
           style={styles.right}>
-          <Intro />
           <Results
             {...props}
             {...state}
             onChange={this.handleChange}
             getMutations={this.getMutations} />
-          <h3>App state</h3>
-          <pre>{JSON.stringify(this.state, null, '  ')}</pre>
         </div>
       </div>
     )
