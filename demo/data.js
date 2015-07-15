@@ -1,7 +1,10 @@
 
 import pkg from '../package.json'
 import basscss from 'basscss/css/basscss.css'
-import tachyons from 'tachyons/css/tachyons.css'
+// Tachyons has typos
+// import tachyons from 'tachyons/css/tachyons.css'
+// Inuit doesn’t work
+// import inuit from 'inuit-starter-kit'
 import suitcss from 'suitcss/index.css'
 import purecss from 'purecss'
 import foundation from 'foundation-sites/css/foundation.css'
@@ -35,10 +38,15 @@ export default {
       name: 'Basscss',
       css: basscss
     },
-    {
-      name: 'Tachyons',
-      css: tachyons
-    },
+    // {
+    //   name: 'Inuit',
+    //   css: inuit
+    // },
+    // Temporarily disabled until @mrmrs fixes the typos
+    // {
+    //   name: 'Tachyons',
+    //   css: tachyons
+    // },
     {
       name: 'Suit CSS',
       css: suitcss

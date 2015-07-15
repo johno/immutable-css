@@ -41,7 +41,7 @@ class App extends React.Component {
       mutations = immutablecss(immutable, custom)
       this.setState({ mutations })
     } catch (e) {
-      // console.error(e)
+      console.error(e)
     }
   }
 

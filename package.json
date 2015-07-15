@@ -50,6 +50,7 @@
     "csswring": "^3.0.5",
     "file-loader": "^0.8.4",
     "foundation-sites": "^5.5.2",
+    "inuit-starter-kit": "^0.2.9",
     "json-loader": "^0.5.2",
     "mocha": "*",
     "node-libs-browser": "^0.5.2",
