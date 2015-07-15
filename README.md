@@ -17,14 +17,14 @@ npm i -g immutable-css
 ## Usage
 
 ```js
-var immutableCss = require('immutable-css');
+var immutableCss = require('immutable-css')
 
-immutableCss('vendor.css', 'app.css');
+immutableCss('vendor.css', 'app.css')
 // [{ selector: '.awesome', line: 5, column: 1, rule: {/* Rule Object */} }];
 ```
 
 ```js
-immutableCss('vendor.css', 'app.css', { verbose: true });
+immutableCss('vendor.css', 'app.css', { verbose: true })
 // app.css[line 5,col 1]: .awesome was mutated
 ```
 
@@ -35,6 +35,8 @@ immutableCss('vendor.css', 'app.css', { verbose: true });
 * `immutableSelectors` (Array): List of selectors to check against.
 
 #### Using the CLI
+
+Deprecated: Will be moving to a standalone module.
 
 ```
 immutablecss vendor.css app.css app2.css
