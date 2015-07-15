@@ -1,7 +1,19 @@
 
 @import 'basscss/src/basscss.css';
 
-body {
-}
+.blue-a1 { color: color(var(--blue) a(.875)) }
+.blue-a2 { color: color(var(--blue) a(.75)) }
 
+.bg-blue-a1 { background-color: color(var(--blue) a(.0625)) }
+.bg-blue-a2 { background-color: color(var(--blue) a(.125)) }
+
+.bg-red-a1 { background-color: color(var(--red) a(.0625)) }
+.bg-red-a2 { background-color: color(var(--red) a(.125)) }
+
+:root {
+  --font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, sans-serif;
+  --bold-font-weight: 600;
+  --heading-font-weight: 600;
+  --button-font-size: var(--h5);
+}
 

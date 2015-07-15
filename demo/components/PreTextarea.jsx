@@ -6,13 +6,13 @@ class PreTextarea extends React.Component {
 
   render () {
     let props = this.props
-    let { label, name, style } = props
+    let { label, helptext, name, style } = props
 
     let styles = {
       textarea: assign({
-        fontSize: 12,
+        fontSize: 13,
         fontFamily: 'Consolas, "Liberation Mono", Menlo, Courier, monospace',
-        lineHeight: '16px',
+        lineHeight: '18px',
         whiteSpace: 'pre',
         overflow: 'auto'
       }, style)
@@ -22,9 +22,10 @@ class PreTextarea extends React.Component {
       <div>
         <label
           htmlFor={name}
-          className='h5 bold block'>
+          className='bold block'>
           {label}
         </label>
+        <p className='h5 mb1'>{helptext}</p>
         <textarea
           {...props}
           style={styles.textarea}

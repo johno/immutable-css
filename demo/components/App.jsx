@@ -3,8 +3,9 @@ import React from 'react'
 import { throttle } from 'lodash'
 import immutablecss from '../../lib/get-mutations'
 import Header from './Header.jsx'
-import ImmutableForm from './ImmutableForm.jsx'
-import Results from './Results.jsx'
+import Form from './Form.jsx'
+import Mutations from './Mutations.jsx'
+import About from './About.jsx'
 
 class App extends React.Component {
 
@@ -40,9 +41,8 @@ class App extends React.Component {
       mutations = immutablecss(immutable, custom)
       this.setState({ mutations })
     } catch (e) {
-      console.error(e)
+      // console.error(e)
     }
-    console.log('getMutations')
   }
 
   componentDidMount () {
@@ -64,32 +64,24 @@ class App extends React.Component {
       container: {
         minHeight: '100vh'
       },
-      left: {
-      },
-      right: {
-        minHeight: '100vh',
-        paddingRight: 96,
-      }
     }
 
     return (
-      <div className='clearfix'
+      <div className='mb4'
         style={styles.container}>
-        <Header title={props.title} />
-        <div className='sm-col sm-col-4'
-          style={styles.left}>
-          <ImmutableForm
-            {...props}
-            {...state}
-            onChange={this.handleChange} />
-        </div>
-        <div className='sm-col sm-col-8'
-          style={styles.right}>
-          <Results
-            {...props}
-            {...state}
-            onChange={this.handleChange}
-            getMutations={this.getMutations} />
+        <Header {...props} />
+        <Form
+          {...props}
+          {...state}
+          onChange={this.handleChange}
+          getMutations={this.getMutations} />
+        <div className='clearfix'>
+          <div className='sm-col-right sm-col-7 px3'>
+            <Mutations {...props} {...state} />
+          </div>
+          <div className='sm-col sm-col-5 px3'>
+            <About />
+          </div>
         </div>
       </div>
     )

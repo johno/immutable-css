@@ -5,15 +5,16 @@ class Select extends React.Component {
 
   render () {
     let props = this.props
-    let { label, name, options } = props
+    let { label, name, helptext, options } = props
 
     return (
       <div>
         <label
           htmlFor={name}
-          className='h5 bold block'>
+          className='bold block'>
           {label}
         </label>
+        <p className='h5 mb1'>{helptext}</p>
         <select {...props}
           className='col-12 field'>
           {options.map(function(option, i) {

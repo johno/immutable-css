@@ -1,4 +1,5 @@
 
+import pkg from '../package.json'
 import basscss from 'basscss/css/basscss.css'
 import tachyons from 'tachyons/css/tachyons.css'
 import suitcss from 'suitcss/index.css'
@@ -8,7 +9,8 @@ import foundation from 'foundation-sites/css/foundation.css'
 import bootstrap from 'bootstrap/dist/css/bootstrap.css'
 
 export default {
-  title: 'Immutable CSS',
+  title: pkg.name,
+  description: pkg.description,
   initialCustom:
 `
 /* Paste your own CSS here. */
