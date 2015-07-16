@@ -21,19 +21,19 @@
   },
   "keywords": [
     "css",
-    "immutable",
-    "mutability",
-    "immutablecss",
     "immutability",
-    "mutation",
+    "immutable",
+    "immutablecss",
     "lint",
-    "linter"
+    "linter",
+    "mutability",
+    "mutation"
   ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/johnotander/immutable-css/issues"
   },
-  "homepage": "https://github.com/johnotander/immutable-css",
+  "homepage": "https://github.com/johnotander/immutable.css",
   "dependencies": {
     "commander": "^2.7.1",
     "get-css-classes": "0.0.1",
@@ -41,7 +41,6 @@
     "postcss": "^4.1.16",
     "specificity": "^0.1.4"
   },
-  "homepage": "https://github.com/johnotander/immutable.css",
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",
     "babel-loader": "^5.3.1",
@@ -66,7 +65,7 @@
     "react-contenteditable": "0.0.2",
     "style-loader": "^0.12.3",
     "suitcss": "^0.6.0",
-    "tachyons": "^1.2.0",
+    "tachyons": "^3.0.0-beta-1",
     "url-loader": "^0.5.6",
     "webpack": "^1.10.1",
     "webpack-dev-server": "^1.10.1"

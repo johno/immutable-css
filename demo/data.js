@@ -1,8 +1,7 @@
 
 import pkg from '../package.json'
 import basscss from 'basscss/css/basscss.css'
-// Tachyons has typos
-// import tachyons from 'tachyons/css/tachyons.css'
+import tachyons from 'tachyons/css/tachyons.css'
 // Inuit doesn’t work
 // import inuit from 'inuit-starter-kit'
 import suitcss from 'suitcss/index.css'
@@ -42,11 +41,10 @@ export default {
     //   name: 'Inuit',
     //   css: inuit
     // },
-    // Temporarily disabled until @mrmrs fixes the typos
-    // {
-    //   name: 'Tachyons',
-    //   css: tachyons
-    // },
+    {
+    name: 'Tachyons',
+    css: tachyons
+    },
     {
       name: 'Suit CSS',
       css: suitcss
