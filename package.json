@@ -1,8 +1,15 @@
 {
-  "name": "immutable-css-site",
-  "version": "1.0.0",
-  "description": "The docs/promo site for immutable-css",
+  "name": "immutable-css",
+  "description": "A CSS linter for immutable selectors.",
+  "author": "John Otander",
+  "version": "0.0.3",
   "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "bin": {
+    "immutablecss": "./bin/immutablecss"
+  },
   "scripts": {
     "demo:dev": "webpack-dev-server --progress --colors --config demo/webpack.config.js",
     "demo:prod": "webpack -p --progress --colors --config demo/webpack.config.js",
@@ -14,13 +21,13 @@
   },
   "keywords": [
     "css",
-    "immutability",
     "immutable",
-    "immutablecss",
-    "lint",
-    "linter",
     "mutability",
-    "mutation"
+    "immutablecss",
+    "immutability",
+    "mutation",
+    "lint",
+    "linter"
   ],
   "license": "MIT",
   "bugs": {
