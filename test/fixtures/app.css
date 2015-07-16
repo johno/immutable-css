@@ -1,0 +1,27 @@
+.bar:before {
+  content: 'baz';
+}
+
+.awesome:before {
+  color: green;
+}
+
+:root {
+  color: purple;
+}
+
+.bar.awesome {
+  color: hotpink;
+}
+
+.sibling + .foo {
+  color: yellow;
+}
+
+.foobar > .awesome {
+  color: tomato;
+}
+
+a.awesome {
+  color: rebeccapurple;
+}
