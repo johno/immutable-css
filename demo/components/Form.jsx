@@ -24,7 +24,7 @@ class Form extends React.Component {
                 label='Immutable Source CSS'
                 helptext='Paste base library styles here.'
                 name='immutable'
-                rows={10}
+                rows={9}
                 value={immutable}
                 onChange={onChange} />
             </div>
