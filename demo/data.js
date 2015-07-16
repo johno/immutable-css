@@ -15,7 +15,7 @@ export default {
   description: pkg.description,
   initialCustom:
 `
-/* These are a examples of mutations */
+/* These are examples of mutations */
 .red {
   color: orangered;
 }
@@ -23,7 +23,7 @@ export default {
   width: 100%;
 }
 
-/* These are a examples of extensions */
+/* These are examples of extensions */
 .orangered {
   color: orangered;
 }
