@@ -4,7 +4,7 @@ import React from 'react'
 class Html extends React.Component {
 
   render () {
-    let { title, description, children, css } = this.props
+    let { title, description, children, css, ga } = this.props
 
     return (
       <html>
@@ -18,6 +18,7 @@ class Html extends React.Component {
         <body>
           {children}
           <script src='demo/bundle.js' />
+          <script dangerouslySetInnerHTML={{ __html: ga }} />
         </body>
       </html>
     )
