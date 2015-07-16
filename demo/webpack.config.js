@@ -5,6 +5,7 @@ var customMedia = require('postcss-custom-media')
 var customProperties = require('postcss-custom-properties')
 var calc = require('postcss-calc')
 var colorFunction = require('postcss-color-function')
+var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin')
 
 module.exports = {
 
@@ -13,7 +14,8 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     publicPath: 'demo',
-    path: __dirname
+    path: __dirname,
+    libraryTarget: 'umd'
   },
 
   module: {
@@ -28,6 +30,10 @@ module.exports = {
 
     ],
   },
+
+  plugins: [
+    new StaticSiteGeneratorPlugin('bundle.js', ['../'], {})
+  ],
 
   postcss: function() {
     return [

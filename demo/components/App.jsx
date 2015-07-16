@@ -2,6 +2,7 @@
 import React from 'react'
 import { throttle } from 'lodash'
 import immutablecss from '../../lib/get-mutations'
+import Html from './Html.jsx'
 import Header from './Header.jsx'
 import Form from './Form.jsx'
 import Mutations from './Mutations.jsx'
@@ -67,23 +68,25 @@ class App extends React.Component {
     }
 
     return (
-      <div className='mb4'
-        style={styles.container}>
-        <Header {...props} />
-        <Form
-          {...props}
-          {...state}
-          onChange={this.handleChange}
-          getMutations={this.getMutations} />
-        <div className='clearfix'>
-          <div className='sm-col-right sm-col-7 px3'>
-            <Mutations {...props} {...state} />
-          </div>
-          <div className='sm-col sm-col-5 px3'>
-            <About />
+      <Html {...props}>
+        <div className='mb4'
+          style={styles.container}>
+          <Header {...props} />
+          <Form
+            {...props}
+            {...state}
+            onChange={this.handleChange}
+            getMutations={this.getMutations} />
+          <div className='clearfix'>
+            <div className='sm-col-right sm-col-7 px3'>
+              <Mutations {...props} {...state} />
+            </div>
+            <div className='sm-col sm-col-5 px3'>
+              <About />
+            </div>
           </div>
         </div>
-      </div>
+      </Html>
     )
   }
 

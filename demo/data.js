@@ -2,13 +2,13 @@
 import pkg from '../package.json'
 import basscss from 'basscss/css/basscss.css'
 import tachyons from 'tachyons/css/tachyons.css'
-// Inuit doesn’t work
-// import inuit from 'inuit-starter-kit'
 import suitcss from 'suitcss/index.css'
 import purecss from 'purecss'
 import foundation from 'foundation-sites/css/foundation.css'
-
 import bootstrap from 'bootstrap/dist/css/bootstrap.css'
+
+// Inuit doesn’t work
+// import inuit from 'inuit-starter-kit'
 
 export default {
   title: pkg.name,
