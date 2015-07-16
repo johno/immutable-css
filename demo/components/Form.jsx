@@ -22,7 +22,7 @@ class Form extends React.Component {
             <div className='mb2'>
               <PreTextarea
                 label='Immutable Source CSS'
-                helptext='Paste base library styles here.'
+                helptext='Paste base library styles here or choose a library below.'
                 name='immutable'
                 rows={9}
                 value={immutable}

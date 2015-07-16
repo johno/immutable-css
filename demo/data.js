@@ -15,8 +15,6 @@ export default {
   description: pkg.description,
   initialCustom:
 `
-/* Paste your own CSS here. */
-
 /* These are a examples of mutations */
 .red {
   color: orangered;
@@ -29,7 +27,7 @@ export default {
 .orangered {
   color: orangered;
 }
-.btn-custom {
+.btn-purple {
   background-color: purple;
 }`,
   libraries: [
