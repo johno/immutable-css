@@ -1,10 +1,20 @@
+var fs = require('fs')
 var assert = require('assert')
+var postcss = require('postcss')
+var postcssImport = require('postcss-import')
 var immutableCss = require('..')
 
-describe('immutable-css', function() {
+function fixture (name) {
+  return fs.readFileSync('test/fixtures/' + name, 'utf8')
+}
 
-  it('should return false if immutability has been broken', function() {
-    assert.equal(immutableCss('test/fixtures/vendor.css', 'test/fixtures/app.css', { verbose: true }).length, 5)
-    assert.equal(immutableCss('test/fixtures/bootstrap.css', 'test/fixtures/basscss.css', { verbose: true }).length, 13)
+function test (input, mutations) {
+  assert.deepEqual(postcss([ postcssImport(), immutableCss() ]).process(fixture(input), { from: input }).messages, mutations)
+}
+
+describe('immutable-css', function () {
+
+  it('should report the correct mutations', function () {
+    test('basscss-mutations.css', [])
   })
 })

@@ -1,28 +1,48 @@
 'use strict'
 
-var fs = require('fs')
 var postcss = require('postcss')
-var getMutations = require('./lib/get-mutations')
+var getCssClasses = require('get-css-classes')
 
-module.exports = function immutableCss(immutableCssFile, customCssFile, options) {
-  options = options || {}
-  var noMutationViolations = true
-
-  var immutableCss = fs.readFileSync(immutableCssFile, 'utf8').trim()
-  var customCss = fs.readFileSync(customCssFile, 'utf8').trim()
-
-  var immutableErrors = getMutations(immutableCss, customCss, options)
-  immutableErrors.forEach(function(error) {
- 
-    if (options.verbose) {
-      console.log(
-        customCssFile + '[' +
-        'line ' + error.line + ',' +
-        'col ' + error.column +
-        ']: ' + error.selector + ' was mutated'
-      )
+module.exports = postcss.plugin('immutable-css', function () {
+  var classMap = {}
+  return function immutableCss (root, opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
     }
-  })
 
-  return immutableErrors
+    opts = opts || {}
+    cb = cb || function () {}
+
+    root.eachRule(function (rule) {
+      rule.selectors.forEach(function (selector) {
+        getCssClasses(selector).forEach(function (klass) {
+          classMap[klass] = classMap[klass] || []
+ 
+          if (!containsMutationFromSource(rule.source.input.from, classMap[klass])) {
+            classMap[klass].push({
+              selector: klass,
+              line: rule.source.start.line,
+              column: rule.source.start.column,
+              rule: rule
+            })
+          }
+        })
+      })
+    })
+
+    Object.keys(classMap).forEach(function (mutationClass) {
+      if (classMap[mutationClass].length === 1) {
+        delete classMap[mutationClass]
+      }
+    })
+
+    console.log(classMap)
+  }
+})
+
+function containsMutationFromSource(source, mutations) {
+  return mutations.some(function (mutation) {
+    return mutation.rule.source.input.from === source
+  }) 
 }
