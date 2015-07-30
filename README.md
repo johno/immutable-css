@@ -51,11 +51,20 @@ test/fixtures/app2.css
 test/fixtures/app2.css[line 1,col 1]: .foo was mutated
 ```
 
-## Acknowledgements
+## Dependencies
 
 * <https://github.com/postcss/postcss>
 * <https://github.com/tj/commander.js>
-* <https://www.npmjs.com/package/specificity>
+* <https://github.com/johnotander/get-css-classes>
+* <https://github.com/css-modules/css-selector-tokenizer>
+
+## Related Reading
+
+* <http://csswizardry.com/2015/03/immutable-css/>
+* <http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/>
+* <http://www.jon.gold/2015/07/functional-css/>
+* <http://eng.wealthfront.com/2013/08/functional-css-fcss.html>
+* <http://www.basscss.com/docs/reference/principles/#immutable-utilities>
 
 ## License
 
