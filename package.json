@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "postcss-import": "^6.2.0"
+    "postcss-import": "^6.2.0",
+    "postcss-reporter": "^0.3.1"
   }
 }

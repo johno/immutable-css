@@ -3,9 +3,9 @@
 var postcss = require('postcss')
 var getCssClasses = require('get-css-classes')
 
-module.exports = postcss.plugin('immutable-css', function () {
+module.exports = postcss.plugin('immutable-css', function (opts, cb) {
   var classMap = {}
-  return function immutableCss (root, opts, cb) {
+  return function immutableCss (root, result) {
     if (typeof opts === 'function') {
       cb = opts
       opts = {}
@@ -32,12 +32,10 @@ module.exports = postcss.plugin('immutable-css', function () {
     })
 
     Object.keys(classMap).forEach(function (mutationClass) {
-      if (classMap[mutationClass].length === 1) {
-        delete classMap[mutationClass]
+      if (classMap[mutationClass].length > 1) {
+        result.warn(getWarningString(classMap[mutationClass]))
       }
     })
-
-    console.log(classMap)
   }
 })
 
@@ -45,4 +43,14 @@ function containsMutationFromSource(source, mutations) {
   return mutations.some(function (mutation) {
     return mutation.rule.source.input.from === source
   }) 
+}
+
+function getWarningString(mutations) {
+  var warning = mutations[0].selector + ' was mutated ' + mutations.length + ' times\n'
+
+  mutations.forEach(function (mutation) {
+   warning += '[line ' + mutation.line + ', col ' + mutation.column + ']: ' + mutation.rule.source.input.from + '\n'
+  })
+
+  return warning
 }
