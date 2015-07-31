@@ -16,10 +16,10 @@ export default {
   initialCustom:
 `
 /* These are examples of mutations */
-.red {
+.red, .btn-warning, .button, .pure-button, .Button, .b--red {
   color: orangered;
 }
-.btn {
+.btn, .button, .pure-button, .Button, .mw--100 {
   width: 100%;
 }
 
