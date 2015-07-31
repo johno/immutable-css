@@ -52,6 +52,7 @@
     "foundation-sites": "^5.5.2",
     "inuit-starter-kit": "^0.2.9",
     "json-loader": "^0.5.2",
+    "lodash": "^3.10.0",
     "mocha": "*",
     "node-libs-browser": "^0.5.2",
     "postcss-calc": "^4.1.0",
