@@ -6,6 +6,7 @@ var extendOptions = require('extend-options')
 
 module.exports = postcss.plugin('immutable-css', function (opts, cb) {
   var classMap = {}
+
   return function immutableCss (root, result) {
     if (typeof opts === 'function') {
       cb = opts
@@ -39,8 +40,12 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
     Object.keys(classMap).forEach(function (mutationClass) {
       if (hasMutation(mutationClass, classMap, opts)) {
         result.warn(getWarningString(classMap[mutationClass]))
+      } else {
+        delete classMap[mutationClass]
       }
     })
+
+    cb(classMap)
   }
 })
 
