@@ -10,13 +10,14 @@ function fixture (name) {
   return fs.readFileSync('test/fixtures/' + name, 'utf8')
 }
 
-function test (input, mutations, cb) {
-  assert.deepEqual(
-    postcss([ postcssImport(), immutableCss(cb), postcssReporter() ])
+function test (input, mutations, opts, cb) {
+  var messages =  postcss([ postcssImport(), immutableCss(opts, cb), postcssReporter() ])
       .process(fixture(input), { from: input })
-      .messages,
-    mutations
-  )
+      .messages
+
+  if (mutations) {
+    assert.deepEqual(messages, mutations)
+  }
 }
 
 describe('immutable-css', function () {
@@ -26,8 +27,23 @@ describe('immutable-css', function () {
   })
 
   it('should return the mutations object in the callback', function (done) {
-    test('basscss-mutations.css', mutations, function (classMap) {
+    test('basscss-mutations.css', undefined, {}, function (classMap) {
       assert.equal(Object.keys(classMap).length, 2)
+      done()
+    })
+  })
+
+  it('should ignore the specified selectors', function (done) {
+    test('basscss-mutations.css', undefined, { ignoredClasses: ['button'] }, function (classMap) {
+      assert.equal(Object.keys(classMap).length, 1)
+      done()
+    })
+  })
+
+  it('should ignore the specified prefixes', function (done) {
+    test('basscss-mutations.css', undefined, { immutablePrefixes: [/\.right/] }, function (classMap) {
+      console.log(Object.keys(classMap))
+      assert.equal(Object.keys(classMap).length, 5)
       done()
     })
   })

@@ -15,14 +15,17 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
 
     cb = cb || function () {}
     opts = extendOptions({
-      immutableSelectors: [],
-      ignoredSelectors: []
+      immutableClasses: [],
+      immutablePrefixes: [],
+      ignoredClasses: []
     }, opts || {})
 
     root.eachRule(function (rule) {
       rule.selectors.forEach(function (selector) {
         getCssClasses(selector).forEach(function (klass) {
           classMap[klass] = classMap[klass] || []
+
+          // Ignore same file mutations. TODO: Make configurable
           if (containsMutationFromSource(rule.source.input.from, classMap[klass])) {
             return
           }
@@ -65,7 +68,17 @@ function getWarningString(mutations) {
   return warning
 }
 
-function hasMutation(mutationClass, classMap, opts) {
-  return (classMap[mutationClass].length > 1 || opts.immutableSelectors.indexOf(mutationClass) != -1) &&
-         opts.ignoredSelectors.indexOf(mutationClass) == -1
+
+function hasMutation (mutationClass, classMap, opts) {
+  var mutationClassWithoutDot = mutationClass.replace('.', '')
+  return (classMap[mutationClass].length > 1 ||
+          opts.immutableClasses.indexOf(mutationClassWithoutDot) != -1 ||
+          containsImmutablePrefix(mutationClass, opts)) &&
+         opts.ignoredClasses.indexOf(mutationClassWithoutDot) == -1
+}
+
+function containsImmutablePrefix (mutationClass, opts) {
+  return opts.immutablePrefixes.some(function (prefix) {
+    return prefix.test(mutationClass)
+  })
 }
