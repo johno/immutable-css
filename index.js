@@ -5,6 +5,8 @@ var getCssClasses = require('get-css-classes')
 var extendOptions = require('extend-options')
 
 var hasMutation = require('./lib/has-mutation')
+var getWarningString = require('./lib/get-warning-string')
+var containsMutationFromSource = require('./lib/contains-mutation-from-source')
 
 module.exports = postcss.plugin('immutable-css', function (opts, cb) {
   var classMap = {}
@@ -53,19 +55,3 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
     cb(classMap)
   }
 })
-
-function containsMutationFromSource(source, mutations) {
-  return mutations.some(function (mutation) {
-    return mutation.rule.source.input.from === source
-  }) 
-}
-
-function getWarningString(mutations) {
-  var warning = mutations[0].selector + ' was mutated ' + mutations.length + ' times\n'
-
-  mutations.forEach(function (mutation) {
-   warning += '[line ' + mutation.line + ', col ' + mutation.column + ']: ' + mutation.rule.source.input.from + '\n'
-  })
-
-  return warning
-}
