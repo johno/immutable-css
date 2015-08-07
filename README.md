@@ -37,7 +37,7 @@ immutableCss('vendor.css', 'app.css', { verbose: true })
 #### Using the CLI
 
 ```
-immutablecss vendor.css app.css app2.css
+immutable-css vendor.css app.css app2.css
 
 test/fixtures/app.css
 test/fixtures/app.css[line 5,col 1]: .awesome was mutated
