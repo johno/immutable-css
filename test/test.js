@@ -34,7 +34,7 @@ describe('immutable-css', function () {
   })
 
   it('should ignore the specified selectors', function (done) {
-    test('basscss-mutations.css', undefined, { ignoredClasses: ['button'] }, function (classMap) {
+    test('basscss-mutations.css', undefined, { ignoredClasses: ['.button'] }, function (classMap) {
       assert.equal(Object.keys(classMap).length, 1)
       done()
     })
@@ -42,7 +42,6 @@ describe('immutable-css', function () {
 
   it('should ignore the specified prefixes', function (done) {
     test('basscss-mutations.css', undefined, { immutablePrefixes: [/\.right/] }, function (classMap) {
-      console.log(Object.keys(classMap))
       assert.equal(Object.keys(classMap).length, 5)
       done()
     })

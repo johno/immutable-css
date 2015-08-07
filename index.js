@@ -4,6 +4,8 @@ var postcss = require('postcss')
 var getCssClasses = require('get-css-classes')
 var extendOptions = require('extend-options')
 
+var hasMutation = require('./lib/has-mutation')
+
 module.exports = postcss.plugin('immutable-css', function (opts, cb) {
   var classMap = {}
 
@@ -66,19 +68,4 @@ function getWarningString(mutations) {
   })
 
   return warning
-}
-
-
-function hasMutation (mutationClass, classMap, opts) {
-  var mutationClassWithoutDot = mutationClass.replace('.', '')
-  return (classMap[mutationClass].length > 1 ||
-          opts.immutableClasses.indexOf(mutationClassWithoutDot) != -1 ||
-          containsImmutablePrefix(mutationClass, opts)) &&
-         opts.ignoredClasses.indexOf(mutationClassWithoutDot) == -1
-}
-
-function containsImmutablePrefix (mutationClass, opts) {
-  return opts.immutablePrefixes.some(function (prefix) {
-    return prefix.test(mutationClass)
-  })
 }
