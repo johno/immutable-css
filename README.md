@@ -8,12 +8,6 @@ Best practices suggest avoiding overriding styles from vendor libraries to preve
 npm install --save immutable-css
 ```
 
-#### For the CLI
-
-```
-npm i -g immutable-css
-```
-
 ## Usage
 
 ```js
@@ -28,13 +22,17 @@ immutableCss('vendor.css', 'app.css', { verbose: true })
 // app.css[line 5,col 1]: .awesome was mutated
 ```
 
-#### Options
+### Options
 
 * `ignoredClasses` (Array): List of classes to ignore for mutation violations. Ex: `['.some-mutable-class']`
 * `immutableClasses` (Array): List of classes to check against. Ex: `['.button', '.foobar']`
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. Ex: `[/\.u\-/, /\.util\-/]`
 
-#### Using the CLI
+### Using the CLI
+
+```
+npm i -g immutable-css
+```
 
 ```
 immutable-css vendor.css app.css app2.css
