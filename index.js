@@ -29,15 +29,19 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
         getCssClasses(selector).forEach(function (klass) {
           classMap[klass] = classMap[klass] || []
 
+          var klassSource = rule.source.input.from
+          var klassLine = rule.source.start.line
+          var klassColumn = rule.source.start.column
+
           // Ignore same file mutations. TODO: Make configurable
-          if (containsMutationFromSource(rule.source.input.from, classMap[klass])) {
+          if (containsMutationFromSource(klassSource, classMap[klass])) {
             return
           }
 
           classMap[klass].push({
             selector: klass,
-            line: rule.source.start.line,
-            column: rule.source.start.column,
+            line: klassLine,
+            column: klassColumn,
             rule: rule
           })
         })
