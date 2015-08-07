@@ -30,9 +30,9 @@ immutableCss('vendor.css', 'app.css', { verbose: true })
 
 #### Options
 
-* `verbose` (Boolean): Print output to standard out.
-* `ignoredSelectors` (Array): List of selectors to ignore for mutation violations.
-* `immutableSelectors` (Array): List of selectors to check against.
+* `ignoredClasses` (Array): List of classes to ignore for mutation violations. Ex: `['.some-mutable-class']`
+* `immutableClasses` (Array): List of classes to check against. Ex: `['.button', '.foobar']`
+* `immutablePrefixes` (Array): List of prefix regexes that are immutable. Ex: `[/\.u\-/, /\.util\-/]`
 
 #### Using the CLI
 
