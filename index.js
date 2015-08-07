@@ -9,7 +9,7 @@ var getWarningString = require('./lib/get-warning-string')
 var containsMutationFromSource = require('./lib/contains-mutation-from-source')
 
 module.exports = postcss.plugin('immutable-css', function (opts, cb) {
-  var classMap = {}
+  var mutationsMap = {}
 
   return function immutableCss (root, result) {
     if (typeof opts === 'function') {
@@ -27,18 +27,18 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
     root.eachRule(function (rule) {
       rule.selectors.forEach(function (selector) {
         getCssClasses(selector).forEach(function (klass) {
-          classMap[klass] = classMap[klass] || []
+          mutationsMap[klass] = mutationsMap[klass] || []
 
           var klassSource = rule.source.input.from
           var klassLine = rule.source.start.line
           var klassColumn = rule.source.start.column
 
           // Ignore same file mutations. TODO: Make configurable
-          if (containsMutationFromSource(klassSource, classMap[klass])) {
+          if (containsMutationFromSource(klassSource, mutationsMap[klass])) {
             return
           }
 
-          classMap[klass].push({
+          mutationsMap[klass].push({
             selector: klass,
             line: klassLine,
             column: klassColumn,
@@ -48,14 +48,14 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
       })
     })
 
-    Object.keys(classMap).forEach(function (mutationClass) {
-      if (hasMutation(mutationClass, classMap, opts)) {
-        result.warn(getWarningString(classMap[mutationClass]))
+    Object.keys(mutationsMap).forEach(function (mutationClass) {
+      if (hasMutation(mutationClass, mutationsMap, opts)) {
+        result.warn(getWarningString(mutationsMap[mutationClass]))
       } else {
-        delete classMap[mutationClass]
+        delete mutationsMap[mutationClass]
       }
     })
 
-    cb(classMap)
+    cb(mutationsMap)
   }
 })
