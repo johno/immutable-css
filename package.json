@@ -33,10 +33,11 @@
   },
   "homepage": "https://github.com/johnotander/immutable-css",
   "dependencies": {
-    "commander": "^2.7.1",
     "extend-options": "0.0.1",
     "get-css-classes": "0.0.1",
+    "glob": "^5.0.14",
     "has-class-selector": "0.0.1",
+    "meow": "^3.3.0",
     "postcss": "^4.0.6",
     "specificity": "^0.1.4"
   },

@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
-var program = require('commander')
+var glob = require('glob')
+var meow = require('meow')
+var postcss = require('postcss')
 var immutableCss = require('..')
 
-program
-  .version('0.0.1')
-  .command('* <immutableCssFile.css> [appCssFiles.css...]')
-  .action(function(immutableCssFile, appCssFiles) {
-    if(appCssFiles) {
-      appCssFiles.forEach(function(appCssFile) {
-        var mutations = immutableCss(immutableCssFile, appCssFile, { verbose: true })
-        if (mutations.length) {
-          process.exit(1)
-        }
-      })
-    }
-  })
+var helpText = [
+  'Usage',
+  '  immutable-css --immutable=basscss.css --custom=app.css',
+  '  immutable-css --immutable=some/immutable/**/*.css --custom=some/app/**/*.css'
+]
 
-program.parse(process.argv)
+var cli = meow({
+  help: helpText,
+  h: helpText,
+  pkg: '../package.json'
+})
+
+if (cli.flags.h) {
+  console.log(cli.help)
+}
+
+if (cli.flags.v) {
+  console.log(cli.pkg.version)
+}
