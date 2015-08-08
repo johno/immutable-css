@@ -10,16 +10,19 @@ npm install --save immutable-css
 
 ## Usage
 
+Immutable CSS detects mutations among files by leveraging PostCSS sourcemaps. It is also best used as a PostCSS plugin in tandem with `postcss-import` and `postcss-reporter`.
+
 ```js
+var fs = require('fs')
+var postcss = require('postcss')
+var import = require('postcss-import')
+var reporter = require('postcss-reporter')
 var immutableCss = require('immutable-css')
 
-immutableCss('vendor.css', 'app.css')
-// [{ selector: '.awesome', line: 5, column: 1, rule: {/* Rule Object */} }];
-```
+var css = fs.readFileSync('styles.css', 'utf8')
 
-```js
-immutableCss('vendor.css', 'app.css', { verbose: true })
-// app.css[line 5,col 1]: .awesome was mutated
+var mutations = postcss([import(), immutableCss(), reporter()])
+                  .process(css, { from: 'styles.css' })
 ```
 
 ### Options
@@ -28,6 +31,20 @@ immutableCss('vendor.css', 'app.css', { verbose: true })
 * `immutableClasses` (Array): List of classes to check against. Ex: `['.button', '.foobar']`
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. Ex: `[/\.u\-/, /\.util\-/]`
 
+### Using the callback
+
+Immutable CSS accepts an optional callback, which returns the mutations hash. The key is the mutated class name, the value is an array of mutating filenames.
+
+```js
+postcss([
+  import(),
+  immutableCss({ ignoredClasses: ['.button'] }, function(mutations) {
+    console.log(mutations)
+    // => { '.foobar': [] }
+  })
+]).process(css, { from: cssFile })
+```
+
 ### Using the CLI
 
 ```
@@ -35,16 +52,15 @@ npm i -g immutable-css
 ```
 
 ```
-immutable-css vendor.css app.css app2.css
-
-test/fixtures/app.css
-test/fixtures/app.css[line 5,col 1]: .awesome was mutated
-test/fixtures/app.css[line 9,col 1]: .awesome was mutated
-test/fixtures/app.css[line 13,col 1]: .foo was mutated
-test/fixtures/app.css[line 17,col 1]: .awesome was mutated
-test/fixtures/app.css[line 21,col 1]: .awesome was mutated
-test/fixtures/app2.css
-test/fixtures/app2.css[line 1,col 1]: .foo was mutated
+immutable-css vendor.css app.css app2.csscss-mutations.css
+⚠  .button was mutated 2 times
+[line 93, col 1]: /css/immutable-css/test/fixtures/basscss.css
+[line 11, col 1]: /css/immutable-css/basscss-mutations.css
+[immutable-css]
+⚠  .left was mutated 2 times
+[line 291, col 1]: /css/immutable-css/test/fixtures/basscss.css
+[line 15, col 1]: /css/immutable-css/basscss-mutations.css
+[immutable-css]ss
 ```
 
 The CLI exits with an error code if there are mutations, too. That way you can include the CLI as part of your CI:
