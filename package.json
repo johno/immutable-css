@@ -8,7 +8,7 @@
     "test": "test"
   },
   "bin": {
-    "immutablecss": "./bin/immutablecss"
+    "immutable-css": "./bin/immutablecss"
   },
   "scripts": {
     "test": "mocha test"
