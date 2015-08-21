@@ -36,8 +36,6 @@ immutableCss('vendor.css', 'app.css', { verbose: true })
 
 #### Using the CLI
 
-Deprecated: Will be moving to a standalone module.
-
 ```
 immutablecss vendor.css app.css app2.css
 
@@ -49,6 +47,12 @@ test/fixtures/app.css[line 17,col 1]: .awesome was mutated
 test/fixtures/app.css[line 21,col 1]: .awesome was mutated
 test/fixtures/app2.css
 test/fixtures/app2.css[line 1,col 1]: .foo was mutated
+```
+
+The CLI exits with an error code if there are mutations, too. That way you can include the CLI as part of your CI:
+
+```
+some_ci_stuff && immutablecss vendor.css app.css && other_ci_stuff
 ```
 
 ## Dependencies
