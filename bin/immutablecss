@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var program = require('commander');
-var immutableCss = require('..');
+var fs = require('fs')
+var program = require('commander')
+var immutableCss = require('..')
 
 program
   .version('0.0.1')
@@ -10,10 +10,12 @@ program
   .action(function(immutableCssFile, appCssFiles) {
     if(appCssFiles) {
       appCssFiles.forEach(function(appCssFile) {
-        console.log(appCssFile);
-        immutableCss(immutableCssFile, appCssFile, { verbose: true });
-      });
+        var mutations = immutableCss(immutableCssFile, appCssFile, { verbose: true })
+        if (mutations.length) {
+          process.exit(1)
+        }
+      })
     }
-  });
+  })
 
-program.parse(process.argv);
+program.parse(process.argv)
