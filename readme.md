@@ -16,7 +16,8 @@ npm install --save immutable-css
 
 ## Usage
 
-Ensure that app specific styles aren't mutating vendor selectors
+`immutableCss.process(immutableSourceCss, customCss, options)` takes two stylesheet paths, and ensures the custom CSS doesn't override any selectors contained within the immutable source.
+This is typically best when comparing vendor CSS ([Bootstrap](http://getbootstrap.com), [Tachyons](http://tachyons.io), [Basscss](http://basscss.com), etc.) to your app's customizations.
 
 ```js
 var immutableCss = require('immutable-css')
@@ -26,10 +27,13 @@ immutableCss.process('css/vendor.css', 'css/app.css')
 
 ```
 
-Ensure that CSS files in a directory aren't overriding selectors
+`immutableCss.processGlob(cssGlob, options)` takes a glob that matches CSS files and ensures that no stylesheet overrides selectors contained within another.
+This is useful to ensure that CSS partials aren't mixing concerns by mutating selectors contained within another file.
 
-```
-immutableCss.process('css/**/*.css', { verbose: true })
+```js
+var immutableCss = require('immutable-css')
+
+immutableCss.processGlob('src/css/**/*.css', { verbose: true })
 ```
 
 ### Using with [PostCSS](https://github.com/postcss/postcss)
