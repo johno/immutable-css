@@ -10,7 +10,7 @@ function fixture(name) {
 describe('get-css-classes-from-ast', function() {
 
   it('should return a hash of the selectors', function() {
-    var css = postcss.parse(fixture('vendor.css'), { safe: true })
+    var css = postcss.parse(fixture('vendor.css'))
     assert.deepEqual(getCssClassesFromAst(css), { '.foo': true, '.awesome': true, '.opossum': true })
   })
 })

@@ -1,28 +1,61 @@
 'use strict'
 
-var fs = require('fs')
 var postcss = require('postcss')
-var getMutations = require('./lib/get-mutations')
+var getCssClasses = require('get-css-classes')
+var extendOptions = require('extend-options')
 
-module.exports = function immutableCss(immutableCssFile, customCssFile, options) {
-  options = options || {}
-  var noMutationViolations = true
+var hasMutation = require('./lib/has-mutation')
+var getWarningString = require('./lib/get-warning-string')
+var containsMutationFromSource = require('./lib/contains-mutation-from-source')
 
-  var immutableCss = fs.readFileSync(immutableCssFile, 'utf8').trim()
-  var customCss = fs.readFileSync(customCssFile, 'utf8').trim()
+module.exports = postcss.plugin('immutable-css', function (opts, cb) {
+  var mutationsMap = {}
 
-  var immutableErrors = getMutations(immutableCss, customCss, options)
-  immutableErrors.forEach(function(error) {
- 
-    if (options.verbose) {
-      console.log(
-        customCssFile + '[' +
-        'line ' + error.line + ',' +
-        'col ' + error.column +
-        ']: ' + error.selector + ' was mutated'
-      )
+  return function immutableCss (root, result) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
     }
-  })
 
-  return immutableErrors
-}
+    cb = cb || function () {}
+    opts = extendOptions({
+      immutableClasses: [],
+      immutablePrefixes: [],
+      ignoredClasses: []
+    }, opts || {})
+
+    root.eachRule(function (rule) {
+      rule.selectors.forEach(function (selector) {
+        getCssClasses(selector).forEach(function (klass) {
+          mutationsMap[klass] = mutationsMap[klass] || []
+
+          var klassSource = rule.source.input.from
+          var klassLine = rule.source.start.line
+          var klassColumn = rule.source.start.column
+
+          // Ignore same file mutations. TODO: Make configurable
+          if (containsMutationFromSource(klassSource, mutationsMap[klass])) {
+            return
+          }
+
+          mutationsMap[klass].push({
+            selector: klass,
+            line: klassLine,
+            column: klassColumn,
+            rule: rule
+          })
+        })
+      })
+    })
+
+    Object.keys(mutationsMap).forEach(function (mutationClass) {
+      if (hasMutation(mutationClass, mutationsMap, opts)) {
+        result.warn(getWarningString(mutationsMap[mutationClass]))
+      } else {
+        delete mutationsMap[mutationClass]
+      }
+    })
+
+    cb(mutationsMap)
+  }
+})

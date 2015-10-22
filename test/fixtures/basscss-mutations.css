@@ -1,3 +1,5 @@
+@import './test/fixtures/basscss';
+
 .this-is-not-a-mutation {
   color: green;
 }

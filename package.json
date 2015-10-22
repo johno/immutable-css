@@ -7,9 +7,6 @@
   "directories": {
     "test": "test"
   },
-  "bin": {
-    "immutablecss": "./bin/immutablecss"
-  },
   "scripts": {
     "test": "mocha test"
   },
@@ -33,13 +30,17 @@
   },
   "homepage": "https://github.com/johnotander/immutable-css",
   "dependencies": {
-    "commander": "^2.7.1",
-    "get-css-classes": "0.0.1",
-    "has-class-selector": "0.0.1",
-    "postcss": "^4.0.6",
+    "extend-options": "0.0.1",
+    "get-css-classes": "1.0.0",
+    "glob": "^5.0.14",
+    "has-class-selector": "1.0.0",
+    "meow": "^3.3.0",
+    "postcss": "^5.0.10",
     "specificity": "^0.1.4"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "postcss-import": "^7.1.0",
+    "postcss-reporter": "^1.3.0"
   }
 }
