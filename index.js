@@ -5,6 +5,7 @@ var getCssClasses = require('get-css-classes')
 var extendOptions = require('extend-options')
 
 var hasMutation = require('./lib/has-mutation')
+var getMutations = require('./lib/get-mutations')
 var getWarningString = require('./lib/get-warning-string')
 var containsMutationFromSource = require('./lib/contains-mutation-from-source')
 
@@ -59,3 +60,5 @@ module.exports = postcss.plugin('immutable-css', function (opts, cb) {
     cb(mutationsMap)
   }
 })
+
+module.exports.getMutations = getMutations

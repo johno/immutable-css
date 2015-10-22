@@ -16,6 +16,24 @@ npm install --save immutable-css
 
 ## Usage
 
+Ensure that app specific styles aren't mutating vendor selectors
+
+```js
+var immutableCss = require('immutable-css')
+
+immutableCss.process('css/vendor.css', 'css/app.css')
+// => [...]
+
+```
+
+Ensure that CSS files in a directory aren't overriding selectors
+
+```
+immutableCss.process('css/**/*.css', { verbose: true })
+```
+
+### Using with [PostCSS](https://github.com/postcss/postcss)
+
 Immutable CSS detects mutations among files by leveraging PostCSS sourcemaps. It is also best used as a PostCSS plugin in tandem with `postcss-import` and `postcss-reporter`.
 
 ```js
@@ -60,6 +78,7 @@ var mutations = postcss([import(), immutableCss(), reporter()])
 * `immutableClasses` (Array): List of classes to check against. <br>Ex: `['.button', '.foobar']`
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. <br>Ex: `[/\.u\-/, /\.util\-/]`
 * `callback` (Function): Callback that receives a mutations object. <br>Ex: `function (mutations) { console.log(mutations) }`
+* `verbose` (Boolean): Whether mutations are logged (defaults to true with PostCSS).
 
 #### Using the callback
 
