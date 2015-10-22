@@ -1,3 +1,5 @@
+![immutable-css-logo](https://cloud.githubusercontent.com/assets/1424573/10672507/e545820e-78ad-11e5-856c-bc42f7950102.png)
+
 # immutable-css [![Build Status](https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master)](https://travis-ci.org/johnotander/immutable-css)
 
 Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered – or as Harry Roberts describes, base styles should be treated as [Immutable CSS](http://csswizardry.com/2015/03/immutable-css/).
