@@ -31,7 +31,7 @@ var mutations = postcss([import(), immutableCss(), reporter()])
                   .process(css, { from: 'styles.css' })
 ```
 
-### Input
+#### Input
 
 ```css
 @import 'basscss';
@@ -41,7 +41,7 @@ var mutations = postcss([import(), immutableCss(), reporter()])
 .something-else {}
 ```
 
-### Output
+#### Output
 
 ```sh
 ⚠  .button was mutated 2 times
@@ -61,7 +61,7 @@ var mutations = postcss([import(), immutableCss(), reporter()])
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. <br>Ex: `[/\.u\-/, /\.util\-/]`
 * `callback` (Function): Callback that receives a mutations object. <br>Ex: `function (mutations) { console.log(mutations) }`
 
-### Using the callback
+#### Using the callback
 
 Immutable CSS accepts an optional callback, which returns the mutations hash. The key is the mutated class name, the value is an array of mutating filenames.
 
