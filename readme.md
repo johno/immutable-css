@@ -6,6 +6,8 @@
 
 Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered – or as Harry Roberts describes, base styles should be treated as [Immutable CSS](http://csswizardry.com/2015/03/immutable-css/).
 
+See the interactive [web app](http://immutablecss.com).
+
 ## Installation
 
 ```bash
@@ -96,7 +98,6 @@ immutable-css css/main.css
 ## Dependencies
 
 * <https://github.com/postcss/postcss>
-* <https://github.com/sindresorhus/meow>
 * <https://github.com/johnotander/get-css-classes>
 * <https://github.com/css-modules/css-selector-tokenizer>
 
