@@ -54,10 +54,10 @@ var mutations = postcss([import(), immutableCss(), reporter()])
 
 ### Options
 
-* `ignoredClasses` (Array): List of classes to ignore for mutation violations. Ex: `['.some-mutable-class']`
-* `immutableClasses` (Array): List of classes to check against. Ex: `['.button', '.foobar']`
-* `immutablePrefixes` (Array): List of prefix regexes that are immutable. Ex: `[/\.u\-/, /\.util\-/]`
-* `callback` (Function): Callback that receives a mutations object. Ex: `function (mutations) { console.log(mutations) }`
+* `ignoredClasses` (Array): List of classes to ignore for mutation violations. <br>Ex: `['.some-mutable-class']`
+* `immutableClasses` (Array): List of classes to check against. <br>Ex: `['.button', '.foobar']`
+* `immutablePrefixes` (Array): List of prefix regexes that are immutable. <br>Ex: `[/\.u\-/, /\.util\-/]`
+* `callback` (Function): Callback that receives a mutations object. <br>Ex: `function (mutations) { console.log(mutations) }`
 
 ### Using the callback
 
