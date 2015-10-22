@@ -48,6 +48,22 @@ describe('immutable-css', function () {
   })
 })
 
+describe('immutable-css.processFiles', function () {
+
+  it('reports the mutations', function () {
+    var foundMutations = immutableCss.processFiles('test/fixtures/basscss.css', 'test/fixtures/basscss-mutations.css')
+    assert.equal(foundMutations.length, mutations.length)
+  })
+})
+
+describe('immutable-css.processGlob', function () {
+
+  it('reports the mutations', function () {
+    var foundMutations = immutableCss.processGlob('test/fixtures/**/*.css')
+    assert.equal(foundMutations.length, 15)  // Magic mutation number in test/fixtures
+  })
+})
+
 var mutations = [{
   plugin: 'immutable-css',
   text: '.button was mutated 2 times\n[line 93, col 1]: ' + __dirname + '/fixtures/basscss.css\n[line 11, col 1]: ' + path.resolve(__dirname, '..') + '/basscss-mutations.css\n',

@@ -16,13 +16,13 @@ npm install --save immutable-css
 
 ## Usage
 
-`immutableCss.process(immutableSourceCss, customCss, options)` takes two stylesheet paths, and ensures the custom CSS doesn't override any selectors contained within the immutable source.
+`immutableCss.processFiles(immutableSourceCss, customCss, options)` takes two stylesheet paths, and ensures the custom CSS doesn't override any selectors contained within the immutable source.
 This is typically best when comparing vendor CSS ([Bootstrap](http://getbootstrap.com), [Tachyons](http://tachyons.io), [Basscss](http://basscss.com), etc.) to your app's customizations.
 
 ```js
 var immutableCss = require('immutable-css')
 
-immutableCss.process('css/vendor.css', 'css/app.css')
+immutableCss.processFiles('css/vendor.css', 'css/app.css')
 // => [...]
 
 ```
