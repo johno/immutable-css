@@ -25,11 +25,35 @@ var mutations = postcss([import(), immutableCss(), reporter()])
                   .process(css, { from: 'styles.css' })
 ```
 
+### Input
+
+```css
+@import 'basscss';
+
+.button {}
+.left {}
+.something-else {}
+```
+
+### Output
+
+```sh
+⚠  .button was mutated 2 times
+[line 93, col 1]: /css/basscss.css
+[line 3, col 1]: /css/custom.css
+[immutable-css]
+⚠  .left was mutated 2 times
+[line 291, col 1]: /css/basscss.css
+[line 4, col 1]: /css/custom.css
+[immutable-css]
+```
+
 ### Options
 
 * `ignoredClasses` (Array): List of classes to ignore for mutation violations. Ex: `['.some-mutable-class']`
 * `immutableClasses` (Array): List of classes to check against. Ex: `['.button', '.foobar']`
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. Ex: `[/\.u\-/, /\.util\-/]`
+* `callback` (Function): Callback that receives a mutations object. Ex: `function (mutations) { console.log(mutations) }`
 
 ### Using the callback
 
@@ -45,34 +69,30 @@ postcss([
 ]).process(css, { from: cssFile })
 ```
 
-### Using the CLI
+### Using the [immutable-css-cli](https://github.com/johnotander/immutable-css-cli)
 
-```
-npm i -g immutable-css
+```sh
+npm i -g immutable-css-cli
 ```
 
-```
-immutable-css vendor.css app.css app2.csscss-mutations.css
+```sh
+immutable-css css/main.css
 ⚠  .button was mutated 2 times
-[line 93, col 1]: /css/immutable-css/test/fixtures/basscss.css
-[line 11, col 1]: /css/immutable-css/basscss-mutations.css
+[line 93, col 1]: /css/_basscss.css
+[line 11, col 1]: /css/_custom.css
 [immutable-css]
 ⚠  .left was mutated 2 times
-[line 291, col 1]: /css/immutable-css/test/fixtures/basscss.css
-[line 15, col 1]: /css/immutable-css/basscss-mutations.css
-[immutable-css]ss
+[line 291, col 1]: /css/_basscss.css
+[line 15, col 1]: /css/_custom.css
+[immutable-css]
 ```
 
-The CLI exits with an error code if there are mutations, too. That way you can include the CLI as part of your CI:
-
-```
-some_ci_stuff && immutablecss vendor.css app.css && other_ci_stuff
-```
+<https://github.com/johnotander/immutable-css-cli>
 
 ## Dependencies
 
 * <https://github.com/postcss/postcss>
-* <https://github.com/tj/commander.js>
+* <https://github.com/sindresorhus/meow>
 * <https://github.com/johnotander/get-css-classes>
 * <https://github.com/css-modules/css-selector-tokenizer>
 
