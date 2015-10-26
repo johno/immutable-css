@@ -28,7 +28,7 @@ var immutableCss =  postcss.plugin('immutable-css', function (opts, cb) {
       ignoredClasses: []
     }, opts || {})
 
-    root.eachRule(function (rule) {
+    root.walkRules(function (rule) {
       rule.selectors.forEach(function (selector) {
         getCssClasses(selector).forEach(function (klass) {
           mutationsMap[klass] = mutationsMap[klass] || []
