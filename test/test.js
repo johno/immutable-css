@@ -48,6 +48,15 @@ describe('immutable-css', function () {
   })
 })
 
+describe('immutable-css --strict', function () {
+  it('does not allow class mutations in the same file', function (done) {
+    test('vendor.css', undefined, { strict: true }, function (classMap) {
+      assert.equal(Object.keys(classMap).length, 1)
+      done()
+    })
+  })
+})
+
 describe('immutable-css.processFiles', function () {
 
   it('reports the mutations', function () {
