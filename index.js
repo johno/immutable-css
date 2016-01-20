@@ -25,7 +25,8 @@ var immutableCss =  postcss.plugin('immutable-css', function (opts, cb) {
     opts = extendOptions({
       immutableClasses: [],
       immutablePrefixes: [],
-      ignoredClasses: []
+      ignoredClasses: [],
+      strict: false
     }, opts || {})
 
     root.walkRules(function (rule) {
@@ -37,8 +38,7 @@ var immutableCss =  postcss.plugin('immutable-css', function (opts, cb) {
           var klassLine = rule.source.start.line
           var klassColumn = rule.source.start.column
 
-          // Ignore same file mutations. TODO: Make configurable
-          if (containsMutationFromSource(klassSource, mutationsMap[klass])) {
+          if (containsMutationFromSource(klassSource, mutationsMap[klass]) && !opts.strict) {
             return
           }
 

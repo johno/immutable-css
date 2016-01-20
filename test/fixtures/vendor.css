@@ -2,6 +2,10 @@
   background-color: tomato;
 }
 
+.foo {
+  color: purple;
+}
+
 .awesome .opossum {
   color: blue;
 }

@@ -78,6 +78,7 @@ var mutations = postcss([import(), immutableCss(), reporter()])
 
 ### Options
 
+* `strict` (Boolean): Whether class mutations are allowed in the same file. Default: `false`.
 * `ignoredClasses` (Array): List of classes to ignore for mutation violations. <br>Ex: `['.some-mutable-class']`
 * `immutableClasses` (Array): List of classes to check against. <br>Ex: `['.button', '.foobar']`
 * `immutablePrefixes` (Array): List of prefix regexes that are immutable. <br>Ex: `[/\.u\-/, /\.util\-/]`
