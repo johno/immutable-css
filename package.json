@@ -32,7 +32,7 @@
   "dependencies": {
     "extend-options": "0.0.1",
     "file-exists": "^0.1.1",
-    "get-css-classes": "1.0.0",
+    "get-css-classes": "1.1.0",
     "glob": "^5.0.14",
     "has-class-selector": "1.0.0",
     "is-css": "^1.0.0",
