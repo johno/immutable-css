@@ -13,9 +13,9 @@ var getWarningString = require('./lib/get-warning-string')
 var containsMutationFromSource = require('./lib/contains-mutation-from-source')
 
 var immutableCss =  postcss.plugin('immutable-css', function (opts, cb) {
-  var mutationsMap = {}
-
   return function immutableCss (root, result) {
+    var mutationsMap = {}
+    
     if (typeof opts === 'function') {
       cb = opts
       opts = {}
