@@ -53,6 +53,30 @@ var mutations = postcss([import(), immutableCss(), reporter()])
                   .process(css, { from: 'styles.css' })
 ```
 
+### Using with [Gulp](http://gulpjs.com)
+
+```js
+var gulp = require('gulp')
+var postcss = require('gulp-postcss')
+var import = require('postcss-import')
+var reporter = require('postcss-reporter')
+var immutableCss = require('immutable-css')
+
+gulp.task('immutable', function () {
+  var processors = [
+    import,
+    immutableCss,
+    // If you want Immutable CSS to halt the gulp pipline if there are any warnings
+    // then set throwError to true
+    reporter({clearMessages: true, throwError: false})
+  ]
+  
+  gulp.src('assets/css/base.css')
+    .pipe(postcss(processors))
+    .pipe(gulp.dest('dist/css'))
+})
+```
+
 #### Input
 
 ```css
