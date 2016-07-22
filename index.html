@@ -1,139 +1,900 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=Edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title></title><style>.cxs-2552577879{font-size:32px}.cxs-424651569{font-size:20px}.cxs-3377994344{}.cxs-3377994344:hover{box-shadow:inset 0 0 0 999px rgba(0, 0, 0, .125)}.cxs-799160745{font-size:48px}.cxs-3954183383{font-size:24px}@media screen and (min-width: 52em) { .cxs-2552577879{font-size:48px} }@media screen and (min-width: 52em) { .cxs-424651569{} }@media screen and (min-width: 52em) { .cxs-799160745{font-size:72px} }@media screen and (min-width: 52em) { .cxs-3954183383{} }</style></head><body style="margin:0;"><div class="Xv" style="font-family:-apple-system, BlinkMacSystemFont, sans-serif;font-weight:400;line-height:1.5;color:#111;background-color:#fff;"><nav style="position:absolute;top:0;right:0;left:0;display:flex;align-items:center;padding-top:8px;padding-bottom:8px;padding-left:32px;padding-right:32px;color:#fff;"><a href="http://immutablecss.com" class="Link" style="box-sizing:border-box;color:inherit;font-size:14px;font-weight:600;text-decoration:none;margin-right:8px;">Home</a><a href="https://github.com/johnotander/immutable-css" class="Link" style="box-sizing:border-box;color:inherit;font-size:14px;font-weight:600;text-decoration:none;margin-right:8px;">GitHub</a><a href="https://npmjs.com/package/immutable-css" class="Link" style="box-sizing:border-box;color:inherit;font-size:14px;font-weight:600;text-decoration:none;margin-right:8px;">npm</a></nav><header style="display:flex;align-items:center;justify-content:center;text-align:left;min-height:100vh;padding-top:48px;padding-bottom:48px;padding-left:32px;padding-right:32px;color:white;background-color:#111;background-image:url(undefined);background-size:cover;background-position:center;"><div style="max-width:1024px;flex:1 1 auto;"><h1 class="cxs-799160745 cxs-799160745" style="box-sizing:border-box;font-weight:600;line-height:1.25;h0:[object Object];h1:[object Object];h2:[object Object];h3:[object Object];h4:[object Object];h5:[object Object];h6:[object Object];margin:0;">immutable-css</h1><h2 class="cxs-3954183383 cxs-3954183383" style="box-sizing:border-box;font-weight:600;line-height:1.25;h0:[object Object];h1:[object Object];h2:[object Object];h3:[object Object];h4:[object Object];h5:[object Object];h6:[object Object];margin:0;">A CSS linter for immutable selectors.</h2><p class="Text" style="box-sizing:border-box;font-size:20px;margin:0;">v1.1.2</p><div style="box-sizing:border-box;margin-left:-16px;margin-right:-16px;"><a href="https://twitter.com/intent/tweet?text=immutable-css%253A%2520A%2520CSS%2520linter%2520for%2520immutable%2520selectors.&amp;url=http%253A%252F%252Fimmutablecss.com" class="cxs-3377994344" style="box-sizing:border-box;font-family:inherit;font-size:inherit;font-weight:600;display:inline-block;margin:16px;padding-top:8px;padding-bottom:8px;padding-left:16px;padding-right:16px;border:0;cursor:pointer;border-radius:2px;color:#fff;background-color:#08e;text-decoration:none;hover:[object Object];">Tweet</a><div style="display:table;clear:both;"></div></div></div></header><div style="box-sizing:border-box;max-width:1024px;margin-left:auto;margin-right:auto;padding-top:32px;padding-bottom:32px;padding-left:32px;padding-right:32px;"><article style="box-sizing:border-box;"><style>.Prose{}.Prose h1, .Prose h2, .Prose h3, .Prose h4, .Prose h5, .Prose h6{}.Prose h1{}.Prose h2{}.Prose h3{}.Prose h4{}.Prose h5{}.Prose h6{}.Prose p{}.Prose a{color: #08e;}</style><div><p>&lt;h1 align=&quot;center&quot;&gt;
-  &lt;img width=&quot;360&quot; src=&quot;https://rawgit.com/johnotander/immutable-css/master/media/logo.png&quot; alt=&quot;immutable-css&quot;&gt;
-&lt;/h1&gt;
+<!DOCTYPE html><html data-reactid=".1ge0d9g64g0" data-react-checksum="202732202"><head data-reactid=".1ge0d9g64g0.0"><meta charset="utf-8" data-reactid=".1ge0d9g64g0.0.0"><title data-reactid=".1ge0d9g64g0.0.1">immutable-css</title><meta name="description" content="A CSS linter for immutable selectors." data-reactid=".1ge0d9g64g0.0.2"><meta name="viewport" content="width=device-width,initial-scale=1" data-reactid=".1ge0d9g64g0.0.3"><style data-reactid=".1ge0d9g64g0.0.4">
+body { margin: 0 }
+img { max-width: 100% }
+svg { max-height: 100% }
+/* Basscss Base Forms */
 
-</p>
-<p><a href="https://travis-ci.org/johnotander/immutable-css"><img src="https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master" alt="Build Status"></a> <a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat" alt="js-standard-style"></a></p>
-<p>Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered &#x2013; or as Harry Roberts describes, base styles should be treated as <a href="http://csswizardry.com/2015/03/immutable-css/">Immutable CSS</a>.</p>
-<p>See the interactive <a href="http://immutablecss.com">web app</a>.</p>
-<h2 id="installation">Installation</h2>
-<pre><code class="lang-bash">npm install --save immutable-css
-</code></pre>
-<h2 id="usage">Usage</h2>
-<p><code>immutableCss.processFiles(immutableSourceCss, customCss, options)</code> takes two stylesheet paths, and ensures the custom CSS doesn&apos;t override any selectors contained within the immutable source.
-This is typically best when comparing vendor CSS (<a href="http://getbootstrap.com">Bootstrap</a>, <a href="http://tachyons.io">Tachyons</a>, <a href="http://basscss.com">Basscss</a>, etc.) to your app&apos;s customizations.</p>
-<pre><code class="lang-js">var immutableCss = require(&apos;immutable-css&apos;)
+input,
+select,
+textarea,
+fieldset {
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-top: 0;
+  margin-bottom: 0;
+}
 
-immutableCss.processFiles(&apos;css/vendor.css&apos;, &apos;css/app.css&apos;)
-// =&gt; [...]
-</code></pre>
-<p><code>immutableCss.processGlob(cssGlob, options)</code> takes a glob that matches CSS files and ensures that no stylesheet overrides selectors contained within another.
-This is useful to ensure that CSS partials aren&apos;t mixing concerns by mutating selectors contained within another file.</p>
-<pre><code class="lang-js">var immutableCss = require(&apos;immutable-css&apos;)
+label {
+  vertical-align: middle;
+}
 
-immutableCss.processGlob(&apos;src/css/**/*.css&apos;, { verbose: true })
-</code></pre>
-<h3 id="using-with-postcss-https-github-com-postcss-postcss-">Using with <a href="https://github.com/postcss/postcss">PostCSS</a></h3>
-<p>Immutable CSS detects mutations among files by leveraging PostCSS sourcemaps. It is also best used as a PostCSS plugin in tandem with <code>postcss-import</code> and <code>postcss-reporter</code>.</p>
-<pre><code class="lang-js">var fs = require(&apos;fs&apos;)
-var postcss = require(&apos;postcss&apos;)
-var import = require(&apos;postcss-import&apos;)
-var reporter = require(&apos;postcss-reporter&apos;)
-var immutableCss = require(&apos;immutable-css&apos;)
+input[type=text],
+input[type=date],
+input[type=datetime],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=time],
+input[type=url],
+input[type=week] {
+  height: 2.25rem;
+  padding: .5rem .5rem;
+  vertical-align: middle;
+  -webkit-appearance: none;
+}
 
-var css = fs.readFileSync(&apos;styles.css&apos;, &apos;utf8&apos;)
+select {
+  line-height: 1.75;
+  padding: .5rem .5rem;
+}
 
-var mutations = postcss([import(), immutableCss(), reporter()])
-                  .process(css, { from: &apos;styles.css&apos; })
-</code></pre>
-<h3 id="using-with-gulp-http-gulpjs-com-">Using with <a href="http://gulpjs.com">Gulp</a></h3>
-<pre><code class="lang-js">var gulp = require(&apos;gulp&apos;)
-var postcss = require(&apos;gulp-postcss&apos;)
-var import = require(&apos;postcss-import&apos;)
-var reporter = require(&apos;postcss-reporter&apos;)
-var immutableCss = require(&apos;immutable-css&apos;)
+select:not([multiple]) {
+  height: 2.25rem;
+  vertical-align: middle;
+}
 
-gulp.task(&apos;immutable&apos;, function () {
-  var processors = [
-    import,
-    immutableCss,
-    // If you want Immutable CSS to halt the gulp pipline if there are any warnings
-    // then set throwError to true
-    reporter({clearMessages: true, throwError: false})
-  ]
+textarea {
+  line-height: 1.75;
+  padding: .5rem .5rem;
+}
 
-  gulp.src(&apos;assets/css/base.css&apos;)
-    .pipe(postcss(processors))
-    .pipe(gulp.dest(&apos;dist/css&apos;))
-})
-</code></pre>
-<h4 id="input">Input</h4>
-<pre><code class="lang-css">@import &apos;basscss&apos;;
+/* Basscss Defaults */
 
-.button {}
-.left {}
-.something-else {}
-</code></pre>
-<h4 id="output">Output</h4>
-<pre><code class="lang-sh">&#x26A0;  .button was mutated 2 times
-[line 93, col 1]: /css/basscss.css
-[line 3, col 1]: /css/custom.css
-[immutable-css]
-&#x26A0;  .left was mutated 2 times
-[line 291, col 1]: /css/basscss.css
-[line 4, col 1]: /css/custom.css
-[immutable-css]
-</code></pre>
-<h3 id="options">Options</h3>
-<ul>
-<li><code>strict</code> (Boolean): Whether class mutations are allowed in the same file. Default: <code>false</code>.</li>
-<li><code>ignoredClasses</code> (Array): List of classes to ignore for mutation violations. &lt;br&gt;Ex: <code>[&apos;.some-mutable-class&apos;]</code></li>
-<li><code>immutableClasses</code> (Array): List of classes to check against. &lt;br&gt;Ex: <code>[&apos;.button&apos;, &apos;.foobar&apos;]</code></li>
-<li><code>immutablePrefixes</code> (Array): List of prefix regexes that are immutable. &lt;br&gt;Ex: <code>[/\.u\-/, /\.util\-/]</code></li>
-<li><code>callback</code> (Function): Callback that receives a mutations object. &lt;br&gt;Ex: <code>function (mutations) { console.log(mutations) }</code></li>
-<li><code>verbose</code> (Boolean): Whether mutations are logged (defaults to true with PostCSS).</li>
-</ul>
-<h4 id="using-the-callback">Using the callback</h4>
-<p>Immutable CSS accepts an optional callback, which returns the mutations hash. The key is the mutated class name, the value is an array of mutating filenames.</p>
-<pre><code class="lang-js">postcss([
-  import(),
-  immutableCss({ ignoredClasses: [&apos;.button&apos;] }, function(mutations) {
-    console.log(mutations)
-    // =&gt; { &apos;.foobar&apos;: [] }
-  })
-]).process(css, { from: cssFile })
-</code></pre>
-<h3 id="using-the-immutable-css-cli-https-github-com-johnotander-immutable-css-cli-">Using the <a href="https://github.com/johnotander/immutable-css-cli">immutable-css-cli</a></h3>
-<pre><code class="lang-sh">npm i -g immutable-css-cli
-</code></pre>
-<pre><code class="lang-sh">immutable-css css/main.css
-&#x26A0;  .button was mutated 2 times
-[line 93, col 1]: /css/_basscss.css
-[line 11, col 1]: /css/_custom.css
-[immutable-css]
-&#x26A0;  .left was mutated 2 times
-[line 291, col 1]: /css/_basscss.css
-[line 15, col 1]: /css/_custom.css
-[immutable-css]
-</code></pre>
-<p><a href="https://github.com/johnotander/immutable-css-cli">https://github.com/johnotander/immutable-css-cli</a></p>
-<h2 id="dependencies">Dependencies</h2>
-<ul>
-<li><a href="https://github.com/postcss/postcss">https://github.com/postcss/postcss</a></li>
-<li><a href="https://github.com/johnotander/get-css-classes">https://github.com/johnotander/get-css-classes</a></li>
-<li><a href="https://github.com/css-modules/css-selector-tokenizer">https://github.com/css-modules/css-selector-tokenizer</a></li>
-</ul>
-<h2 id="related-reading">Related Reading</h2>
-<ul>
-<li><a href="http://csswizardry.com/2015/03/immutable-css/">http://csswizardry.com/2015/03/immutable-css/</a></li>
-<li><a href="http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/">http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/</a></li>
-<li><a href="http://www.jon.gold/2015/07/functional-css/">http://www.jon.gold/2015/07/functional-css/</a></li>
-<li><a href="http://eng.wealthfront.com/2013/08/functional-css-fcss.html">http://eng.wealthfront.com/2013/08/functional-css-fcss.html</a></li>
-<li><a href="http://www.basscss.com/docs/reference/principles/#immutable-utilities">http://www.basscss.com/docs/reference/principles/#immutable-utilities</a></li>
-</ul>
-<h2 id="license">License</h2>
-<p>MIT</p>
-<h2 id="contributing">Contributing</h2>
-<ol>
-<li>Fork it</li>
-<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
-<li>Commit your changes (<code>git commit -am &apos;Add some feature&apos;</code>)</li>
-<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
-<li>Create new Pull Request</li>
-</ol>
-<p>Crafted with &lt;3 by <a href="https://twitter.com/jxnblk">@jxnblk</a> &amp; <a href="https://twitter.com/4lpine">@4lpine</a>.</p>
-<hr>
-<blockquote>
-<p>This package was initially generated with <a href="http://yeoman.io">yeoman</a> and the <a href="https://github.com/johnotander/generator-p.git">p generator</a>.</p>
-</blockquote>
-</div></article></div><footer style="padding-top:16px;padding-bottom:16px;padding-left:32px;padding-right:32px;margin-top:16px;border-color:#ddd;border-top-style:solid;border-top-width:1px;"><div><a href="https://github.com/johnotander/immutable-css" class="Link" style="box-sizing:border-box;color:inherit;margin-right:16px;">GitHub</a><a href="https://github.com/johnotander" class="Link" style="box-sizing:border-box;color:inherit;margin-right:16px;">johnotander</a></div><div></div></footer></div><div style="font-family:-apple-system, sans-serif;font-size:12px;font-weight:600;text-align:right;padding:8px;padding-right:32px;color:#fff;background-color:#000;"><a href="//compositor.io" style="color:inherit;text-decoration:none;">Built with Compositor.io</a></div></body></html>
+/*
+
+   COLOR VARIABLES
+
+   - Cool
+   - Warm
+   - Gray Scale
+
+*/
+
+:root {
+
+  /* Cool */
+
+
+  /* Warm */
+
+
+  /* Gray scale */
+
+}
+/* Basscss Base Tables */
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+}
+
+th,
+td {
+  padding: .25rem 1rem;
+  line-height: inherit;
+}
+
+th { vertical-align: bottom }
+td { vertical-align: top }
+/* Basscss Base Typography */
+
+body {
+  font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, sans-serif;
+  line-height: 1.5;
+  font-size: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 1em;
+  margin-bottom: .5em;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+dl, ol, ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+pre, code, samp {
+  font-family: 'Source Code Pro', Consolas, monospace;
+  font-size: inherit;
+}
+
+pre {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  overflow-x: scroll;
+}
+
+h1 { font-size: 2rem }
+h2 { font-size: 1.5rem }
+h3 { font-size: 1.25rem }
+h4 { font-size: 1rem }
+h5 { font-size: .875rem }
+h6 { font-size: .75rem }
+/* Basscss Color Base */
+
+body {
+  color: #111;
+  background-color: #fff;
+}
+
+a {
+  color: #0074d9;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+pre, code {
+  background-color: transparent;
+  border-radius: 3px;
+}
+
+hr {
+  border: 0;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0,0,0,.125);
+}
+/* Basscss Color Forms */
+
+.field {
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0,0,0,.125);
+  border-radius: 3px;
+}
+
+.field:focus,
+.field.is-focused {
+  outline: none;
+  border-color: #0074d9;
+  box-shadow: 0 0 0 2px rgba(0, 116, 217, 0.5);
+}
+
+.field:disabled,
+.field.is-disabled {
+  background-color: rgba(0,0,0,.125);
+  opacity: .5;
+}
+
+.field:read-only:not(select),
+.field.is-read-only {
+  background-color: rgba(0,0,0,.125);
+}
+
+
+.field.is-success {
+  border-color: #2ecc40;
+}
+
+.field.is-success:focus,
+.field.is-success.is-focused {
+  box-shadow: 0 0 0 2px rgba(46, 204, 64, 0.5);
+}
+
+.field.is-warning {
+  border-color: #ffdc00;
+}
+
+.field.is-warning:focus,
+.field.is-warning.is-focused {
+  box-shadow: 0 0 0 2px rgba(255, 220, 0, 0.5);
+}
+
+.field:invalid,
+.field.is-error {
+  border-color: #ff4136;
+}
+
+.field:invalid:focus,
+.field:invalid.is-focused,
+.field.is-error:focus,
+.field.is-error.is-focused {
+  box-shadow: 0 0 0 2px rgba(255, 65, 54, 0.5);
+}
+/* Basscss Color Tables */
+
+.table-light th,
+.table-light td {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgba(0,0,0,.125);
+}
+
+.table-light tr:last-child td {
+  border-bottom: 0;
+}
+/* Basscss Btn */
+
+.btn {
+  font-family: inherit;
+  font-size: .875rem;
+  font-weight: bold;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1.125rem;
+  padding: .5rem 1rem;
+  margin: 0;
+  height: auto;
+  border: 1px solid transparent;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  color: inherit;
+  background-color: transparent;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn:focus {
+  outline: none;
+  border-color: rgba(0,0,0,.125);
+  box-shadow: 0 0 0 3px rgba(0,0,0,.25);
+}
+
+::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+/* Basscss Btn Primary */
+
+.btn-primary {
+  color: #fff;
+  background-color: #0074d9;
+  border-radius: 3px;
+}
+
+.btn-primary:hover {
+  box-shadow: inset 0 0 0 20rem rgba(0,0,0,.0625);
+}
+
+.btn-primary:active {
+  box-shadow: inset 0 0 0 20rem rgba(0,0,0,.125),
+    inset 0 3px 4px 0 rgba(0,0,0,.25),
+    0 0 1px rgba(0,0,0,.125);
+}
+
+.btn-primary:disabled,
+.btn-primary.is-disabled {
+  opacity: .5;
+}
+/* Basscss Btn Outline */
+
+.btn-outline,
+.btn-outline:hover {
+  border-color: currentcolor;
+}
+
+.btn-outline {
+  border-radius: 3px;
+}
+
+.btn-outline:hover {
+  box-shadow: inset 0 0 0 20rem rgba(0,0,0,.0625);
+}
+
+.btn-outline:active {
+  box-shadow: inset 0 0 0 20rem rgba(0,0,0,.125),
+    inset 0 3px 4px 0 rgba(0,0,0,.25),
+    0 0 1px rgba(0,0,0,.125);
+}
+
+.btn-outline:disabled,
+.btn-outline.is-disabled {
+  opacity: .5;
+}
+/* Basscss Type Scale */
+
+.h1 { font-size: 2rem }
+.h2 { font-size: 1.5rem }
+.h3 { font-size: 1.25rem }
+.h4 { font-size: 1rem }
+.h5 { font-size: .875rem }
+.h6 { font-size: .75rem }
+/* Basscss Utility Typography */
+
+.bold    { font-weight: bold; font-weight: 600 }
+.regular { font-weight: normal }
+.italic  { font-style: italic }
+.caps    { text-transform: uppercase; letter-spacing: .2em; }
+
+.left-align   { text-align: left }
+.center       { text-align: center }
+.right-align  { text-align: right }
+.justify      { text-align: justify }
+
+.nowrap { white-space: nowrap }
+.break-word { word-wrap: break-word }
+
+.truncate {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-reset {
+  list-style: none;
+  padding-left: 0;
+}
+/* Basscss Utility Layout */
+
+.inline       { display: inline }
+.block        { display: block }
+.inline-block { display: inline-block }
+.table        { display: table }
+.table-cell   { display: table-cell }
+
+.overflow-hidden { overflow: hidden }
+.overflow-scroll { overflow: scroll }
+.overflow-auto   { overflow: auto }
+
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table
+}
+.clearfix:after { clear: both }
+
+.left  { float: left }
+.right { float: right }
+
+.fit { max-width: 100% }
+
+.border-box { box-sizing: border-box }
+/* Basscss Align */
+
+.align-baseline { vertical-align: baseline }
+.align-top      { vertical-align: top }
+.align-middle   { vertical-align: middle }
+.align-bottom   { vertical-align: bottom }
+/* Basscss Utility White Space */
+
+.m0  { margin:        0 }
+.mt0 { margin-top:    0 }
+.mr0 { margin-right:  0 }
+.mb0 { margin-bottom: 0 }
+.ml0 { margin-left:   0 }
+
+.m1  { margin: .5rem }
+.mt1 { margin-top: .5rem }
+.mr1 { margin-right: .5rem }
+.mb1 { margin-bottom: .5rem }
+.ml1 { margin-left: .5rem }
+
+.m2  { margin: 1rem }
+.mt2 { margin-top: 1rem }
+.mr2 { margin-right: 1rem }
+.mb2 { margin-bottom: 1rem }
+.ml2 { margin-left: 1rem }
+
+.m3  { margin: 2rem }
+.mt3 { margin-top: 2rem }
+.mr3 { margin-right: 2rem }
+.mb3 { margin-bottom: 2rem }
+.ml3 { margin-left: 2rem }
+
+.m4  { margin: 4rem }
+.mt4 { margin-top: 4rem }
+.mr4 { margin-right: 4rem }
+.mb4 { margin-bottom: 4rem }
+.ml4 { margin-left: 4rem }
+
+.mxn1 { margin-left: -.5rem; margin-right: -.5rem; }
+.mxn2 { margin-left: -1rem; margin-right: -1rem; }
+.mxn3 { margin-left: -2rem; margin-right: -2rem; }
+.mxn4 { margin-left: -4rem; margin-right: -4rem; }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p0 { padding: 0 }
+
+.p1  { padding: .5rem }
+.py1 { padding-top: .5rem; padding-bottom: .5rem }
+.px1 { padding-left: .5rem; padding-right: .5rem }
+
+.p2  { padding: 1rem }
+.py2 { padding-top: 1rem; padding-bottom: 1rem }
+.px2 { padding-left: 1rem; padding-right: 1rem }
+
+.p3  { padding: 2rem }
+.py3 { padding-top: 2rem; padding-bottom: 2rem }
+.px3 { padding-left: 2rem; padding-right: 2rem }
+
+.p4  { padding: 4rem }
+.py4 { padding-top: 4rem; padding-bottom: 4rem }
+.px4 { padding-left: 4rem; padding-right: 4rem }
+/* Basscss Positions */
+
+.relative { position: relative }
+.absolute { position: absolute }
+.fixed    { position: fixed }
+
+.top-0    { top: 0 }
+.right-0  { right: 0 }
+.bottom-0 { bottom: 0 }
+.left-0   { left: 0 }
+
+.z1 { z-index: 1 }
+.z2 { z-index: 2 }
+.z3 { z-index: 3 }
+.z4 { z-index: 4 }
+/* Basscss Utility Responsive States */
+
+.sm-show, .md-show, .lg-show {
+  display: none !important
+}
+
+@media (min-width: 40em) {
+  .sm-show { display: block !important }
+}
+
+@media (min-width: 52em) {
+  .md-show { display: block !important }
+}
+
+@media (min-width: 64em) {
+  .lg-show { display: block !important }
+}
+
+
+@media (min-width: 40em) {
+  .sm-hide { display: none !important }
+}
+
+@media (min-width: 52em) {
+  .md-hide { display: none !important }
+}
+
+@media (min-width: 64em) {
+  .lg-hide { display: none !important }
+}
+
+.display-none { display: none !important }
+
+.hide {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+/* Basscss Grid */
+
+.container {
+  max-width: 64em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.col {
+  float: left;
+  box-sizing: border-box;
+}
+
+.col-right {
+  float: right;
+  box-sizing: border-box;
+}
+
+.col-1 {
+  width: 8.33333%;
+}
+
+.col-2 {
+  width: 16.66667%;
+}
+
+.col-3 {
+  width: 25%;
+}
+
+.col-4 {
+  width: 33.33333%;
+}
+
+.col-5 {
+  width: 41.66667%;
+}
+
+.col-6 {
+  width: 50%;
+}
+
+.col-7 {
+  width: 58.33333%;
+}
+
+.col-8 {
+  width: 66.66667%;
+}
+
+.col-9 {
+  width: 75%;
+}
+
+.col-10 {
+  width: 83.33333%;
+}
+
+.col-11 {
+  width: 91.66667%;
+}
+
+.col-12 {
+  width: 100%;
+}
+@media (min-width: 40em) {
+
+  .sm-col {
+    float: left;
+    box-sizing: border-box;
+  }
+
+  .sm-col-right {
+    float: right;
+    box-sizing: border-box;
+  }
+
+  .sm-col-1 {
+    width: 8.33333%;
+  }
+
+  .sm-col-2 {
+    width: 16.66667%;
+  }
+
+  .sm-col-3 {
+    width: 25%;
+  }
+
+  .sm-col-4 {
+    width: 33.33333%;
+  }
+
+  .sm-col-5 {
+    width: 41.66667%;
+  }
+
+  .sm-col-6 {
+    width: 50%;
+  }
+
+  .sm-col-7 {
+    width: 58.33333%;
+  }
+
+  .sm-col-8 {
+    width: 66.66667%;
+  }
+
+  .sm-col-9 {
+    width: 75%;
+  }
+
+  .sm-col-10 {
+    width: 83.33333%;
+  }
+
+  .sm-col-11 {
+    width: 91.66667%;
+  }
+
+  .sm-col-12 {
+    width: 100%;
+  }
+
+}
+@media (min-width: 52em) {
+
+  .md-col {
+    float: left;
+    box-sizing: border-box;
+  }
+
+  .md-col-right {
+    float: right;
+    box-sizing: border-box;
+  }
+
+  .md-col-1 {
+    width: 8.33333%;
+  }
+
+  .md-col-2 {
+    width: 16.66667%;
+  }
+
+  .md-col-3 {
+    width: 25%;
+  }
+
+  .md-col-4 {
+    width: 33.33333%;
+  }
+
+  .md-col-5 {
+    width: 41.66667%;
+  }
+
+  .md-col-6 {
+    width: 50%;
+  }
+
+  .md-col-7 {
+    width: 58.33333%;
+  }
+
+  .md-col-8 {
+    width: 66.66667%;
+  }
+
+  .md-col-9 {
+    width: 75%;
+  }
+
+  .md-col-10 {
+    width: 83.33333%;
+  }
+
+  .md-col-11 {
+    width: 91.66667%;
+  }
+
+  .md-col-12 {
+    width: 100%;
+  }
+
+}
+@media (min-width: 64em) {
+
+  .lg-col {
+    float: left;
+    box-sizing: border-box;
+  }
+
+  .lg-col-right {
+    float: right;
+    box-sizing: border-box;
+  }
+
+  .lg-col-1 {
+    width: 8.33333%;
+  }
+
+  .lg-col-2 {
+    width: 16.66667%;
+  }
+
+  .lg-col-3 {
+    width: 25%;
+  }
+
+  .lg-col-4 {
+    width: 33.33333%;
+  }
+
+  .lg-col-5 {
+    width: 41.66667%;
+  }
+
+  .lg-col-6 {
+    width: 50%;
+  }
+
+  .lg-col-7 {
+    width: 58.33333%;
+  }
+
+  .lg-col-8 {
+    width: 66.66667%;
+  }
+
+  .lg-col-9 {
+    width: 75%;
+  }
+
+  .lg-col-10 {
+    width: 83.33333%;
+  }
+
+  .lg-col-11 {
+    width: 91.66667%;
+  }
+
+  .lg-col-12 {
+    width: 100%;
+  }
+
+}
+/* Flex Object */
+
+.flex { display: flex }
+
+.flex-column  { flex-direction: column }
+.flex-wrap    { flex-wrap: wrap }
+
+.flex-center   { align-items: center }
+.flex-baseline { align-items: baseline }
+.flex-stretch  { align-items: stretch }
+.flex-start    { align-items: flex-start }
+.flex-end      { align-items: flex-end }
+
+.flex-justify  { justify-content: space-between }
+
+/*
+ * 1. Fix for Chrome 44 bug. https://code.google.com/p/chromium/issues/detail?id=506893
+ */
+
+.flex-auto {
+  flex: 1 1 auto;
+  min-width: 0; /* 1 */
+  min-height: 0; /* 1 */
+}
+.flex-grow { flex: 1 0 auto }
+.flex-none { flex: none }
+
+.flex-first { order: -1 }
+.flex-last  { order: 99999 }
+@media (min-width: 40em) {
+  .sm-flex { display: flex }
+}
+@media (min-width: 52em) {
+  .md-flex { display: flex }
+}
+@media (min-width: 64em) {
+  .lg-flex { display: flex }
+}
+/* Basscss Color Borders */
+
+.border {
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0,0,0,.125);
+}
+
+.border-top {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: rgba(0,0,0,.125);
+}
+
+.border-right {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: rgba(0,0,0,.125);
+}
+
+.border-bottom {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0,0,0,.125);
+}
+
+.border-left {
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-left-color: rgba(0,0,0,.125);
+}
+
+.border-none { border: 0 }
+
+.rounded { border-radius: 3px }
+.circle  { border-radius: 50% }
+
+.rounded-top    { border-radius: 3px 3px 0 0 }
+.rounded-right  { border-radius: 0 3px 3px 0 }
+.rounded-bottom { border-radius: 0 0 3px 3px }
+.rounded-left   { border-radius: 3px 0 0 3px }
+
+.not-rounded { border-radius: 0 }
+/* Basscss Colors */
+
+.black  { color: #111 }
+.gray   { color: #aaa }
+.silver { color: #ddd }
+.white  { color: #fff }
+
+.aqua  { color: #7fdbff }
+.blue  { color: #0074d9 }
+.navy  { color: #001f3f }
+.teal  { color: #39cccc }
+.green { color: #2ecc40 }
+.olive { color: #3d9970 }
+.lime  { color: #01ff70 }
+
+.yellow  { color: #ffdc00 }
+.orange  { color: #ff851b }
+.red     { color: #ff4136 }
+.fuchsia { color: #f012be }
+.purple  { color: #b10dc9 }
+.maroon  { color: #85144b }
+
+.color-inherit { color: inherit }
+.muted { opacity: .5 }
+/* Basscss Background Colors */
+
+.bg-black  { background-color: #111 }
+.bg-gray   { background-color: #aaa }
+.bg-silver { background-color: #ddd }
+.bg-white  { background-color: #fff }
+
+.bg-aqua  { background-color: #7fdbff }
+.bg-blue  { background-color: #0074d9 }
+.bg-navy  { background-color: #001f3f }
+.bg-teal  { background-color: #39cccc }
+.bg-green { background-color: #2ecc40 }
+.bg-olive { background-color: #3d9970 }
+.bg-lime  { background-color: #01ff70 }
+
+.bg-yellow  { background-color: #ffdc00 }
+.bg-orange  { background-color: #ff851b }
+.bg-red     { background-color: #ff4136 }
+.bg-fuchsia { background-color: #f012be }
+.bg-purple  { background-color: #b10dc9 }
+.bg-maroon  { background-color: #85144b }
+
+.bg-darken-1 { background-color: rgba(0,0,0,.0625) }
+.bg-darken-2 { background-color: rgba(0,0,0,.125) }
+.bg-darken-3 { background-color: rgba(0,0,0,.25) }
+.bg-darken-4 { background-color: rgba(0,0,0,.5) }
+
+.bg-lighten-1 { background-color: rgba(255,255,255,.0625) }
+.bg-lighten-2 { background-color: rgba(255,255,255,.125) }
+.bg-lighten-3 { background-color: rgba(255,255,255,.25) }
+.bg-lighten-4 { background-color: rgba(255,255,255,.5) }
+
+.blue-a1 { color: rgba(0, 116, 217, 0.875) }
+.blue-a2 { color: rgba(0, 116, 217, 0.75) }
+
+.bg-blue-a1 { background-color: rgba(0, 116, 217, 0.0625) }
+.bg-blue-a2 { background-color: rgba(0, 116, 217, 0.125) }
+
+.bg-red-a1 { background-color: rgba(255, 65, 54, 0.0625) }
+.bg-red-a2 { background-color: rgba(255, 65, 54, 0.125) }
+
+</style></head><body data-reactid=".1ge0d9g64g0.1"><div class="mb4" style="min-height:100vh;" data-reactid=".1ge0d9g64g0.1.0"><header class="px3" data-reactid=".1ge0d9g64g0.1.0.0"><div class="mb3 border-bottom" data-reactid=".1ge0d9g64g0.1.0.0.0"><div class="sm-flex flex-center py3 mxn2" data-reactid=".1ge0d9g64g0.1.0.0.0.0"><div class="px2 flex-auto" data-reactid=".1ge0d9g64g0.1.0.0.0.0.0"><h1 class="h2 m0" data-reactid=".1ge0d9g64g0.1.0.0.0.0.0.0">immutable-css</h1><p class="h3 m0" data-reactid=".1ge0d9g64g0.1.0.0.0.0.0.1">A CSS linter for immutable selectors.</p></div><div class="inline-block m2" style="height:28px;" data-reactid=".1ge0d9g64g0.1.0.0.0.0.1"><a href="https://twitter.com/share" class="twitter-share-button" data-text="immutable-css: A CSS linter for immutable selectors." data-via="4lpine" data-size="large" data-reactid=".1ge0d9g64g0.1.0.0.0.0.1.0">Tweet</a><script data-reactid=".1ge0d9g64g0.1.0.0.0.0.1.1">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?"http":"https";if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document, "script", "twitter-wjs");</script></div><div class="" data-reactid=".1ge0d9g64g0.1.0.0.0.0.2"><a href="//npmjs.com/package/immutable-css" class="btn" data-reactid=".1ge0d9g64g0.1.0.0.0.0.2.0">npm</a><a href="//github.com/johnotander/immutable-css" class="btn" data-reactid=".1ge0d9g64g0.1.0.0.0.0.2.1">GitHub</a></div></div></div></header><div data-reactid=".1ge0d9g64g0.1.0.1"><div class="clearfix" data-reactid=".1ge0d9g64g0.1.0.1.0"><div class="sm-col sm-col-5 px3" data-reactid=".1ge0d9g64g0.1.0.1.0.0"><div class="mb2" data-reactid=".1ge0d9g64g0.1.0.1.0.0.0"><div data-reactid=".1ge0d9g64g0.1.0.1.0.0.0.0"><label for="immutable" class="bold block" data-reactid=".1ge0d9g64g0.1.0.1.0.0.0.0.0">Immutable Source CSS</label><p class="h5 mb1" data-reactid=".1ge0d9g64g0.1.0.1.0.0.0.0.1">Paste base library styles here or choose a library below.</p><textarea label="Immutable Source CSS" name="immutable" rows="9" style="font-size:13px;font-family:Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace;line-height:18px;white-space:pre;overflow:auto;" class="col-12 field" data-reactid=".1ge0d9g64g0.1.0.1.0.0.0.0.2">
+</textarea></div></div><div class="mb2" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1"><div data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0"><label for="library" class="bold block" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.0">Load Vendor Library</label><p class="h5 mb1" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.1"></p><select label="Load Vendor Library" name="library" class="col-12 field" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2"><option value="0" label="Basscss" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$0"></option><option value="1" label="Tachyons" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$1"></option><option value="2" label="Suit CSS" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$2"></option><option value="3" label="Pure CSS" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$3"></option><option value="4" label="Bootstrap" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$4"></option><option value="5" label="Foundation" data-reactid=".1ge0d9g64g0.1.0.1.0.0.1.0.2.$5"></option></select></div></div></div><div class="sm-col sm-col-7 px3" data-reactid=".1ge0d9g64g0.1.0.1.0.1"><div class="mb2" data-reactid=".1ge0d9g64g0.1.0.1.0.1.0"><div data-reactid=".1ge0d9g64g0.1.0.1.0.1.0.0"><label for="custom" class="bold block" data-reactid=".1ge0d9g64g0.1.0.1.0.1.0.0.0">Custom CSS</label><p class="h5 mb1" data-reactid=".1ge0d9g64g0.1.0.1.0.1.0.0.1">Paste application-specific styles here.</p><textarea label="Custom CSS" name="custom" rows="14" style="font-size:13px;font-family:Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace;line-height:18px;white-space:pre;overflow:auto;" class="col-12 field" data-reactid=".1ge0d9g64g0.1.0.1.0.1.0.0.2">
+</textarea></div></div></div></div><div class="right-align px3" data-reactid=".1ge0d9g64g0.1.0.1.1"><hr class="mb2" data-reactid=".1ge0d9g64g0.1.0.1.1.0"><button class="btn btn-primary bg-black" data-reactid=".1ge0d9g64g0.1.0.1.1.1">Check CSS</button></div></div><div class="clearfix" data-reactid=".1ge0d9g64g0.1.0.2"><div class="sm-col-right sm-col-7 px3" data-reactid=".1ge0d9g64g0.1.0.2.0"><div data-reactid=".1ge0d9g64g0.1.0.2.0.0"><h2 data-reactid=".1ge0d9g64g0.1.0.2.0.0.0"><span data-reactid=".1ge0d9g64g0.1.0.2.0.0.0.0">0</span><span data-reactid=".1ge0d9g64g0.1.0.2.0.0.0.1"> mutations found</span></h2><div data-reactid=".1ge0d9g64g0.1.0.2.0.0.1"></div></div></div><div class="sm-col sm-col-5 px3" data-reactid=".1ge0d9g64g0.1.0.2.1"><div data-reactid=".1ge0d9g64g0.1.0.2.1.0"><h3 data-reactid=".1ge0d9g64g0.1.0.2.1.0.0">About</h3><p data-reactid=".1ge0d9g64g0.1.0.2.1.0.1"><span data-reactid=".1ge0d9g64g0.1.0.2.1.0.1.0">Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered – or as Harry Roberts describes, base styles should be treated as </span><a href="http://csswizardry.com/2015/03/immutable-css/" data-reactid=".1ge0d9g64g0.1.0.2.1.0.1.1">Immutable CSS</a><span data-reactid=".1ge0d9g64g0.1.0.2.1.0.1.2">.</span></p><p data-reactid=".1ge0d9g64g0.1.0.2.1.0.2"><span data-reactid=".1ge0d9g64g0.1.0.2.1.0.2.0">Made by </span><a href="https://twitter.com/4lpine" data-reactid=".1ge0d9g64g0.1.0.2.1.0.2.1">@4lpine</a><span data-reactid=".1ge0d9g64g0.1.0.2.1.0.2.2"> and </span><a href="http://jxnblk.com" data-reactid=".1ge0d9g64g0.1.0.2.1.0.2.3">Jxnblk</a><span data-reactid=".1ge0d9g64g0.1.0.2.1.0.2.4">.</span></p></div></div></div></div><script src="demo/bundle.js" data-reactid=".1ge0d9g64g0.1.1"></script><script data-reactid=".1ge0d9g64g0.1.2">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-65237119-1', 'auto');
+ga('send', 'pageview');
+</script></body></html>
