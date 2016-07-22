@@ -1,0 +1,127 @@
+{
+  "name": "johnotander/immutable-css",
+  "version": "0.1.3",
+  "libraries": {
+    "xv": "^1.1.2"
+  },
+  "title": "",
+  "branch": "",
+  "style": {
+    "name": "Default",
+    "fontFamily": "-apple-system, BlinkMacSystemFont, sans-serif",
+    "fontWeight": 400,
+    "bold": 600,
+    "lineHeight": 1.5,
+    "typeScale": [
+      72,
+      48,
+      24,
+      20,
+      16,
+      14,
+      12
+    ],
+    "heading": {
+      "fontFamily": null,
+      "fontStyle": null,
+      "fontWeight": 600,
+      "lineHeight": 1.25,
+      "textTransform": null,
+      "letterSpacing": null,
+      "h0": {},
+      "h1": {},
+      "h2": {},
+      "h3": {},
+      "h4": {},
+      "h5": {},
+      "h6": {}
+    },
+    "alternativeText": {},
+    "space": [
+      0,
+      8,
+      16,
+      32,
+      48,
+      64,
+      96
+    ],
+    "layout": {
+      "maxWidth": 1024,
+      "centered": false
+    },
+    "colors": {
+      "text": "#111",
+      "background": "#fff",
+      "inverted": "#fff",
+      "primary": "#08e",
+      "secondary": "#0e8",
+      "highlight": "#e08",
+      "border": "#ddd",
+      "muted": "#eee"
+    },
+    "border": {
+      "width": 1,
+      "radius": 2
+    },
+    "link": {},
+    "button": {
+      "hover": {
+        "boxShadow": "inset 0 0 0 999px rgba(0, 0, 0, .125)"
+      }
+    },
+    "input": {},
+    "body": {
+      "margin": 0
+    }
+  },
+  "content": [
+    {
+      "component": "nav/AbsoluteNav",
+      "links": [
+        {
+          "href": "http://immutablecss.com",
+          "text": "Home"
+        },
+        {
+          "href": "https://github.com/johnotander/immutable-css",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://npmjs.com/package/immutable-css",
+          "text": "npm"
+        }
+      ]
+    },
+    {
+      "component": "header/BannerHeader",
+      "heading": "immutable-css",
+      "subhead": "A CSS linter for immutable selectors.",
+      "links": [
+        {
+          "text": "Tweet",
+          "href": "https://twitter.com/intent/tweet?text=immutable-css%253A%2520A%2520CSS%2520linter%2520for%2520immutable%2520selectors.&url=http%253A%252F%252Fimmutablecss.com"
+        }
+      ],
+      "text": "v1.1.2"
+    },
+    {
+      "component": "article/BasicArticle",
+      "text": "<p>&lt;h1 align=&quot;center&quot;&gt;\n  &lt;img width=&quot;360&quot; src=&quot;https://rawgit.com/johnotander/immutable-css/master/media/logo.png&quot; alt=&quot;immutable-css&quot;&gt;\n&lt;/h1&gt;\n\n</p>\n<p><a href=\"https://travis-ci.org/johnotander/immutable-css\"><img src=\"https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master\" alt=\"Build Status\"></a> <a href=\"https://github.com/feross/standard\"><img src=\"https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat\" alt=\"js-standard-style\"></a></p>\n<p>Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered &#x2013; or as Harry Roberts describes, base styles should be treated as <a href=\"http://csswizardry.com/2015/03/immutable-css/\">Immutable CSS</a>.</p>\n<p>See the interactive <a href=\"http://immutablecss.com\">web app</a>.</p>\n<h2 id=\"installation\">Installation</h2>\n<pre><code class=\"lang-bash\">npm install --save immutable-css\n</code></pre>\n<h2 id=\"usage\">Usage</h2>\n<p><code>immutableCss.processFiles(immutableSourceCss, customCss, options)</code> takes two stylesheet paths, and ensures the custom CSS doesn&apos;t override any selectors contained within the immutable source.\nThis is typically best when comparing vendor CSS (<a href=\"http://getbootstrap.com\">Bootstrap</a>, <a href=\"http://tachyons.io\">Tachyons</a>, <a href=\"http://basscss.com\">Basscss</a>, etc.) to your app&apos;s customizations.</p>\n<pre><code class=\"lang-js\">var immutableCss = require(&apos;immutable-css&apos;)\n\nimmutableCss.processFiles(&apos;css/vendor.css&apos;, &apos;css/app.css&apos;)\n// =&gt; [...]\n</code></pre>\n<p><code>immutableCss.processGlob(cssGlob, options)</code> takes a glob that matches CSS files and ensures that no stylesheet overrides selectors contained within another.\nThis is useful to ensure that CSS partials aren&apos;t mixing concerns by mutating selectors contained within another file.</p>\n<pre><code class=\"lang-js\">var immutableCss = require(&apos;immutable-css&apos;)\n\nimmutableCss.processGlob(&apos;src/css/**/*.css&apos;, { verbose: true })\n</code></pre>\n<h3 id=\"using-with-postcss-https-github-com-postcss-postcss-\">Using with <a href=\"https://github.com/postcss/postcss\">PostCSS</a></h3>\n<p>Immutable CSS detects mutations among files by leveraging PostCSS sourcemaps. It is also best used as a PostCSS plugin in tandem with <code>postcss-import</code> and <code>postcss-reporter</code>.</p>\n<pre><code class=\"lang-js\">var fs = require(&apos;fs&apos;)\nvar postcss = require(&apos;postcss&apos;)\nvar import = require(&apos;postcss-import&apos;)\nvar reporter = require(&apos;postcss-reporter&apos;)\nvar immutableCss = require(&apos;immutable-css&apos;)\n\nvar css = fs.readFileSync(&apos;styles.css&apos;, &apos;utf8&apos;)\n\nvar mutations = postcss([import(), immutableCss(), reporter()])\n                  .process(css, { from: &apos;styles.css&apos; })\n</code></pre>\n<h3 id=\"using-with-gulp-http-gulpjs-com-\">Using with <a href=\"http://gulpjs.com\">Gulp</a></h3>\n<pre><code class=\"lang-js\">var gulp = require(&apos;gulp&apos;)\nvar postcss = require(&apos;gulp-postcss&apos;)\nvar import = require(&apos;postcss-import&apos;)\nvar reporter = require(&apos;postcss-reporter&apos;)\nvar immutableCss = require(&apos;immutable-css&apos;)\n\ngulp.task(&apos;immutable&apos;, function () {\n  var processors = [\n    import,\n    immutableCss,\n    // If you want Immutable CSS to halt the gulp pipline if there are any warnings\n    // then set throwError to true\n    reporter({clearMessages: true, throwError: false})\n  ]\n\n  gulp.src(&apos;assets/css/base.css&apos;)\n    .pipe(postcss(processors))\n    .pipe(gulp.dest(&apos;dist/css&apos;))\n})\n</code></pre>\n<h4 id=\"input\">Input</h4>\n<pre><code class=\"lang-css\">@import &apos;basscss&apos;;\n\n.button {}\n.left {}\n.something-else {}\n</code></pre>\n<h4 id=\"output\">Output</h4>\n<pre><code class=\"lang-sh\">&#x26A0;  .button was mutated 2 times\n[line 93, col 1]: /css/basscss.css\n[line 3, col 1]: /css/custom.css\n[immutable-css]\n&#x26A0;  .left was mutated 2 times\n[line 291, col 1]: /css/basscss.css\n[line 4, col 1]: /css/custom.css\n[immutable-css]\n</code></pre>\n<h3 id=\"options\">Options</h3>\n<ul>\n<li><code>strict</code> (Boolean): Whether class mutations are allowed in the same file. Default: <code>false</code>.</li>\n<li><code>ignoredClasses</code> (Array): List of classes to ignore for mutation violations. &lt;br&gt;Ex: <code>[&apos;.some-mutable-class&apos;]</code></li>\n<li><code>immutableClasses</code> (Array): List of classes to check against. &lt;br&gt;Ex: <code>[&apos;.button&apos;, &apos;.foobar&apos;]</code></li>\n<li><code>immutablePrefixes</code> (Array): List of prefix regexes that are immutable. &lt;br&gt;Ex: <code>[/\\.u\\-/, /\\.util\\-/]</code></li>\n<li><code>callback</code> (Function): Callback that receives a mutations object. &lt;br&gt;Ex: <code>function (mutations) { console.log(mutations) }</code></li>\n<li><code>verbose</code> (Boolean): Whether mutations are logged (defaults to true with PostCSS).</li>\n</ul>\n<h4 id=\"using-the-callback\">Using the callback</h4>\n<p>Immutable CSS accepts an optional callback, which returns the mutations hash. The key is the mutated class name, the value is an array of mutating filenames.</p>\n<pre><code class=\"lang-js\">postcss([\n  import(),\n  immutableCss({ ignoredClasses: [&apos;.button&apos;] }, function(mutations) {\n    console.log(mutations)\n    // =&gt; { &apos;.foobar&apos;: [] }\n  })\n]).process(css, { from: cssFile })\n</code></pre>\n<h3 id=\"using-the-immutable-css-cli-https-github-com-johnotander-immutable-css-cli-\">Using the <a href=\"https://github.com/johnotander/immutable-css-cli\">immutable-css-cli</a></h3>\n<pre><code class=\"lang-sh\">npm i -g immutable-css-cli\n</code></pre>\n<pre><code class=\"lang-sh\">immutable-css css/main.css\n&#x26A0;  .button was mutated 2 times\n[line 93, col 1]: /css/_basscss.css\n[line 11, col 1]: /css/_custom.css\n[immutable-css]\n&#x26A0;  .left was mutated 2 times\n[line 291, col 1]: /css/_basscss.css\n[line 15, col 1]: /css/_custom.css\n[immutable-css]\n</code></pre>\n<p><a href=\"https://github.com/johnotander/immutable-css-cli\">https://github.com/johnotander/immutable-css-cli</a></p>\n<h2 id=\"dependencies\">Dependencies</h2>\n<ul>\n<li><a href=\"https://github.com/postcss/postcss\">https://github.com/postcss/postcss</a></li>\n<li><a href=\"https://github.com/johnotander/get-css-classes\">https://github.com/johnotander/get-css-classes</a></li>\n<li><a href=\"https://github.com/css-modules/css-selector-tokenizer\">https://github.com/css-modules/css-selector-tokenizer</a></li>\n</ul>\n<h2 id=\"related-reading\">Related Reading</h2>\n<ul>\n<li><a href=\"http://csswizardry.com/2015/03/immutable-css/\">http://csswizardry.com/2015/03/immutable-css/</a></li>\n<li><a href=\"http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/\">http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/</a></li>\n<li><a href=\"http://www.jon.gold/2015/07/functional-css/\">http://www.jon.gold/2015/07/functional-css/</a></li>\n<li><a href=\"http://eng.wealthfront.com/2013/08/functional-css-fcss.html\">http://eng.wealthfront.com/2013/08/functional-css-fcss.html</a></li>\n<li><a href=\"http://www.basscss.com/docs/reference/principles/#immutable-utilities\">http://www.basscss.com/docs/reference/principles/#immutable-utilities</a></li>\n</ul>\n<h2 id=\"license\">License</h2>\n<p>MIT</p>\n<h2 id=\"contributing\">Contributing</h2>\n<ol>\n<li>Fork it</li>\n<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>\n<li>Commit your changes (<code>git commit -am &apos;Add some feature&apos;</code>)</li>\n<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>\n<li>Create new Pull Request</li>\n</ol>\n<p>Crafted with &lt;3 by <a href=\"https://twitter.com/jxnblk\">@jxnblk</a> &amp; <a href=\"https://twitter.com/4lpine\">@4lpine</a>.</p>\n<hr>\n<blockquote>\n<p>This package was initially generated with <a href=\"http://yeoman.io\">yeoman</a> and the <a href=\"https://github.com/johnotander/generator-p.git\">p generator</a>.</p>\n</blockquote>\n",
+      "html": "<p>&lt;h1 align=&quot;center&quot;&gt;\n  &lt;img width=&quot;360&quot; src=&quot;https://rawgit.com/johnotander/immutable-css/master/media/logo.png&quot; alt=&quot;immutable-css&quot;&gt;\n&lt;/h1&gt;\n\n</p>\n<p><a href=\"https://travis-ci.org/johnotander/immutable-css\"><img src=\"https://secure.travis-ci.org/johnotander/immutable-css.png?branch=master\" alt=\"Build Status\"></a> <a href=\"https://github.com/feross/standard\"><img src=\"https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat\" alt=\"js-standard-style\"></a></p>\n<p>Best practices suggest avoiding overriding styles from vendor libraries to prevent unwanted side effects. Base library styles should not be altered &#x2013; or as Harry Roberts describes, base styles should be treated as <a href=\"http://csswizardry.com/2015/03/immutable-css/\">Immutable CSS</a>.</p>\n<p>See the interactive <a href=\"http://immutablecss.com\">web app</a>.</p>\n<h2 id=\"installation\">Installation</h2>\n<pre><code class=\"lang-bash\">npm install --save immutable-css\n</code></pre>\n<h2 id=\"usage\">Usage</h2>\n<p><code>immutableCss.processFiles(immutableSourceCss, customCss, options)</code> takes two stylesheet paths, and ensures the custom CSS doesn&apos;t override any selectors contained within the immutable source.\nThis is typically best when comparing vendor CSS (<a href=\"http://getbootstrap.com\">Bootstrap</a>, <a href=\"http://tachyons.io\">Tachyons</a>, <a href=\"http://basscss.com\">Basscss</a>, etc.) to your app&apos;s customizations.</p>\n<pre><code class=\"lang-js\">var immutableCss = require(&apos;immutable-css&apos;)\n\nimmutableCss.processFiles(&apos;css/vendor.css&apos;, &apos;css/app.css&apos;)\n// =&gt; [...]\n</code></pre>\n<p><code>immutableCss.processGlob(cssGlob, options)</code> takes a glob that matches CSS files and ensures that no stylesheet overrides selectors contained within another.\nThis is useful to ensure that CSS partials aren&apos;t mixing concerns by mutating selectors contained within another file.</p>\n<pre><code class=\"lang-js\">var immutableCss = require(&apos;immutable-css&apos;)\n\nimmutableCss.processGlob(&apos;src/css/**/*.css&apos;, { verbose: true })\n</code></pre>\n<h3 id=\"using-with-postcss-https-github-com-postcss-postcss-\">Using with <a href=\"https://github.com/postcss/postcss\">PostCSS</a></h3>\n<p>Immutable CSS detects mutations among files by leveraging PostCSS sourcemaps. It is also best used as a PostCSS plugin in tandem with <code>postcss-import</code> and <code>postcss-reporter</code>.</p>\n<pre><code class=\"lang-js\">var fs = require(&apos;fs&apos;)\nvar postcss = require(&apos;postcss&apos;)\nvar import = require(&apos;postcss-import&apos;)\nvar reporter = require(&apos;postcss-reporter&apos;)\nvar immutableCss = require(&apos;immutable-css&apos;)\n\nvar css = fs.readFileSync(&apos;styles.css&apos;, &apos;utf8&apos;)\n\nvar mutations = postcss([import(), immutableCss(), reporter()])\n                  .process(css, { from: &apos;styles.css&apos; })\n</code></pre>\n<h3 id=\"using-with-gulp-http-gulpjs-com-\">Using with <a href=\"http://gulpjs.com\">Gulp</a></h3>\n<pre><code class=\"lang-js\">var gulp = require(&apos;gulp&apos;)\nvar postcss = require(&apos;gulp-postcss&apos;)\nvar import = require(&apos;postcss-import&apos;)\nvar reporter = require(&apos;postcss-reporter&apos;)\nvar immutableCss = require(&apos;immutable-css&apos;)\n\ngulp.task(&apos;immutable&apos;, function () {\n  var processors = [\n    import,\n    immutableCss,\n    // If you want Immutable CSS to halt the gulp pipline if there are any warnings\n    // then set throwError to true\n    reporter({clearMessages: true, throwError: false})\n  ]\n\n  gulp.src(&apos;assets/css/base.css&apos;)\n    .pipe(postcss(processors))\n    .pipe(gulp.dest(&apos;dist/css&apos;))\n})\n</code></pre>\n<h4 id=\"input\">Input</h4>\n<pre><code class=\"lang-css\">@import &apos;basscss&apos;;\n\n.button {}\n.left {}\n.something-else {}\n</code></pre>\n<h4 id=\"output\">Output</h4>\n<pre><code class=\"lang-sh\">&#x26A0;  .button was mutated 2 times\n[line 93, col 1]: /css/basscss.css\n[line 3, col 1]: /css/custom.css\n[immutable-css]\n&#x26A0;  .left was mutated 2 times\n[line 291, col 1]: /css/basscss.css\n[line 4, col 1]: /css/custom.css\n[immutable-css]\n</code></pre>\n<h3 id=\"options\">Options</h3>\n<ul>\n<li><code>strict</code> (Boolean): Whether class mutations are allowed in the same file. Default: <code>false</code>.</li>\n<li><code>ignoredClasses</code> (Array): List of classes to ignore for mutation violations. &lt;br&gt;Ex: <code>[&apos;.some-mutable-class&apos;]</code></li>\n<li><code>immutableClasses</code> (Array): List of classes to check against. &lt;br&gt;Ex: <code>[&apos;.button&apos;, &apos;.foobar&apos;]</code></li>\n<li><code>immutablePrefixes</code> (Array): List of prefix regexes that are immutable. &lt;br&gt;Ex: <code>[/\\.u\\-/, /\\.util\\-/]</code></li>\n<li><code>callback</code> (Function): Callback that receives a mutations object. &lt;br&gt;Ex: <code>function (mutations) { console.log(mutations) }</code></li>\n<li><code>verbose</code> (Boolean): Whether mutations are logged (defaults to true with PostCSS).</li>\n</ul>\n<h4 id=\"using-the-callback\">Using the callback</h4>\n<p>Immutable CSS accepts an optional callback, which returns the mutations hash. The key is the mutated class name, the value is an array of mutating filenames.</p>\n<pre><code class=\"lang-js\">postcss([\n  import(),\n  immutableCss({ ignoredClasses: [&apos;.button&apos;] }, function(mutations) {\n    console.log(mutations)\n    // =&gt; { &apos;.foobar&apos;: [] }\n  })\n]).process(css, { from: cssFile })\n</code></pre>\n<h3 id=\"using-the-immutable-css-cli-https-github-com-johnotander-immutable-css-cli-\">Using the <a href=\"https://github.com/johnotander/immutable-css-cli\">immutable-css-cli</a></h3>\n<pre><code class=\"lang-sh\">npm i -g immutable-css-cli\n</code></pre>\n<pre><code class=\"lang-sh\">immutable-css css/main.css\n&#x26A0;  .button was mutated 2 times\n[line 93, col 1]: /css/_basscss.css\n[line 11, col 1]: /css/_custom.css\n[immutable-css]\n&#x26A0;  .left was mutated 2 times\n[line 291, col 1]: /css/_basscss.css\n[line 15, col 1]: /css/_custom.css\n[immutable-css]\n</code></pre>\n<p><a href=\"https://github.com/johnotander/immutable-css-cli\">https://github.com/johnotander/immutable-css-cli</a></p>\n<h2 id=\"dependencies\">Dependencies</h2>\n<ul>\n<li><a href=\"https://github.com/postcss/postcss\">https://github.com/postcss/postcss</a></li>\n<li><a href=\"https://github.com/johnotander/get-css-classes\">https://github.com/johnotander/get-css-classes</a></li>\n<li><a href=\"https://github.com/css-modules/css-selector-tokenizer\">https://github.com/css-modules/css-selector-tokenizer</a></li>\n</ul>\n<h2 id=\"related-reading\">Related Reading</h2>\n<ul>\n<li><a href=\"http://csswizardry.com/2015/03/immutable-css/\">http://csswizardry.com/2015/03/immutable-css/</a></li>\n<li><a href=\"http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/\">http://csswizardry.com/2012/06/the-open-closed-principle-applied-to-css/</a></li>\n<li><a href=\"http://www.jon.gold/2015/07/functional-css/\">http://www.jon.gold/2015/07/functional-css/</a></li>\n<li><a href=\"http://eng.wealthfront.com/2013/08/functional-css-fcss.html\">http://eng.wealthfront.com/2013/08/functional-css-fcss.html</a></li>\n<li><a href=\"http://www.basscss.com/docs/reference/principles/#immutable-utilities\">http://www.basscss.com/docs/reference/principles/#immutable-utilities</a></li>\n</ul>\n<h2 id=\"license\">License</h2>\n<p>MIT</p>\n<h2 id=\"contributing\">Contributing</h2>\n<ol>\n<li>Fork it</li>\n<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>\n<li>Commit your changes (<code>git commit -am &apos;Add some feature&apos;</code>)</li>\n<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>\n<li>Create new Pull Request</li>\n</ol>\n<p>Crafted with &lt;3 by <a href=\"https://twitter.com/jxnblk\">@jxnblk</a> &amp; <a href=\"https://twitter.com/4lpine\">@4lpine</a>.</p>\n<hr>\n<blockquote>\n<p>This package was initially generated with <a href=\"http://yeoman.io\">yeoman</a> and the <a href=\"https://github.com/johnotander/generator-p.git\">p generator</a>.</p>\n</blockquote>\n"
+    },
+    {
+      "component": "footer/BasicFooter",
+      "links": [
+        {
+          "href": "https://github.com/johnotander/immutable-css",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/johnotander",
+          "text": "johnotander"
+        }
+      ]
+    }
+  ]
+}
